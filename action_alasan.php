@@ -16,6 +16,24 @@ switch ($action) {
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         break;
 
+    case 'get':
+        $id = (int) ($_GET['id'] ?? 0);
+        $stmt = $pdo->prepare("SELECT * FROM alasan_pelanggarans WHERE id=?");
+        $stmt->execute([$id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($data) {
+            // Get jenis pelanggaran name
+            $stmt_jp = $pdo->prepare("SELECT name FROM jenis_pelanggarans WHERE id=?");
+            $stmt_jp->execute([$data['id_jenis_pelanggaran']]);
+            $jp = $stmt_jp->fetch(PDO::FETCH_ASSOC);
+            $data['jenis_pelanggaran'] = $jp['name'] ?? '';
+            echo json_encode(['success' => true] + $data);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan']);
+        }
+        break;
+
     case 'delete':
         $id = (int) ($_POST['id'] ?? 0);
         $stmt = $pdo->prepare("DELETE FROM alasan_pelanggarans WHERE id=?");
@@ -59,6 +77,21 @@ switch ($action) {
             $pdo->rollBack();
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
+        break;
+
+    case 'update':
+        $id = (int) $_POST['id'];
+        $id_jenis_pelanggaran = (int) $_POST['id_jenis_pelanggaran'];
+        $detail = trim($_POST['detail'] ?? '');
+
+        if ($id <= 0 || $id_jenis_pelanggaran <= 0 || empty($detail)) {
+            echo json_encode(['success' => false, 'message' => 'Data tidak lengkap!']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("UPDATE alasan_pelanggarans SET id_jenis_pelanggaran=?, detail=? WHERE id=?");
+        $success = $stmt->execute([$id_jenis_pelanggaran, $detail, $id]);
+        echo json_encode(['success' => $success, 'message' => $success ? 'Berhasil update!' : 'Gagal update!']);
         break;
 
     default:
