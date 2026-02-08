@@ -127,6 +127,7 @@
             <div class="dropdown-content">
                 <a href="?page=kelas">kelas</a>
                 <a href="?page=jenis_pelanggaran">jenis pelanggaran</a>
+                <a href="?page=alasan_pelanggaran">alasan pelanggaran</a>
                 <a href="?page=mapel">mapel</a>
             </div>
         </div>

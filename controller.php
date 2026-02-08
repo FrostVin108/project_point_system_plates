@@ -28,6 +28,9 @@ switch ($page) {
     case 'jenis_pelanggaran':
         echo $templates->render('data_filler::jenis_pelanggaran', ['title' => 'Data jenis pelanggaran']);
         break;
+    case 'alasan_pelanggaran':
+        echo $templates->render('data_filler::alasan_pelanggaran', ['title' => 'Data alasan pelanggaran']);
+        break;
     case 'siswa':
         echo $templates->render('siswa::siswa', ['title' => 'Siswa']);
         break;
