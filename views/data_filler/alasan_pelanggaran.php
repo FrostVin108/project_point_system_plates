@@ -55,7 +55,7 @@
                                 <th width="8%" class="text-center fw-bold">No</th>
                                 <th width="22%" class="fw-bold">Jenis Pelanggaran</th>
                                 <th width="45%">Detail Alasan</th>
-                                <th width="12%" class="text-center fw-bold">Tanggal</th>
+                                <!-- <th width="12%" class="text-center fw-bold">Tanggal</th> -->
                                 <th width="13%" class="text-center fw-bold">Aksi</th>
                             </tr>
                         </thead>
@@ -68,7 +68,7 @@
 </div>
 
 <!-- ADD/EDIT MODAL -->
-<div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static" style="margin-top: 100px;">
+<div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static" style="margin-top: 40px;">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-warning text-dark">
@@ -121,7 +121,7 @@
 </div>
 
 <!-- ADD MODAL -->
-<div class="modal fade" id="addModal" tabindex="-1" data-bs-backdrop="static" style="margin-top: 100px;">
+<div class="modal fade" id="addModal" tabindex="-1" data-bs-backdrop="static" style="margin-top: 10px;">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-danger text-white">
@@ -523,12 +523,12 @@
                     width: "45%",
                     render: data => `<div class="detail-text p-2 border rounded bg-light">${data.detail}</div>`
                 },
-                {
-                    data: null,
-                    className: 'text-center',
-                    width: "12%",
-                    render: data => new Date(data.created_at || Date.now()).toLocaleDateString('id-ID')
-                },
+                // {
+                //     data: null,
+                //     className: 'text-center',
+                //     width: "12%",
+                //     render: data => new Date(data.created_at || Date.now()).toLocaleDateString('id-ID')
+                // },
                 {
                     data: null,
                     orderable: false,

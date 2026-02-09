@@ -122,6 +122,7 @@
     <div class="sidenav">
         <h2>Navigation</h2>
         <a href="?page=dashboard">Dashboard</a>
+        <a href="?page=pelanggaran">pelanggaran</a>
         <div class="dropdown">
             <button class="dropdown-btn">data filler</button>
             <div class="dropdown-content">

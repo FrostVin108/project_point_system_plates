@@ -16,6 +16,9 @@ switch ($page) {
     case 'dashboard':
         echo $templates->render('dashboard', ['title' => 'Dashboard']);
         break;
+    case 'pelanggaran':
+        echo $templates->render('pelanggaran', ['title' => 'pelanggaran']);
+        break;
     case 'login':
         echo $templates->render('login', ['title' => 'Login']);
         break;
