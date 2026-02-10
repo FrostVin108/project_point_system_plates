@@ -6,11 +6,13 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
     case 'read':
-        // 🔥 JOIN dengan kelas untuk tampilkan nama kelas
+        // 🔥 TAMBAH POINT & STATUS
         $stmt = $pdo->prepare("
             SELECT s.*, 
                    k.tingkat, k.jurusan, k.kelas as kelas_name,
-                   CONCAT(k.tingkat, ' ', k.jurusan, ' ', k.kelas) as kelas_full
+                   CONCAT(k.tingkat, ' ', k.jurusan, ' ', k.kelas) as kelas_full,
+                   s.point,  -- 🔥 POINT
+                   '' as status  -- 🔥 STATUS (kosong dulu)
             FROM siswas s 
             LEFT JOIN kelas k ON s.id_kelas = k.id 
             ORDER BY s.id DESC
@@ -19,25 +21,25 @@ switch ($action) {
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         break;
 
-    case 'edit': // 🔥 GET DATA UNTUK EDIT (bukan UPDATE)
+    // ... case lain TIDAK BERUBAH ...
+    case 'edit':
         $id = $_GET['id'] ?? 0;
         if ($id == 0) {
             echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
             break;
         }
-
         $stmt = $pdo->prepare("
-            SELECT s.*, k.tingkat, k.jurusan, k.kelas as kelas_name 
+            SELECT s.*, k.tingkat, k.jurusan, k.kelas as kelas_name, s.point
             FROM siswas s 
             LEFT JOIN kelas k ON s.id_kelas = k.id 
             WHERE s.id = ?
         ");
         $stmt->execute([$id]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($data); // 🔥 RETURN ARRAY [{}]
+        echo json_encode($data);
         break;
 
-    case 'update': // 🔥 INI UNTUK UPDATE (POST)
+    case 'update':
         $name = $_POST['name'] ?? '';
         $nis = $_POST['nis'] ?? '';
 
@@ -49,7 +51,8 @@ switch ($action) {
         $stmt = $pdo->prepare("
             UPDATE siswas SET 
                 name=?, nis=?, id_kelas=?, name_orang_tua=?, pekerjaan_orang_tua=?,
-                telphone_orang_tua=?, telphone=?, alamat=?, alamat_orang_tua=?, detail=?
+                telphone_orang_tua=?, telphone=?, alamat=?, alamat_orang_tua=?, 
+                detail=?, point=?  -- 🔥 TAMBAH POINT
             WHERE id=?
         ");
         $success = $stmt->execute([
@@ -63,6 +66,7 @@ switch ($action) {
             $_POST['alamat'] ?? '',
             $_POST['alamat_orang_tua'] ?? '',
             $_POST['detail'] ?? '',
+            (int) ($_POST['point'] ?? 0),  // 🔥 POINT
             $_POST['id'] ?? 0
         ]);
         echo json_encode(['success' => $success]);
@@ -80,8 +84,8 @@ switch ($action) {
         $stmt = $pdo->prepare("
             INSERT INTO siswas (
                 name, nis, id_kelas, name_orang_tua, pekerjaan_orang_tua,
-                telphone_orang_tua, telphone, alamat, alamat_orang_tua, detail
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                telphone_orang_tua, telphone, alamat, alamat_orang_tua, detail, point
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $success = $stmt->execute([
             $name,
@@ -93,7 +97,8 @@ switch ($action) {
             $_POST['telphone'] ?? '',
             $_POST['alamat'] ?? '',
             $_POST['alamat_orang_tua'] ?? '',
-            $_POST['detail'] ?? ''
+            $_POST['detail'] ?? '',
+            0  // 🔥 POINT DEFAULT 0
         ]);
         echo json_encode(['success' => $success]);
         break;
@@ -107,6 +112,5 @@ switch ($action) {
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Invalid action']);
-        break;
 }
 ?>
