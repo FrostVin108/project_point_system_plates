@@ -91,7 +91,7 @@
             min-height: 70vh;
         }
 
-        <style>.btn-word {
+        .btn-word {
             background: #007bff;
             color: white;
             padding: 6px 12px;
@@ -105,14 +105,24 @@
             background: #0056b3;
             color: white;
         }
-    </style>
 
+        /* 🔥 USER INFO STYLE */
+        .user-info {
+            background-color: #444;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-role {
+            color: #ffd700;
+            font-weight: bold;
+        }
     </style>
 
     <!-- Font Awesome 6 FREE CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -120,36 +130,87 @@
 
 <body>
     <div class="sidenav">
-        <h2>Navigation</h2>
-        <a href="?page=dashboard">Dashboard</a>
-        <a href="?page=pelanggaran">pelanggaran</a>
-        <div class="dropdown">
-            <button class="dropdown-btn">data filler</button>
-            <div class="dropdown-content">
-                <a href="?page=kelas">kelas</a>
-                <a href="?page=jenis_pelanggaran">jenis pelanggaran</a>
-                <a href="?page=alasan_pelanggaran">alasan pelanggaran</a>
-                <a href="?page=mapel">mapel</a>
+        <h2><i class="fas fa-school me-2"></i>Vin Web</h2>
+        
+        <!-- 🔥 SESSION DETECTION - LOGIN/LOGOUT -->
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <!-- ✅ USER SUDAH LOGIN -->
+            <div class="user-info">
+                <div><i class="fas fa-user-circle me-2"></i><?= $_SESSION['user_name'] ?></div>
+                <div class="user-role"><?= $_SESSION['role'] ?></div>
+                <a href="?page=logout" class="btn-word" style="font-size: 11px;">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
             </div>
-        </div>
-
-        <div class="dropdown">
-            <button class="dropdown-btn">Siswa</button>
-            <div class="dropdown-content">
-                <a href="?page=siswa">dashboard</a>
-                <a href="?page=siswa_table">Table</a>
+        <?php else: ?>
+            <!-- ❌ BELUM LOGIN -->
+            <div style="padding: 15px; background-color: #444; border-radius: 8px; margin-bottom: 20px;">
+                <div class="text-center">
+                    <i class="fas fa-user-slash fa-2x text-warning mb-2"></i>
+                    <div>Belum Login</div>
+                    <a href="?page=login" class="btn-word mt-2">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
 
-        <div class="dropdown">
-            <button class="dropdown-btn">guru</button>
-            <div class="dropdown-content">
-                <a href="?page=guru">dashboard</a>
-                <a href="?page=guru_table">Table</a>
-            </div>
-        </div>
+        <!-- 🔥 MENU NAVIGATION - ROLE BASED -->
+        <?php if (isset($_SESSION['role'])): ?>
+            <?php if ($_SESSION['role'] === 'admin'): ?>
+                <!-- ADMIN MENU FULL -->
+                <a href="?page=dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+                <a href="?page=pelanggaran"><i class="fas fa-exclamation-triangle me-2"></i>Pelanggaran</a>
+                
+                <div class="dropdown">
+                    <button class="dropdown-btn"><i class="fas fa-database me-2"></i>Data Filler</button>
+                    <div class="dropdown-content">
+                        <a href="?page=kelas">Kelas</a>
+                        <a href="?page=jenis_pelanggaran">Jenis Pelanggaran</a>
+                        <a href="?page=alasan_pelanggaran">Alasan Pelanggaran</a>
+                        <a href="?page=mapel">Mapel</a>
+                    </div>
+                </div>
 
-        <a href="?page=users">user</a>
+                <div class="dropdown">
+                    <button class="dropdown-btn"><i class="fas fa-users me-2"></i>Siswa</button>
+                    <div class="dropdown-content">
+                        <a href="?page=siswa">Dashboard</a>
+                        <a href="?page=siswa_table">Table</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropdown-btn"><i class="fas fa-chalkboard-teacher me-2"></i>Guru</button>
+                    <div class="dropdown-content">
+                        <a href="?page=guru">Dashboard</a>
+                        <a href="?page=guru_table">Table</a>
+                    </div>
+                </div>
+
+                <a href="?page=users" class="text-warning fw-bold">
+                    <i class="fas fa-user-shield me-2"></i>Users (Admin)
+                </a>
+            <?php elseif ($_SESSION['role'] === 'guru'): ?>
+                <!-- GURU MENU LIMITED -->
+                <a href="?page=dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+                <a href="?page=pelanggaran"><i class="fas fa-exclamation-triangle me-2"></i>Pelanggaran</a>
+                
+                <div class="dropdown">
+                    <button class="dropdown-btn"><i class="fas fa-users me-2"></i>Siswa</button>
+                    <div class="dropdown-content">
+                        <a href="?page=siswa">Dashboard</a>
+                        <a href="?page=siswa_table">Table</a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- SISWA MENU MINIMAL -->
+                <a href="?page=dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+            <?php endif; ?>
+        <?php else: ?>
+            <!-- GUEST MENU -->
+            <a href="?page=dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+        <?php endif; ?>
     </div>
 
     <main>
@@ -157,7 +218,5 @@
             <?= $this->section('main') ?>
         </div>
     </main>
-
 </body>
-
 </html>
