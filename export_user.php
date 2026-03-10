@@ -1,72 +1,112 @@
 <?php
 require 'vendor/autoload.php';
-include 'database.php';  // Your PDO connection
+include 'database.php';
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Shared\Html;
-use League\Plates\Engine;
+use PhpOffice\PhpWord\SimpleType\Jc;
 
-$id = $_GET['id'] ?? 1;
-$date = $_GET['date'] ?? date('Y-m-d');  // 🔥 From modal or today's date
+$id   = $_GET['id']   ?? 1;
+$date = $_GET['date'] ?? date('Y-m-d');
 
-// Fetch single user
 $stmt = $pdo->prepare("SELECT id, name, role FROM users WHERE id = ?");
 $stmt->execute([$id]);
 $user = $stmt->fetch(PDO::FETCH_OBJ);
 
-if (!$user) {
-    die("User not found");
-}
+if (!$user) die("User not found");
 
-// ✅ PERFECT HTML TEMPLATE with DATE
-$templates = new Engine('templates');
-$html = $templates->render('user_report', ['user' => $user, 'reportDate' => $date]);
+// ── Data jenis (hardcode untuk testing) ───────────────────────────────────
+$jenisList   = ['A', 'B', 'C', 'D', 'E'];
+$jumlahJenis = count($jenisList);
 
+// ── Setup dokumen ──────────────────────────────────────────────────────────
 $phpWord = new PhpWord();
-
-// 🔥 BEAUTIFUL SECTION WITH MARGINS
 $section = $phpWord->addSection([
-    'marginTop' => 1200,
+    'marginTop'    => 1200,
     'marginBottom' => 1200,
-    'marginLeft' => 1200,
-    'marginRight' => 1200
+    'marginLeft'   => 1200,
+    'marginRight'  => 1200,
 ]);
 
-// 🔥 ADD LOGO IMAGE (put logoti.jpg in project root)
-// if (file_exists('logoti.jpg')) {
-//     $section->addImage('logoti.jpg', [
-//         'width' => 100,
-//         'height' => 100,
-//         'alignment' => 'center',
-//         'marginTop' => 200,
-//         'marginBottom' => 300
-//     ]);
-// }
+// ── Font & paragraph styles ────────────────────────────────────────────────
+$fN  = ['name' => 'Arial', 'size' => 10];
+$fB  = ['name' => 'Arial', 'size' => 10, 'bold' => true];
+$fT  = ['name' => 'Arial', 'size' => 13, 'bold' => true];
+$fS  = ['name' => 'Arial', 'size' => 9];
+$fSB = ['name' => 'Arial', 'size' => 9,  'bold' => true];
+$fIt = ['name' => 'Arial', 'size' => 10, 'italic' => true];
+$pC  = ['alignment' => Jc::CENTER, 'spaceAfter' => 0, 'spaceBefore' => 0];
+$pL  = ['alignment' => Jc::START,  'spaceAfter' => 0, 'spaceBefore' => 0];
+$pR  = ['alignment' => Jc::END,    'spaceAfter' => 0, 'spaceBefore' => 0];
 
-// ✅ CORRECT CONSTANTS untuk text wrapping + top center
-if (file_exists('logo_sekolah.jpg')) {
-    $section->addImage('logo_sekolah.jpg', [
-        // 'width' => 120,
-        'height' => 120,
-        'positioning' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-        'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_HORIZONTAL_CENTER,
-        'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_VERTICAL_TOP,
-        'posHorizontalRel' => \PhpOffice\PhpWord\Style\Image::POSITION_RELATIVE_TO_PAGE,
-        'posVerticalRel' => \PhpOffice\PhpWord\Style\Image::POSITION_RELATIVE_TO_PAGE,
-        'margin' => 2000,
-        'wrappingStyle' => 'square',
-        // 'zIndex' => -1
-    ]);
+// ── Judul ──────────────────────────────────────────────────────────────────
+$section->addText('User Report', $fT, ['alignment' => Jc::CENTER, 'spaceAfter' => 40, 'spaceBefore' => 0]);
+$section->addText('Report Date: ' . $date, $fIt, ['alignment' => Jc::CENTER, 'spaceAfter' => 120, 'spaceBefore' => 0]);
+
+// ── Cell style: all border ─────────────────────────────────────────────────
+$border = [
+    'borderTopSize'    => 6, 'borderTopColor'    => '000000',
+    'borderBottomSize' => 6, 'borderBottomColor' => '000000',
+    'borderLeftSize'   => 6, 'borderLeftColor'   => '000000',
+    'borderRightSize'  => 6, 'borderRightColor'  => '000000',
+    'valign'           => 'center',
+];
+
+// ── Lebar kolom (dalam DXA, 1cm ≈ 567 DXA) ────────────────────────────────
+// 100px ≈ 1440 | 260px ≈ 3744 | 120px ≈ 1728 | 30px ≈ 432 | 170px ≈ 2448
+$wTgl  = 1040;
+$wNama = 3584;
+$wKls  = 1578;
+$wJen  = 432;  // per kolom jenis
+$wKet  = 2448;
+$wJenTotal = $wJen * $jumlahJenis;
+
+// ── Tabel ──────────────────────────────────────────────────────────────────
+$table = $section->addTable([
+    'borderSize' => 0,
+    'cellMargin' => 60,
+    'layout'     => \PhpOffice\PhpWord\Style\Table::LAYOUT_FIXED,
+]);
+
+// ── HEADER BARIS 1 ──────────────────────────────────────────────────────────
+$table->addRow(200);
+// TGL — rowspan 2
+$table->addCell($wTgl,     array_merge($border, ['vMerge' => 'restart']))->addText('TGL',              $fSB, $pC);
+// NAMA — rowspan 2
+$table->addCell($wNama,    array_merge($border, ['vMerge' => 'restart']))->addText('NAMA',             $fSB, $pC);
+// KELAS — rowspan 2
+$table->addCell($wKls,     array_merge($border, ['vMerge' => 'restart']))->addText('KELAS',            $fSB, $pC);
+// JENIS PELANGGARAN — colspan
+$table->addCell($wJenTotal,array_merge($border, ['gridSpan' => $jumlahJenis]))->addText('JENIS PELANGGARAN', $fSB, $pC);
+// KETERANGAN — rowspan 2
+$table->addCell($wKet,     array_merge($border, ['vMerge' => 'restart']))->addText('KETERANGAN',       $fSB, $pC);
+
+// ── HEADER BARIS 2: sub-kolom jenis ─────────────────────────────────────────
+$table->addRow(200);
+$table->addCell($wTgl,  array_merge($border, ['vMerge' => 'continue']));
+$table->addCell($wNama, array_merge($border, ['vMerge' => 'continue']));
+$table->addCell($wKls,  array_merge($border, ['vMerge' => 'continue']));
+foreach ($jenisList as $j) {
+    $table->addCell($wJen, $border)->addText($j, $fSB, $pC);
 }
+$table->addCell($wKet, array_merge($border, ['vMerge' => 'continue']));
 
+// ── BARIS DATA ───────────────────────────────────────────────────────────────
+$table->addRow(200);
+$table->addCell($wTgl,  $border)->addText(date('d/m/Y'),  $fS, $pC);
+$table->addCell($wNama, $border)->addText($user->name,    $fS, $pL);
+$table->addCell($wKls,  $border)->addText($user->role,    $fS, $pC);
+foreach ($jenisList as $i => $j) {
+    $table->addCell($wJen, $border)->addText($i === 0 ? "\u{2713}" : '', $fS, $pC);
+}
+$table->addCell($wKet, $border)->addText('Test keterangan user ID ' . $user->id, $fS, $pL);
 
-// 🔥 ADD HTML CONTENT WITH FULL STYLING SUPPORT + DATE
-Html::addHtml($section, $html);
+// ── Total ──────────────────────────────────────────────────────────────────
+$section->addText('Total: 1 data', $fS, ['alignment' => Jc::END, 'spaceBefore' => 80, 'spaceAfter' => 0]);
 
-// 🔥 SAVE & DOWNLOAD
-$writer = IOFactory::createWriter($phpWord, 'Word2007');
-$filename = "user-{$user->id}-" . str_replace(' ', '_', $user->name) . "-{$date}.docx";
+// ── Download ───────────────────────────────────────────────────────────────
+$filename = "user_test_{$user->id}_{$date}.docx";
+$writer   = IOFactory::createWriter($phpWord, 'Word2007');
 $writer->save($filename);
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
