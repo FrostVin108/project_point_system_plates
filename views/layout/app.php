@@ -20,6 +20,13 @@
             color: white;
             padding: 20px;
             box-sizing: border-box;
+
+            /* 🔥 FIXED NAVBAR - tidak ikut scroll */
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
         }
 
         .sidenav h2 {
@@ -80,6 +87,8 @@
 
         main {
             flex: 1;
+            /* 🔥 Dorong konten ke kanan supaya tidak tertutup sidenav */
+            margin-left: 250px;
         }
 
         .container {
