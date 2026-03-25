@@ -62,7 +62,6 @@ try {
             break;
 
         case 'assign_users':
-            // 🔥 FILTER: role='siswa' DAN BELUM DIASSIGN
             $stmt = $pdo->prepare("
                 SELECT u.id, u.name, u.password 
                 FROM users u 
@@ -127,8 +126,8 @@ try {
                 INSERT INTO siswas (
                     name, nis, id_kelas, name_orang_tua, pekerjaan_orang_tua,
                     alamat_orang_tua, alamat, telphone_orang_tua, telphone, 
-                    detail, point, id_user, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    detail, point, sp, id_user, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
 
             $success = $stmt->execute([
@@ -143,6 +142,7 @@ try {
                 trim($_POST['telphone'] ?? ''),
                 trim($_POST['detail'] ?? ''),
                 0,
+                0,
                 null
             ]);
             echo json_encode(['success' => $success]);
@@ -151,14 +151,13 @@ try {
 
         case 'assign':
             $siswa_id = (int) ($_POST['siswa_id'] ?? 0);
-            $user_id = (int) ($_POST['user_id'] ?? 0);
+            $user_id  = (int) ($_POST['user_id']  ?? 0);
 
             if ($siswa_id == 0 || $user_id == 0) {
                 echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
                 exit;
             }
 
-            // 🔥 VALIDASI ROLE SISWA + BELUM DIASSIGN
             $checkRole = $pdo->prepare("SELECT id FROM users WHERE id = ? AND role = 'siswa'");
             $checkRole->execute([$user_id]);
             if (!$checkRole->fetch()) {
@@ -176,6 +175,51 @@ try {
             $stmt = $pdo->prepare("UPDATE siswas SET id_user = ? WHERE id = ?");
             $success = $stmt->execute([$user_id, $siswa_id]);
             echo json_encode(['success' => $success]);
+            exit;
+            break;
+
+        // ============================================================
+        // ACTION: issue_sp
+        // Reset point → 0, tambah sp +1
+        // Status ditentukan dari nilai sp (0 = Aman, >=1 = Warned)
+        // ============================================================
+        case 'issue_sp':
+            $id = (int) ($_POST['id'] ?? 0);
+            if ($id == 0) {
+                echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
+                exit;
+            }
+
+            // Ambil data siswa dulu untuk validasi point >= 100
+            $check = $pdo->prepare("SELECT id, point, sp FROM siswas WHERE id = ?");
+            $check->execute([$id]);
+            $siswa = $check->fetch(PDO::FETCH_ASSOC);
+
+            if (!$siswa) {
+                echo json_encode(['success' => false, 'message' => 'Siswa tidak ditemukan']);
+                exit;
+            }
+
+            if ((int)$siswa['point'] < 100) {
+                echo json_encode(['success' => false, 'message' => 'Point belum mencapai 100']);
+                exit;
+            }
+
+            $newSp = (int)$siswa['sp'] + 1;
+
+            // Reset point ke 0, tambah sp (TANPA update status)
+            $stmt = $pdo->prepare("
+                UPDATE siswas 
+                SET point = 0, sp = ?
+                WHERE id = ?
+            ");
+            $success = $stmt->execute([$newSp, $id]);
+
+            echo json_encode([
+                'success' => $success,
+                'new_sp'  => $newSp,
+                'message' => $success ? "SP{$newSp} berhasil diterbitkan" : 'Gagal menerbitkan SP'
+            ]);
             exit;
             break;
 
