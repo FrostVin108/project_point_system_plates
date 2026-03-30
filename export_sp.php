@@ -26,7 +26,7 @@ $openaiApiKey = getenv('OPENAI_API_KEY') ?: '';
  */
 function generateRangkumanAI(array $pelanggarans, string $namaSiswa, string $apiKey): string {
 
-    if (empty($apiKey) || $apiKey === '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') {
+    if (empty($apiKey) || $apiKey === 'sk') {
         return generateRangkumanManual($pelanggarans, $namaSiswa);
     }
     
