@@ -26,9 +26,6 @@ $openaiApiKey = getenv('OPENAI_API_KEY') ?: '';
  */
 function generateRangkumanAI(array $pelanggarans, string $namaSiswa, string $apiKey): string {
 
-    if (empty($apiKey) || $apiKey === 'sk') {
-        return generateRangkumanManual($pelanggarans, $namaSiswa);
-    }
     
     if (empty($pelanggarans)) {
         return "Siswa belum memiliki catatan pelanggaran.";
