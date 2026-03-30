@@ -25,8 +25,8 @@ $openaiApiKey = getenv('OPENAI_API_KEY') ?: '';
  * @return string Rangkuman dari AI
  */
 function generateRangkumanAI(array $pelanggarans, string $namaSiswa, string $apiKey): string {
-    // Jika tidak ada API key atau tidak ada pelanggaran, return fallback
-    if (empty($apiKey) || $apiKey === 'sk-your-api-key-here') {
+
+    if (empty($apiKey) || $apiKey === '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') {
         return generateRangkumanManual($pelanggarans, $namaSiswa);
     }
     
@@ -34,7 +34,6 @@ function generateRangkumanAI(array $pelanggarans, string $namaSiswa, string $api
         return "Siswa belum memiliki catatan pelanggaran.";
     }
     
-    // Format data pelanggaran untuk prompt
     $dataPelanggaran = [];
     foreach ($pelanggarans as $index => $p) {
         $jenis = $p['jenis_nama'] ?? 'Tidak diketahui';
@@ -45,7 +44,7 @@ function generateRangkumanAI(array $pelanggarans, string $namaSiswa, string $api
     $pelanggaranText = implode("\n", $dataPelanggaran);
     $totalPelanggaran = count($pelanggarans);
     
-    // Buat prompt untuk OpenAI
+    //prompt untuk OpenAI
     $prompt = <<<PROMPT
 Buatlah bagian "Rangkuman Riwayat Pelanggaran" untuk SURAT PERNYATAAN SISWA dari BK sekolah. Formatnya formal, ringkas, dan mudah dipahami orang tua. 
 
