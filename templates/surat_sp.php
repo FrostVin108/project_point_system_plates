@@ -100,7 +100,19 @@ function spFieldRow(string $label, string $value, string $dots,
     <?= spFieldRow('Program Keahlian', $jurusan,       $dots, $fLabel, $fColon, $fVal) ?>
 
     <!-- Masalah: label + titik-titik 3 baris -->
-<?= spFieldRow('Masalah', '', $dots, $fLabel, $fColon, $fVal) ?>
+    <tr>
+        <td style="<?= $fLabel ?>">Masalah</td>
+        <td style="<?= $fColon ?>">:</td>
+        <td style="<?= $fVal ?>"><?= $dots ?></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td style="<?= $fVal ?>"><?= $dots ?></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td style="<?= $fVal ?>padding-bottom:8px;"><?= $dots ?></td>
+    </tr>
 
     <?= spFieldRow('Nama Orang Tua',   $namaOrtu,      $dots, $fLabel, $fColon, $fVal) ?>
     <?= spFieldRow('Pekerjaan',        $pekerjaanOrtu, $dots, $fLabel, $fColon, $fVal) ?>
