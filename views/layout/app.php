@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->e($title ?? 'Vin web') ?></title>
 
+    <!-- PINDAHKAN JQUERY KE SINI (sebelum CSS lainnya juga gapapa) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +32,496 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* ============================================
+   ALASAN PELANGGARAN PAGE STYLES
+   ============================================ */
+
+        /* Table Card Styling */
+        .table-card-violation {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 0.125rem 0.25rem var(--glass-shadow);
+            transition: all var(--transition-normal);
+        }
+
+        .table-card-violation:hover {
+            box-shadow: 0 25px 50px -12px var(--glass-shadow), 0 0 40px rgba(52, 211, 153, 0.1);
+        }
+
+        /* DataTables Wrapper Customization */
+        .violation-table-wrapper {
+            padding: 20px;
+        }
+
+        .violation-table-wrapper .dataTables_length,
+        .violation-table-wrapper .dataTables_filter {
+            margin-bottom: 15px;
+        }
+
+        .violation-table-wrapper .dataTables_length select,
+        .violation-table-wrapper .dataTables_filter input {
+            background: var(--glass-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 8px !important;
+            color: var(--text-primary) !important;
+            padding: 8px 15px !important;
+        }
+
+        .violation-table-wrapper .dataTables_filter input:focus {
+            border-color: var(--emerald-light) !important;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+        }
+
+        /* Detail Text Cell */
+        .detail-text-violation {
+            max-height: 60px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            padding: 8px 12px;
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .btn-action-edit {
+            margin-right: 5px;
+            background: linear-gradient(135deg, var(--warning), #f59e0b) !important;
+            border: none !important;
+            color: white !important;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-action-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.3);
+        }
+
+        .btn-action-delete {
+            background: linear-gradient(135deg, var(--danger), #ef4444) !important;
+            border: none !important;
+            color: white !important;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-action-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Page Header */
+        .page-header-violation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title-violation {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title-violation i {
+            color: var(--danger);
+        }
+
+        /* Add Button */
+        .btn-add-violation {
+            background: linear-gradient(135deg, var(--danger), #ef4444) !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 24px !important;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-add-violation:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-add-violation i {
+            margin-right: 8px;
+        }
+
+        /* ============================================
+   MODAL STYLES - VIOLATION REASONS
+   ============================================ */
+
+        /* Modal Base */
+        .modal-violation .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px var(--glass-shadow);
+        }
+
+        /* Modal Header */
+        .modal-violation .modal-header {
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 24px;
+        }
+
+        .modal-violation .modal-header.bg-warning-custom {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(212, 165, 116, 0.1));
+            color: var(--text-primary);
+        }
+
+        .modal-violation .modal-header.bg-danger-custom {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.1));
+            color: white;
+        }
+
+        .modal-violation .modal-title {
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-violation .btn-close {
+            background: transparent;
+            opacity: 0.7;
+            transition: all var(--transition-fast);
+        }
+
+        .modal-violation .btn-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .modal-violation .btn-close-white {
+            filter: invert(1);
+        }
+
+        /* Modal Body */
+        .modal-violation .modal-body {
+            padding: 24px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Form Sections */
+        .form-section-violation {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: all var(--transition-fast);
+        }
+
+        .form-section-violation:hover {
+            border-color: var(--emerald-light);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.1);
+        }
+
+        .form-section-violation label {
+            display: block;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .form-section-violation label span.text-danger {
+            color: var(--danger);
+        }
+
+        /* Select & Textarea Styling */
+        .form-select-violation,
+        .form-textarea-violation {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all var(--transition-fast);
+        }
+
+        .form-select-violation:focus,
+        .form-textarea-violation:focus {
+            outline: none;
+            border-color: var(--emerald-light);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
+        }
+
+        .form-textarea-violation {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-text-violation {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Dynamic Input Container */
+        .detail-container-violation {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--glass-bg);
+        }
+
+        /* Input Rows */
+        .input-row-violation {
+            margin-bottom: 16px;
+            padding: 20px;
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all var(--transition-fast);
+        }
+
+        .input-row-violation.temporary-row {
+            background: var(--glass-bg);
+            border-style: dashed;
+        }
+
+        .input-row-violation:not(.temporary-row) {
+            background: transparent;
+            border-style: solid;
+        }
+
+        .input-row-violation:hover {
+            border-color: var(--emerald-light);
+            transform: translateX(4px);
+        }
+
+        .input-row-violation label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Remove Button */
+        .btn-remove-row {
+            width: 100%;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-remove-row:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-remove-row:not(:disabled) {
+            background: linear-gradient(135deg, var(--danger), #ef4444) !important;
+            border: none !important;
+            color: white !important;
+        }
+
+        .btn-remove-row:not(:disabled):hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Add Row Button Section */
+        .add-row-section-violation {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .btn-add-row-violation {
+            background: linear-gradient(135deg, var(--success), #22c55e) !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 28px !important;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-add-row-violation:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Modal Footer */
+        .modal-violation .modal-footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 20px 24px;
+            gap: 12px;
+        }
+
+        .btn-cancel-violation {
+            background: var(--glass-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-secondary) !important;
+            padding: 12px 24px !important;
+            border-radius: 12px;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-cancel-violation:hover {
+            background: var(--glass-hover) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .btn-submit-violation {
+            background: linear-gradient(135deg, var(--emerald), var(--gold)) !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 32px !important;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(5, 150, 105, 0.3);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-submit-violation:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-submit-violation:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+
+        /* Warning/Delete Modal Specific */
+        .modal-warning-icon {
+            color: var(--danger);
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pulse-warning 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-warning {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .modal-warning-text {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .modal-warning-subtext {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .modal-warning-subtext strong {
+            color: var(--danger);
+        }
+
+        /* Toast Notification */
+        .toast-violation {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 320px;
+            z-index: 1099;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            animation: slideInToast 0.3s ease;
+        }
+
+        @keyframes slideInToast {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast-violation.success {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .toast-violation.error {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #ff6b6b;
+        }
+
+        /* Badge Styling for Table */
+        .badge-violation-type {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.1));
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 20px;
+            color: #ff6b6b;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .page-header-violation {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .page-title-violation {
+                font-size: 22px;
+            }
+
+            .modal-violation .modal-dialog {
+                margin: 10px;
+            }
+
+            .form-section-violation {
+                padding: 16px;
+            }
+
+            .detail-container-violation {
+                padding: 16px;
+            }
+        }
+
         /* ============================================
            CSS VARIABLES & BASE
         ============================================ */
@@ -1053,6 +1553,10 @@
         }
 
         .container-custom {
+            isolation: isolate;
+            /* Mencegah modal terjebak */
+            position: relative;
+            z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -1434,6 +1938,356 @@
         [data-theme="light"] .checkmark {
             background: rgba(255, 255, 255, 0.8);
         }
+
+        /* ============================================
+   FLOATING THEME TOGGLE - ADAPTIVE LIQUID GLASS
+   ============================================ */
+
+        #theme-toggle {
+            /* Fixed positioning pojok kanan bawah */
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            left: auto !important;
+            top: auto !important;
+
+            /* Z-index tinggi */
+            z-index: 99999 !important;
+
+            /* Ukuran dan bentuk */
+            width: 60px !important;
+            height: 60px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+
+            /* Default: Light Mode - Semi transparan blur GELAP */
+            background: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+
+            /* Border gelap subtle */
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+
+            /* Shadow gelap */
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+
+            /* Layout icon */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            /* Interaksi */
+            cursor: pointer !important;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            overflow: hidden !important;
+        }
+
+        /* ===== DARK MODE: Semi transparan blur PUTIH ===== */
+        #theme-toggle.dark-mode {
+            background: rgba(255, 255, 255, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Inner glow/shine effect */
+        #theme-toggle::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 50% !important;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.2) 0%,
+                    rgba(255, 255, 255, 0.05) 100%) !important;
+            border-radius: 50% 50% 0 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s ease !important;
+        }
+
+        /* Dark mode: shine lebih terang */
+        #theme-toggle.dark-mode::before {
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.4) 0%,
+                    rgba(255, 255, 255, 0.1) 100%) !important;
+        }
+
+        /* Outer glow animasi saat hover */
+        #theme-toggle::after {
+            content: '' !important;
+            position: absolute !important;
+            inset: -3px !important;
+            border-radius: 50% !important;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    var(--emerald-light),
+                    var(--gold),
+                    var(--emerald-light),
+                    transparent) !important;
+            opacity: 0 !important;
+            z-index: -1 !important;
+            transition: all 0.3s ease !important;
+            filter: blur(8px) !important;
+            animation: none !important;
+        }
+
+        #theme-toggle:hover::after {
+            opacity: 0.8 !important;
+            animation: rotate-glow 4s linear infinite !important;
+        }
+
+        @keyframes rotate-glow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== HOVER EFFECTS ===== */
+
+        /* Light Mode Hover: Glow emeralds + scale up */
+        #theme-toggle:hover {
+            transform: scale(1.12) translateY(-3px) !important;
+            box-shadow:
+                0 16px 48px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(52, 211, 153, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(52, 211, 153, 0.4) !important;
+        }
+
+        /* Dark Mode Hover: Glow gold + scale up */
+        #theme-toggle.dark-mode:hover {
+            transform: scale(1.12) translateY(-3px) !important;
+            box-shadow:
+                0 16px 48px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(251, 191, 36, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+            border-color: rgba(251, 191, 36, 0.5) !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        /* Active/Click effect */
+        #theme-toggle:active {
+            transform: scale(0.92) !important;
+            transition: transform 0.1s ease !important;
+        }
+
+        /* ===== ICON STYLING ===== */
+
+        #theme-toggle i {
+            position: absolute !important;
+            font-size: 26px !important;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+        }
+
+        /* SUN ICON - Light Mode (default) */
+        #theme-toggle .icon-sun {
+            opacity: 1 !important;
+            transform: rotate(0deg) scale(1) !important;
+            color: #fbbf24 !important;
+            /* Amber-400 */
+            filter:
+                drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+        }
+
+        /* Light Mode Hover: Sun jadi lebih terang + rotate */
+        #theme-toggle:hover .icon-sun {
+            color: #f59e0b !important;
+            /* Amber-500 */
+            transform: rotate(180deg) scale(1.15) !important;
+            filter:
+                drop-shadow(0 0 20px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 40px rgba(251, 191, 36, 0.4)) !important;
+        }
+
+        /* MOON ICON - Hidden di Light Mode */
+        #theme-toggle .icon-moon {
+            opacity: 0 !important;
+            transform: rotate(-90deg) scale(0.3) !important;
+            color: #6366f1 !important;
+            /* Indigo-500 */
+            filter:
+                drop-shadow(0 0 8px rgba(99, 102, 241, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+        }
+
+        /* ===== DARK MODE ICON STATES ===== */
+
+        /* Dark Mode: Sun hide */
+        #theme-toggle.dark-mode .icon-sun {
+            opacity: 0 !important;
+            transform: rotate(90deg) scale(0.3) !important;
+        }
+
+        /* Dark Mode: Moon show */
+        #theme-toggle.dark-mode .icon-moon {
+            opacity: 1 !important;
+            transform: rotate(0deg) scale(1) !important;
+            color: #4f46e5 !important;
+            /* Indigo-600 */
+            filter:
+                drop-shadow(0 0 8px rgba(99, 102, 241, 0.5)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+        }
+
+        /* Dark Mode Hover: Moon jadi lebih terang + rotate */
+        #theme-toggle.dark-mode:hover .icon-moon {
+            color: #4338ca !important;
+            /* Indigo-700 */
+            transform: rotate(-15deg) scale(1.15) !important;
+            filter:
+                drop-shadow(0 0 20px rgba(99, 102, 241, 0.9)) drop-shadow(0 0 40px rgba(99, 102, 241, 0.4)) !important;
+        }
+
+        /* ===== TOOLTIP ===== */
+
+        #theme-toggle[title]::after {
+            content: attr(title) !important;
+            position: absolute !important;
+            bottom: 75px !important;
+            left: 50% !important;
+            transform: translateX(-50%) translateY(10px) scale(0.9) !important;
+            background: rgba(15, 23, 42, 0.9) !important;
+            backdrop-filter: blur(12px) !important;
+            color: white !important;
+            padding: 8px 14px !important;
+            border-radius: 10px !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            white-space: nowrap !important;
+            opacity: 0 !important;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            pointer-events: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        #theme-toggle.dark-mode[title]::after {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #1e293b !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        #theme-toggle:hover[title]::after {
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0) scale(1) !important;
+        }
+
+        /* ===== RIPPLE EFFECT ===== */
+
+        #theme-toggle .ripple {
+            position: absolute !important;
+            border-radius: 50% !important;
+            transform: scale(0) !important;
+            animation: ripple-anim 0.6s ease-out !important;
+            pointer-events: none !important;
+        }
+
+        /* Light mode ripple: putih */
+        #theme-toggle:not(.dark-mode) .ripple {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
+        }
+
+        /* Dark mode ripple: gelap */
+        #theme-toggle.dark-mode .ripple {
+            background: radial-gradient(circle, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.1) 100%) !important;
+        }
+
+        @keyframes ripple-anim {
+            to {
+                transform: scale(4) !important;
+                opacity: 0 !important;
+            }
+        }
+
+        /* ===== INTRO ANIMATION ===== */
+
+        @keyframes float-in {
+            0% {
+                transform: translateY(100px) scale(0.5);
+                opacity: 0;
+            }
+
+            60% {
+                transform: translateY(-10px) scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        #theme-toggle.intro-animate {
+            animation: float-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+
+        /* Pulse attention */
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 12px 40px rgba(52, 211, 153, 0.5);
+            }
+        }
+
+        #theme-toggle.pulse-attention {
+            animation: pulse-glow 2s ease-in-out infinite !important;
+        }
+
+        /* ===== RESPONSIVE ===== */
+
+        @media (max-width: 768px) {
+            #theme-toggle {
+                width: 52px !important;
+                height: 52px !important;
+                bottom: 20px !important;
+                right: 20px !important;
+            }
+
+            #theme-toggle i {
+                font-size: 22px !important;
+            }
+
+            #theme-toggle[title]::after {
+                bottom: 65px !important;
+                font-size: 11px !important;
+                padding: 6px 12px !important;
+            }
+        }
+
+        /* Override semua style yang mungkin conflict */
+        button#theme-toggle.nav-btn {
+            position: fixed !important;
+            float: none !important;
+            margin: 0 !important;
+            outline: none !important;
+        }
+
+        button#theme-toggle.nav-btn:focus {
+            outline: none !important;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 3px rgba(52, 211, 153, 0.3) !important;
+        }
+
+        button#theme-toggle.nav-btn.dark-mode:focus {
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                0 0 0 3px rgba(251, 191, 36, 0.4) !important;
+        }
     </style>
 </head>
 
@@ -1443,6 +2297,11 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
 ?>
 
 <body class="<?= $isAuthPage ? 'auth-page' : '' ?>" data-page="<?= $currentPage ?>">
+    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+        <i class="fas fa-moon icon-moon"></i>
+        <i class="fas fa-sun icon-sun"></i>
+    </button>
+
     <!-- Background -->
     <div class="background"></div>
     <div class="orb orb-1"></div>
@@ -1451,11 +2310,10 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
 
     <?php if ($isAuthPage): ?>
         <!-- AUTH LAYOUT -->
-        <button class="theme-toggle-float" id="theme-toggle" title="Toggle Light/Dark Mode">
+        <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+            <i class="fas fa-moon icon-moon"></i>
             <i class="fas fa-sun icon-sun"></i>
-            <i class="fas fa-moon icon-moon" style="display: none;"></i>
         </button>
-
         <div class="auth-container">
             <?= $this->section('main') ?>
         </div>
@@ -1626,7 +2484,7 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
 
             <!-- Main Content -->
             <main class="main-content">
-                <nav class="navbar-custom">
+                <!-- <nav class="navbar-custom">
                     <h1 class="page-title">
                         <?php
                         $pageTitles = [
@@ -1661,7 +2519,7 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
                             <i class="fas fa-moon icon-moon" style="display: none;"></i>
                         </button>
                     </div>
-                </nav>
+                </nav> -->
 
                 <div class="container-custom">
                     <div class="glass-card animate-fade-in">
@@ -1684,28 +2542,111 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
 
     <script>
         // ========== THEME TOGGLE ==========
+        /**
+         * Theme Toggle - Adaptive Liquid Glass
+         */
         (function() {
-            const toggle = document.getElementById('theme-toggle');
-            if (!toggle) return;
+            const toggleBtn = document.getElementById('theme-toggle');
+            if (!toggleBtn) return;
 
-            const sun = toggle.querySelector('.icon-sun');
-            const moon = toggle.querySelector('.icon-moon');
+            // State
+            let isDarkMode = false;
 
-            function setTheme(theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                if (sun && moon) {
-                    sun.style.display = theme === 'light' ? 'none' : 'inline-block';
-                    moon.style.display = theme === 'light' ? 'inline-block' : 'none';
+            // Check saved theme or system preference
+            const init = () => {
+                const saved = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                isDarkMode = saved ? saved === 'dark' : prefersDark;
+                applyTheme(isDarkMode, false);
+
+                // Intro animation
+                toggleBtn.classList.add('intro-animate');
+                setTimeout(() => {
+                    toggleBtn.classList.remove('intro-animate');
+                    // Pulse attention setelah intro
+                    toggleBtn.classList.add('pulse-attention');
+                    setTimeout(() => toggleBtn.classList.remove('pulse-attention'), 3000);
+                }, 800);
+            };
+
+            // Apply theme
+            const applyTheme = (dark, animate = true) => {
+                isDarkMode = dark;
+                const body = document.body;
+
+                if (dark) {
+                    body.setAttribute('data-theme', 'dark');
+                    body.classList.add('dark-mode');
+                    body.classList.remove('light-mode');
+                    toggleBtn.classList.add('dark-mode');
+                    toggleBtn.setAttribute('title', 'Switch to Light Mode');
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    body.classList.add('light-mode');
+                    body.classList.remove('dark-mode');
+                    toggleBtn.classList.remove('dark-mode');
+                    toggleBtn.setAttribute('title', 'Switch to Dark Mode');
                 }
-            }
 
-            setTheme(localStorage.getItem('theme') || 'dark');
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
 
-            toggle.addEventListener('click', () => {
-                const current = document.documentElement.getAttribute('data-theme');
-                setTheme(current === 'dark' ? 'light' : 'dark');
+                // Dispatch event
+                window.dispatchEvent(new CustomEvent('themechange', {
+                    detail: {
+                        isDark: dark
+                    }
+                }));
+            };
+
+            // Ripple effect
+            const createRipple = (e) => {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+
+                const rect = toggleBtn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+        `;
+
+                toggleBtn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            };
+
+            // Click handler
+            toggleBtn.addEventListener('click', (e) => {
+                createRipple(e);
+
+                // Click feedback
+                toggleBtn.style.transform = 'scale(0.88)';
+                setTimeout(() => {
+                    toggleBtn.style.transform = '';
+                }, 150);
+
+                // Toggle theme
+                applyTheme(!isDarkMode);
             });
+
+            // Listen system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(e.matches);
+                }
+            });
+
+            // Initialize
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
 
         // ========== DROPDOWN ==========
