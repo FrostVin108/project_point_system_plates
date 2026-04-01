@@ -112,7 +112,8 @@
 /* Action Buttons */
 .btn-action-word,
 .btn-action-edit,
-.btn-action-delete {
+.btn-action-delete,
+.btn-action-view {
     width: 36px;
     height: 36px;
     display: inline-flex;
@@ -127,10 +128,12 @@
 .btn-action-word { background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(56, 189, 248, 0.6)) !important; }
 .btn-action-edit { background: linear-gradient(135deg, rgba(234, 179, 8, 0.8), rgba(251, 191, 36, 0.6)) !important; }
 .btn-action-delete { background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(239, 68, 68, 0.6)) !important; }
+.btn-action-view { background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(167, 139, 250, 0.6)) !important; }
 
 .btn-action-word:hover,
 .btn-action-edit:hover,
-.btn-action-delete:hover {
+.btn-action-delete:hover,
+.btn-action-view:hover {
     transform: translateY(-2px) scale(1.1);
 }
 
@@ -253,6 +256,10 @@
 .liquid-modal-header.info { 
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(56, 189, 248, 0.08));
     border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+}
+.liquid-modal-header.purple { 
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(167, 139, 250, 0.08));
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .liquid-modal-title {
@@ -377,6 +384,82 @@
     gap: 6px;
 }
 
+/* Credential Display Box */
+.credential-box {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.credential-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.credential-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    padding-right: 50px;
+}
+
+.credential-value.password {
+    color: #fbbf24;
+    letter-spacing: 2px;
+}
+
+.credential-value.password.hidden {
+    letter-spacing: 4px;
+}
+
+/* Show/Hide Password Button in View Modal */
+.btn-show-hide-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.btn-show-hide-password:hover {
+    background: rgba(139, 92, 246, 0.4);
+    color: white;
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.btn-show-hide-password.active {
+    background: rgba(52, 211, 153, 0.3);
+    border-color: rgba(52, 211, 153, 0.5);
+    color: var(--emerald-light);
+}
+
 /* Buttons */
 .btn-modal-cancel {
     background: rgba(255, 255, 255, 0.06);
@@ -439,6 +522,11 @@
 .btn-modal-submit.info {
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.9), rgba(56, 189, 248, 0.9));
     box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+}
+
+.btn-modal-submit.purple {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(167, 139, 250, 0.9));
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
 }
 
 /* Delete Modal */
@@ -519,6 +607,13 @@
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
     }
+    
+    .btn-show-hide-password {
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+    }
 }
 </style>
 
@@ -543,9 +638,9 @@
                 <thead>
                     <tr>
                         <th width="8%" class="text-center">No</th>
-                        <th width="35%">Nama</th>
+                        <th width="30%">Nama</th>
                         <th width="15%" class="text-center">Role</th>
-                        <th width="22%" class="text-center">Aksi</th>
+                        <th width="27%" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -697,6 +792,59 @@
                 </button>
                 <button type="button" class="btn-modal-submit danger" id="confirmDelete">
                     <i class="fas fa-trash me-2"></i>Hapus User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW CREDENTIALS MODAL - DENGAN TOMBOL SHOW/HIDE PASSWORD -->
+    <div class="liquid-modal-overlay" id="viewModal" data-modal="true">
+        <div class="liquid-modal" style="max-width: 450px;">
+            <div class="liquid-modal-header purple">
+                <h5 class="liquid-modal-title">
+                    <i class="fas fa-key"></i>Username & Password
+                </h5>
+                <button type="button" class="liquid-modal-close" onclick="closeModal('viewModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="liquid-modal-body">
+                <input type="hidden" id="viewId">
+                <input type="hidden" id="viewPasswordReal" value="">
+                
+                <!-- Username Display -->
+                <div class="credential-box">
+                    <div class="credential-label">
+                        <i class="fas fa-user"></i>Username
+                    </div>
+                    <div class="credential-value" id="viewUsername">-</div>
+                </div>
+
+                <!-- Password Display dengan Tombol Show/Hide -->
+                <div class="credential-box" style="position: relative;">
+                    <div class="credential-label">
+                        <i class="fas fa-lock"></i>Password
+                    </div>
+                    <div class="credential-value password hidden" id="viewPassword">••••••••</div>
+                    <!-- Tombol Show/Hide Password -->
+                    <button type="button" class="btn-show-hide-password" id="btnTogglePassword" 
+                            onclick="toggleViewPassword()" title="Tampilkan/Sembunyikan Password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <!-- Role Info -->
+                <div class="form-text-users" style="text-align: center; justify-content: center; margin-top: 20px;">
+                    <i class="fas fa-shield-alt"></i>
+                    <span id="viewRoleBadge">Role: -</span>
+                </div>
+            </div>
+            <div class="liquid-modal-footer">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('viewModal')">
+                    <i class="fas fa-times me-2"></i>Tutup
+                </button>
+                <button type="button" class="btn-modal-submit purple" onclick="copyCredentials()">
+                    <i class="fas fa-copy me-2"></i>Copy
                 </button>
             </div>
         </div>
@@ -866,6 +1014,11 @@ function closeModal(modalId) {
             setTimeout(function() { form.reset(); }, 300);
         }
     }
+    
+    // Reset password view state ketika menutup viewModal
+    if (modalId === 'viewModal') {
+        resetPasswordView();
+    }
 }
 
 // Escape key handler
@@ -878,7 +1031,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ════════════════════════════════════════════════════════
-// PASSWORD TOGGLE
+// PASSWORD TOGGLE - FORM MODALS
 // ════════════════════════════════════════════════════════
 function toggleEye(btn) {
     var inp  = $(btn).closest('.pass-wrapper-users').find('input');
@@ -890,6 +1043,75 @@ function toggleEye(btn) {
         inp.attr('type', 'password');
         icon.removeClass('fa-eye-slash').addClass('fa-eye');
     }
+}
+
+// ════════════════════════════════════════════════════════
+// VIEW CREDENTIALS MODAL - DENGAN SHOW/HIDE PASSWORD
+// ════════════════════════════════════════════════════════
+
+// Global variable untuk menyimpan password asli
+var currentPassword = '';
+var isPasswordVisible = false;
+
+function openViewModal(userId, userName, role, password) {
+    $('#viewId').val(userId);
+    $('#viewUsername').text(userName);
+    
+    // Simpan password asli
+    currentPassword = password || '••••••••';
+    isPasswordVisible = false;
+    
+    // Reset tampilan password ke hidden
+    $('#viewPassword').text('••••••••').addClass('hidden');
+    $('#btnTogglePassword').removeClass('active').find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+    
+    // Update role badge
+    var roleLabel = { 
+        admin: 'Admin', 
+        guru: 'Guru', 
+        siswa: 'Siswa', 
+        guru_bk: 'Guru BK' 
+    }[role] || role;
+    $('#viewRoleBadge').html('Role: ' + roleLabel);
+    
+    openModal('viewModal');
+}
+
+function toggleViewPassword() {
+    var passwordEl = $('#viewPassword');
+    var btn = $('#btnTogglePassword');
+    var icon = btn.find('i');
+    
+    if (isPasswordVisible) {
+        // Hide password
+        passwordEl.text('••••••••').addClass('hidden');
+        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        btn.removeClass('active');
+        isPasswordVisible = false;
+    } else {
+        // Show password
+        passwordEl.text(currentPassword).removeClass('hidden');
+        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        btn.addClass('active');
+        isPasswordVisible = true;
+    }
+}
+
+function resetPasswordView() {
+    currentPassword = '';
+    isPasswordVisible = false;
+}
+
+function copyCredentials() {
+    var username = $('#viewUsername').text();
+    var password = isPasswordVisible ? currentPassword : '•••••••• (hidden)';
+    var text = 'Username: ' + username + '\nPassword: ' + password;
+    
+    navigator.clipboard.writeText(text).then(function() {
+        showToast('Username & Password berhasil dicopy!', 'success');
+    }).catch(function() {
+        showToast('Gagal copy ke clipboard', 'error');
+    });
 }
 
 // ════════════════════════════════════════════════════════
@@ -982,6 +1204,10 @@ $(document).ready(function() {
                     var id   = row.id;
                     var name = $('<div>').text(row.name || '').html();
                     return '<div class="d-flex justify-content-center gap-2 flex-wrap">' +
+                        '<button class="btn btn-action-view btn-sm btn-view-tbl"' +
+                            ' data-id="' + id + '" data-name="' + name + '" data-role="' + row.role + '"' +
+                            ' title="Lihat Username & Password">' +
+                            '<i class="fas fa-key"></i></button>' +
                         '<button class="btn btn-action-word btn-sm btn-word-tbl"' +
                             ' data-id="' + id + '" data-name="' + name + '" title="Export Word">' +
                             '<i class="fas fa-file-word"></i></button>' +
@@ -1012,6 +1238,26 @@ $(document).ready(function() {
     });
 
     // ── Event Handlers ────────────────────────────────
+    $(document).on('click', '.btn-view-tbl', function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var role = $(this).data('role');
+        
+        // Ambil data lengkap termasuk password dari server
+        $.get('action_users.php?action=get&id=' + id)
+            .done(function(data) {
+                if (!data || !data.id) {
+                    showToast('Data tidak ditemukan', 'error');
+                    return;
+                }
+                // Gunakan password dari response (jika ada)
+                openViewModal(data.id, data.name, data.role, data.password || '••••••••');
+            })
+            .fail(function() { 
+                showToast('Gagal memuat data', 'error'); 
+            });
+    });
+
     $(document).on('click', '.btn-word-tbl', function() {
         openWordModal($(this).data('id'), $(this).data('name'));
     });

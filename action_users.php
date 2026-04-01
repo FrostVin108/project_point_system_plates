@@ -10,6 +10,7 @@ try {
 
         // ── READ ──────────────────────────────────────────────────────
         case 'read':
+            // Password tidak dikirim di read untuk keamanan
             $stmt = $pdo->query("SELECT id, name, role FROM users ORDER BY id ASC");
             echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE);
             exit;
@@ -21,7 +22,8 @@ try {
                 echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
                 exit;
             }
-            $stmt = $pdo->prepare("SELECT id, name, role FROM users WHERE id = ?");
+            // SERTAKAN PASSWORD di sini!
+            $stmt = $pdo->prepare("SELECT id, name, password, role FROM users WHERE id = ?");
             $stmt->execute([$id]);
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode($data ?: ['success' => false, 'message' => 'User tidak ditemukan'], JSON_UNESCAPED_UNICODE);
