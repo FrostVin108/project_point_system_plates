@@ -2448,6 +2448,17 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
                                             <a href="?page=siswa_table" class="<?= $currentPage == 'siswa_table' ? 'active' : '' ?>">Table</a>
                                         </div>
                                     </li>
+                                    <!-- Guru untuk Guru -->
+                                        <li class="dropdown">
+                                            <button class="dropdown-btn <?= in_array($currentPage, ['guru', 'guru_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                                                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                                                Guru
+                                                <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                                            </button>
+                                            <div class="dropdown-content">
+                                                <a href="?page=guru" class="<?= $currentPage == 'guru' ? 'active' : '' ?>">Dashboard</a>
+                                            </div>
+                                        </li>
                                 <?php endif; ?>
                             </ul>
                         </li>

@@ -19,9 +19,9 @@ $page_access = [
     'pelanggaran' => ['admin', 'guru'],
     'siswa' => ['admin', 'guru'],
     'siswa_table' => ['admin', 'guru'],
+    'guru' => ['admin', 'guru'],
 
     // Admin only
-    'guru' => ['admin'],
     'guru_table' => ['admin'],
     'users' => ['admin'],
 
