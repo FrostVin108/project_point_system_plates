@@ -17,7 +17,7 @@ $page_access = [
 
     // Guru ke atas
     'pelanggaran' => ['admin', 'guru'],
-    'siswa' => ['admin', 'guru'],
+    'siswa' => ['admin', 'siswa'],
     'siswa_table' => ['admin', 'guru'],
     'guru' => ['admin', 'guru'],
 

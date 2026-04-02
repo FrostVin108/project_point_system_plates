@@ -2353,134 +2353,126 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
                     </div>
                 <?php endif; ?>
 
-                <!-- Navigation -->
-                <ul class="nav-menu">
-                    <!-- MANAJEMEN DATA - Semua menu menggunakan dropdown style -->
-                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'guru')): ?>
-                        <li class="nav-section">
-                            <span class="nav-section-title">Manajemen Data</span>
-                            <ul>
-                                <!-- Dashboard - Dropdown style sama seperti Data Filler -->
-                                <li class="dropdown">
-                                    <button class="dropdown-btn <?= in_array($currentPage, ['dashboard']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                        <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
-                                        Dashboard
-                                        <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                    </button>
-                                    <div class="dropdown-content">
-                                        <a href="?page=dashboard" class="<?= $currentPage == 'dashboard' ? 'active' : '' ?>">Overview</a>
-                                    </div>
-                                </li>
+<!-- Navigation -->
+<ul class="nav-menu">
+    <!-- MANAJEMEN DATA - Admin & Guru -->
+    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'guru')): ?>
+        <li class="nav-section">
+            <span class="nav-section-title">Manajemen Data</span>
+            <ul>
+                <!-- Dashboard -->
+                <li class="dropdown">
+                    <button class="dropdown-btn <?= in_array($currentPage, ['dashboard']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                        <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
+                        Dashboard
+                        <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="?page=dashboard" class="<?= $currentPage == 'dashboard' ? 'active' : '' ?>">Overview</a>
+                    </div>
+                </li>
 
-                                <!-- Pelanggaran - Dropdown style sama seperti Data Filler -->
-                                <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'guru'): ?>
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['pelanggaran']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-exclamation-triangle"></i></span>
-                                            Pelanggaran
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=pelanggaran" class="<?= $currentPage == 'pelanggaran' ? 'active' : '' ?>">Data Pelanggaran</a>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
+                <!-- Pelanggaran -->
+                <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'guru'): ?>
+                    <li class="dropdown">
+                        <button class="dropdown-btn <?= in_array($currentPage, ['pelanggaran']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                            <span class="nav-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                            Pelanggaran
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="?page=pelanggaran" class="<?= $currentPage == 'pelanggaran' ? 'active' : '' ?>">Data Pelanggaran</a>
+                        </div>
+                    </li>
+                <?php endif; ?>
 
-                                <?php if ($_SESSION['role'] === 'admin'): ?>
-                                    <!-- Data Filler -->
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['kelas', 'jenis_pelanggaran', 'alasan_pelanggaran', 'mapel']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-database"></i></span>
-                                            Data Filler
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=kelas" class="<?= $currentPage == 'kelas' ? 'active' : '' ?>">Kelas</a>
-                                            <a href="?page=jenis_pelanggaran" class="<?= $currentPage == 'jenis_pelanggaran' ? 'active' : '' ?>">Jenis Pelanggaran</a>
-                                            <a href="?page=alasan_pelanggaran" class="<?= $currentPage == 'alasan_pelanggaran' ? 'active' : '' ?>">Alasan Pelanggaran</a>
-                                            <a href="?page=mapel" class="<?= $currentPage == 'mapel' ? 'active' : '' ?>">Mapel</a>
-                                        </div>
-                                    </li>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <!-- Data Filler -->
+                    <li class="dropdown">
+                        <button class="dropdown-btn <?= in_array($currentPage, ['kelas', 'jenis_pelanggaran', 'alasan_pelanggaran', 'mapel']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                            <span class="nav-icon"><i class="fas fa-database"></i></span>
+                            Data Filler
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="?page=kelas" class="<?= $currentPage == 'kelas' ? 'active' : '' ?>">Kelas</a>
+                            <a href="?page=jenis_pelanggaran" class="<?= $currentPage == 'jenis_pelanggaran' ? 'active' : '' ?>">Jenis Pelanggaran</a>
+                            <a href="?page=alasan_pelanggaran" class="<?= $currentPage == 'alasan_pelanggaran' ? 'active' : '' ?>">Alasan Pelanggaran</a>
+                            <a href="?page=mapel" class="<?= $currentPage == 'mapel' ? 'active' : '' ?>">Mapel</a>
+                        </div>
+                    </li>
 
-                                    <!-- Siswa -->
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['siswa', 'siswa_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-users"></i></span>
-                                            Siswa
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=siswa" class="<?= $currentPage == 'siswa' ? 'active' : '' ?>">Dashboard</a>
-                                            <a href="?page=siswa_table" class="<?= $currentPage == 'siswa_table' ? 'active' : '' ?>">Table</a>
-                                        </div>
-                                    </li>
+                    <!-- Siswa (Admin) -->
+                    <li class="dropdown">
+                        <button class="dropdown-btn <?= in_array($currentPage, ['siswa', 'siswa_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                            <span class="nav-icon"><i class="fas fa-users"></i></span>
+                            Siswa
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="?page=siswa" class="<?= $currentPage == 'siswa' ? 'active' : '' ?>">Dashboard</a>
+                            <a href="?page=siswa_table" class="<?= $currentPage == 'siswa_table' ? 'active' : '' ?>">Table</a>
+                        </div>
+                    </li>
 
-                                    <!-- Guru -->
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['guru', 'guru_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                                            Guru
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=guru" class="<?= $currentPage == 'guru' ? 'active' : '' ?>">Dashboard</a>
-                                            <a href="?page=guru_table" class="<?= $currentPage == 'guru_table' ? 'active' : '' ?>">Table</a>
-                                        </div>
-                                    </li>
+                    <!-- Guru -->
+                    <li class="dropdown">
+                        <button class="dropdown-btn <?= in_array($currentPage, ['guru', 'guru_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                            <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                            Guru
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="?page=guru" class="<?= $currentPage == 'guru' ? 'active' : '' ?>">Dashboard</a>
+                            <a href="?page=guru_table" class="<?= $currentPage == 'guru_table' ? 'active' : '' ?>">Table</a>
+                        </div>
+                    </li>
 
-                                    <!-- Users Admin - Same dropdown style but not dropdown -->
-                                    <li class="nav-item-special">
-                                        <a href="?page=users" class="nav-link-special <?= $currentPage == 'users' ? 'active' : '' ?>">
-                                            <span class="nav-icon"><i class="fas fa-user-shield"></i></span>
-                                            Users (Admin)
-                                        </a>
-                                    </li>
-                                <?php elseif ($_SESSION['role'] === 'guru'): ?>
-                                    <!-- Siswa untuk Guru -->
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['siswa', 'siswa_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-users"></i></span>
-                                            Siswa
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=siswa" class="<?= $currentPage == 'siswa' ? 'active' : '' ?>">Dashboard</a>
-                                            <a href="?page=siswa_table" class="<?= $currentPage == 'siswa_table' ? 'active' : '' ?>">Table</a>
-                                        </div>
-                                    </li>
-                                    <!-- Guru untuk Guru -->
-                                        <li class="dropdown">
-                                            <button class="dropdown-btn <?= in_array($currentPage, ['guru', 'guru_table']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                                                Guru
-                                                <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                            </button>
-                                            <div class="dropdown-content">
-                                                <a href="?page=guru" class="<?= $currentPage == 'guru' ? 'active' : '' ?>">Dashboard</a>
-                                            </div>
-                                        </li>
-                                <?php endif; ?>
-                            </ul>
-                        </li>
-                    <?php else: ?>
-                        <!-- Untuk user yang belum login atau role lain -->
-                        <li class="nav-section">
-                            <span class="nav-section-title">Menu</span>
-                            <ul>
-                                <li class="dropdown">
-                                    <button class="dropdown-btn <?= in_array($currentPage, ['dashboard']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                        <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
-                                        Dashboard
-                                        <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                    </button>
-                                    <div class="dropdown-content">
-                                        <a href="?page=dashboard" class="<?= $currentPage == 'dashboard' ? 'active' : '' ?>">Overview</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                    <?php endif; ?>
-                </ul>
+                    <!-- Users Admin -->
+                    <li class="nav-item-special">
+                        <a href="?page=users" class="nav-link-special <?= $currentPage == 'users' ? 'active' : '' ?>">
+                            <span class="nav-icon"><i class="fas fa-user-shield"></i></span>
+                            Users (Admin)
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($_SESSION['role'] === 'guru'): ?>
+                    <!-- Guru untuk Guru -->
+                    <li class="dropdown">
+                        <button class="dropdown-btn <?= in_array($currentPage, ['guru']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                            <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                            Guru
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="?page=guru" class="<?= $currentPage == 'guru' ? 'active' : '' ?>">Dashboard</a>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </li>
+    <?php endif; ?>
+
+    <!-- MENU SISWA - Khusus untuk role siswa (DI LUAR BLOK ADMIN/GURU) -->
+    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'siswa'): ?>
+        <li class="nav-section">
+            <span class="nav-section-title">Menu Siswa</span>
+            <ul>
+                <li class="dropdown">
+                    <button class="dropdown-btn <?= in_array($currentPage, ['siswa']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
+                        <span class="nav-icon"><i class="fas fa-user-graduate"></i></span>
+                        Siswa
+                        <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="?page=siswa" class="<?= $currentPage == 'siswa' ? 'active' : '' ?>">Dashboard</a>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    <?php endif; ?>
+</ul>
 
                 <!-- LOGOUT BUTTON - Paling Bawah -->
                 <?php if (isset($_SESSION['user_id'])): ?>
