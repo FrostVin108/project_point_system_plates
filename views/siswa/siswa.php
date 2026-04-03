@@ -750,102 +750,116 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                 </div>
             </div>
 
-            <!-- Login Credentials Card - Fixed Toggle -->
-            <div class="glass-card detail-card login-card">
-                <div class="detail-header">
-                    <i class="fas fa-lock"></i>
-                    <span>Informasi Login</span>
-                </div>
-                
-                <div class="credential-box">
-                    <div class="credential-item">
-                        <div class="credential-label">Username</div>
-                        <div class="credential-value">
-                            <span class="credential-text" id="usernameField"><?= htmlspecialchars($user_data['name'] ?? '-') ?></span>
-                            <button type="button" class="btn-toggle" onclick="copyToClipboard('username')" title="Copy Username">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="credential-item">
-                        <div class="credential-label">Password</div>
-                        <div class="credential-value">
-                            <span class="credential-text password-hidden" id="passwordField" data-password="<?= htmlspecialchars($user_data['password'] ?? '') ?>">••••••••</span>
-                            <button type="button" class="btn-toggle" onclick="togglePassword()" title="Show/Hide Password">
-                                <i class="fas fa-eye" id="passwordToggleIcon"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Ganti bagian Login Credentials Card dan Script dengan ini -->
 
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Informasi login bersifat rahasia. Jangan bagikan kepada orang lain.</span>
-                </div>
+<!-- Login Credentials Card -->
+<div class="glass-card detail-card login-card">
+    <div class="detail-header">
+        <i class="fas fa-lock"></i>
+        <span>Informasi Login</span>
+    </div>
+    
+    <div class="credential-box">
+        <div class="credential-item">
+            <div class="credential-label">Username</div>
+            <div class="credential-value">
+                <span class="credential-text" id="usernameField"><?= htmlspecialchars($user_data['name'] ?? '-') ?></span>
+                <button type="button" class="btn-toggle" onclick="copyUsername()" title="Copy Username">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="credential-item">
+            <div class="credential-label">Password</div>
+            <div class="credential-value">
+                <span class="credential-text password-hidden" id="passwordDisplay">••••••••</span>
+                <button type="button" class="btn-toggle" id="btnTogglePassword" title="Show/Hide Password">
+                    <i class="fas fa-eye" id="iconToggle"></i>
+                </button>
             </div>
         </div>
     </div>
+
+    <div class="info-note">
+        <i class="fas fa-info-circle"></i>
+        <span>Informasi login bersifat rahasia. Jangan bagikan kepada orang lain.</span>
+    </div>
 </div>
+
+<!-- Hidden field untuk simpan password asli -->
+<input type="hidden" id="realPassword" value="<?= htmlspecialchars($user_data['password'] ?? '') ?>">
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-    // Password Toggle - Fixed Implementation
-    let isPasswordVisible = false;
+(function() {
+    'use strict';
     
+    // State management
+    let passwordVisible = false;
+    
+    // Elements
+    const passwordDisplay = document.getElementById('passwordDisplay');
+    const realPasswordInput = document.getElementById('realPassword');
+    const btnToggle = document.getElementById('btnTogglePassword');
+    const iconToggle = document.getElementById('iconToggle');
+    
+    // Toggle Password Function
     function togglePassword() {
-        const passwordField = document.getElementById('passwordField');
-        const toggleIcon = document.getElementById('passwordToggleIcon');
-        const realPassword = passwordField.getAttribute('data-password');
+        const realPassword = realPasswordInput.value;
         
-        isPasswordVisible = !isPasswordVisible;
+        passwordVisible = !passwordVisible;
         
-        if (isPasswordVisible) {
-            passwordField.textContent = realPassword || '-';
-            passwordField.classList.remove('password-hidden');
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
+        if (passwordVisible) {
+            passwordDisplay.textContent = realPassword || '-';
+            passwordDisplay.classList.remove('password-hidden');
+            iconToggle.classList.remove('fa-eye');
+            iconToggle.classList.add('fa-eye-slash');
         } else {
-            passwordField.textContent = '••••••••';
-            passwordField.classList.add('password-hidden');
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
+            passwordDisplay.textContent = '••••••••';
+            passwordDisplay.classList.add('password-hidden');
+            iconToggle.classList.remove('fa-eye-slash');
+            iconToggle.classList.add('fa-eye');
         }
     }
-
-    // Copy to Clipboard
-    function copyToClipboard(type) {
-        let textToCopy = '';
+    
+    // Attach event listener
+    if (btnToggle) {
+        btnToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            togglePassword();
+        });
+    }
+    
+    // Copy Username Function
+    window.copyUsername = function() {
+        const username = document.getElementById('usernameField').textContent.trim();
         
-        if (type === 'username') {
-            textToCopy = document.getElementById('usernameField').textContent.trim();
-        }
-        
-        if (!textToCopy || textToCopy === '-') {
+        if (!username || username === '-') {
             showToast('Tidak ada data untuk disalin', 'error');
             return;
         }
         
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(textToCopy).then(() => {
+            navigator.clipboard.writeText(username).then(() => {
                 showToast('Username disalin!', 'success');
             }).catch(() => {
-                fallbackCopy(textToCopy);
+                fallbackCopy(username);
             });
         } else {
-            fallbackCopy(textToCopy);
+            fallbackCopy(username);
         }
-    }
+    };
     
     function fallbackCopy(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-9999px';
-        document.body.appendChild(textArea);
-        textArea.select();
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
         
         try {
             document.execCommand('copy');
@@ -854,23 +868,22 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
             showToast('Gagal menyalin', 'error');
         }
         
-        document.body.removeChild(textArea);
+        document.body.removeChild(textarea);
     }
-
+    
     // Toast Notification
-    function showToast(message, type = 'success') {
+    window.showToast = function(message, type) {
         const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
+        if (!container) return;
         
-        const colors = type === 'success' 
-            ? { border: '#059669', bg: 'rgba(5, 150, 105, 0.2)', icon: '#34d399', iconClass: 'fa-check-circle' }
-            : { border: '#dc2626', bg: 'rgba(220, 38, 38, 0.2)', icon: '#f87171', iconClass: 'fa-exclamation-circle' };
+        const toast = document.createElement('div');
+        const isSuccess = type === 'success';
         
         toast.style.cssText = `
             background: rgba(20, 30, 48, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid ${colors.border};
+            border-left: 4px solid ${isSuccess ? '#059669' : '#dc2626'};
             border-radius: 16px;
             padding: 16px 20px;
             min-width: 300px;
@@ -880,14 +893,15 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: white;
+            margin-bottom: 10px;
         `;
         
         toast.innerHTML = `
-            <div style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: ${colors.bg}; color: ${colors.icon};">
-                <i class="fas ${colors.iconClass}"></i>
+            <div style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: ${isSuccess ? 'rgba(5, 150, 105, 0.2)' : 'rgba(220, 38, 38, 0.2)'}; color: ${isSuccess ? '#34d399' : '#f87171'};">
+                <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
             </div>
             <div>
-                <div style="font-weight: 700; font-size: 14px;">${type === 'success' ? 'Berhasil' : 'Error'}</div>
+                <div style="font-weight: 700; font-size: 14px;">${isSuccess ? 'Berhasil' : 'Error'}</div>
                 <div style="font-size: 13px; color: rgba(255,255,255,0.6);">${message}</div>
             </div>
         `;
@@ -898,21 +912,25 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
             toast.style.animation = 'slideOut 0.3s ease forwards';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
+    };
+    
+    // Add animations
+    if (!document.getElementById('animStyles')) {
+        const style = document.createElement('style');
+        style.id = 'animStyles';
+        style.textContent = `
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes slideOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
     }
-
-    // Animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(100%) scale(0.9); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
-        }
-        @keyframes slideOut {
-            from { opacity: 1; transform: translateX(0) scale(1); }
-            to { opacity: 0; transform: translateX(100%) scale(0.9); }
-        }
-    `;
-    document.head.appendChild(style);
+})();
 </script>
 
 <?php $this->stop() ?>
