@@ -819,6 +819,38 @@
             height: 32px;
             font-size: 0.75rem;
         }
+
+        /* DO Modal specific styles */
+#doModal .detail-card-liquid {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+#doModal .detail-card-liquid .form-group-siswa {
+    margin-bottom: 0;
+}
+
+#doModal .detail-card-liquid .form-group-siswa label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+#doModal .detail-card-liquid .form-input-siswa {
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+/* Checkbox styling */
+#doConfirm {
+    cursor: pointer;
+}
+
+#doConfirm:checked {
+    accent-color: #dc2626;
+}
     }
 </style>
 
@@ -831,11 +863,11 @@
             </h1>
             <p class="page-subtitle">Kelola data siswa & assign akun siswa (role: siswa)</p>
         </div>
-<?php if ($_SESSION['role'] === 'admin'): ?>
-<button class="btn btn-add-siswa" onclick="openModal('addModal')">
-    <i class="fas fa-plus me-2"></i>Tambah Siswa Baru
-</button>
-<?php endif; ?>
+        <?php if ($_SESSION['role'] === 'admin'): ?>
+            <button class="btn btn-add-siswa" onclick="openModal('addModal')">
+                <i class="fas fa-plus me-2"></i>Tambah Siswa Baru
+            </button>
+        <?php endif; ?>
     </div>
 
     <!-- TABLE - Sama dengan Guru -->
@@ -1175,6 +1207,181 @@
         </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════════════
+     PANGGIL SISWA MODAL - Tanggal & Jam
+══════════════════════════════════════════════════════ -->
+    <div class="liquid-modal-overlay" id="panggilModal" data-modal="true">
+        <div class="liquid-modal">
+            <div class="liquid-modal-header warning">
+                <h5 class="liquid-modal-title">
+                    <i class="fas fa-envelope"></i>Surat Panggil Siswa / Orang Tua
+                </h5>
+                <button type="button" class="liquid-modal-close" onclick="closeModal('panggilModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="panggilForm">
+                <div class="liquid-modal-body">
+                    <input type="hidden" id="panggilSiswaId">
+
+                    <!-- Info Siswa -->
+                    <div class="form-group-siswa">
+                        <label>Nama Siswa</label>
+                        <input type="text" class="form-input-siswa" id="panggilSiswaName" readonly style="background: rgba(255,255,255,0.05);">
+                    </div>
+
+                    <!-- Tanggal -->
+                    <div class="form-group-siswa">
+                        <label>Tanggal Panggilan <span class="required">*</span></label>
+                        <input type="date" class="form-input-siswa" id="panggilTanggal" required>
+                    </div>
+
+                    <!-- Jam -->
+                    <div class="form-group-siswa">
+                        <label>Jam Panggilan <span class="required">*</span></label>
+                        <input type="time" class="form-input-siswa" id="panggilJam" required>
+                        <small class="form-hint"><i class="fas fa-info-circle me-1"></i>Format 24 jam (contoh: 08:00)</small>
+                    </div>
+
+                    <!-- Keperluan -->
+                    <div class="form-group-siswa">
+                        <label>Keperluan <span class="required">*</span></label>
+                        <select class="form-select-siswa" id="panggilKeperluan" required>
+                            <option value="">-- Pilih Keperluan --</option>
+                            <option value="Masalah Disiplin Siswa" selected>Masalah Disiplin Siswa</option>
+                            <option value="Konseling Siswa">Konseling Siswa</option>
+                            <option value="Pembahasan Akademik">Pembahasan Akademik</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <!-- Tempat -->
+                    <div class="form-group-siswa">
+                        <label>Tempat <span class="required">*</span></label>
+                        <input type="text" class="form-input-siswa" id="panggilTempat" value="SMK TI Bali Global Denpasar" required>
+                    </div>
+                </div>
+                <div class="liquid-modal-footer" style="justify-content: center;">
+                    <button type="button" class="btn-modal-cancel" onclick="closeModal('panggilModal')">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="submit" class="btn-modal-submit warning">
+                        <i class="fas fa-envelope me-2"></i>Buat Surat Panggilan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+     DO/DROP OUT MODAL - Tanggal & Konfirmasi
+══════════════════════════════════════════════════════ -->
+<div class="liquid-modal-overlay" id="doModal" data-modal="true">
+    <div class="liquid-modal large">
+        <div class="liquid-modal-header danger">
+            <h5 class="liquid-modal-title">
+                <i class="fas fa-user-slash"></i>Surat Keputusan Drop Out (DO)
+            </h5>
+            <button type="button" class="liquid-modal-close" onclick="closeModal('doModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="doForm">
+            <div class="liquid-modal-body">
+                <input type="hidden" id="doSiswaId">
+                
+                <!-- Warning Box -->
+                <div class="modal-warning-box" style="padding: 20px; margin-bottom: 20px; background: rgba(220, 38, 38, 0.1); border-radius: 12px; border: 1px solid rgba(220, 38, 38, 0.3);">
+                    <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 48px; margin-bottom: 12px;"></i>
+                    <h4 style="color: #fca5a5; margin-bottom: 8px;">PERINGATAN: TINDAKAN PERMANEN</h4>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+                        Keputusan DO akan mengakhiri status pendidikan siswa secara permanen. 
+                        Pastikan semua proses pembinaan sudah dilalui.
+                    </p>
+                </div>
+                
+                <!-- Info Siswa -->
+                <div class="detail-card-liquid" style="margin-bottom: 20px;">
+                    <div class="detail-card-header">
+                        <i class="fas fa-user-graduate" style="color: var(--danger);"></i>
+                        <h4 style="color: var(--danger);">Data Siswa</h4>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group-siswa">
+                            <label>Nama Siswa</label>
+                            <input type="text" class="form-input-siswa" id="doSiswaName" readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                        <div class="form-group-siswa">
+                            <label>Kelas</label>
+                            <input type="text" class="form-input-siswa" id="doSiswaKelas" readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group-siswa">
+                            <label>NIS</label>
+                            <input type="text" class="form-input-siswa" id="doSiswaNis" readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                        <div class="form-group-siswa">
+                            <label>Point Pelanggaran</label>
+                            <input type="text" class="form-input-siswa" id="doSiswaPoint" readonly style="background: rgba(255,255,255,0.05); color: #fca5a5; font-weight: bold;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detail Orang Tua -->
+                <div class="detail-card-liquid" style="margin-bottom: 20px;">
+                    <div class="detail-card-header">
+                        <i class="fas fa-users" style="color: var(--info);"></i>
+                        <h4 style="color: var(--info);">Data Orang Tua/Wali</h4>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group-siswa">
+                            <label>Nama Orang Tua</label>
+                            <input type="text" class="form-input-siswa" id="doOrtuName" readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                        <div class="form-group-siswa">
+                            <label>No. Telepon</label>
+                            <input type="text" class="form-input-siswa" id="doOrtuTelp" readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Tanggal DO -->
+                <div class="form-group-siswa">
+                    <label>Tanggal Efektif DO <span class="required">*</span></label>
+                    <input type="date" class="form-input-siswa" id="doTanggal" required>
+                    <small class="form-hint"><i class="fas fa-info-circle me-1"></i>Tanggal mulai berlakunya keputusan DO</small>
+                </div>
+                
+                <!-- Alasan/Detail -->
+                <div class="form-group-siswa">
+                    <label>Detail Keputusan <span class="optional">(opsional)</span></label>
+                    <textarea class="form-textarea-siswa" id="doDetail" rows="3" placeholder="Tambahan detail keputusan jika diperlukan..."></textarea>
+                </div>
+                
+                <!-- Checkbox Konfirmasi -->
+                <div class="form-group-siswa" style="margin-top: 20px;">
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="doConfirm" required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #dc2626;">
+                        <span style="color: rgba(255,255,255,0.9); font-size: 14px;">
+                            Saya menyetujui dan memahami bahwa keputusan ini bersifat <strong style="color: #fca5a5;">PERMANEN</strong> 
+                            dan telah melalui proses pembinaan yang sesuai.
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="liquid-modal-footer" style="justify-content: center;">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('doModal')">
+                    <i class="fas fa-times me-2"></i>Batal
+                </button>
+                <button type="submit" class="btn-modal-submit danger" id="btnDoSubmit" disabled>
+                    <i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </div><!-- END MODAL PORTAL SOURCE -->
 
 
@@ -1285,6 +1492,47 @@
     let deleteSiswaId = null;
     let spSiswaId = null;
     let availableUsers = [];
+    let panggilSiswaId = null;
+    let doSiswaData = null;
+
+    // ============================================================
+// Fungsi DO Student - Ganti yang lama
+// ============================================================
+function DOStudent(id, name) {
+    // Ambil data lengkap siswa dari DataTable
+    const rowData = $('#siswaTable').DataTable().rows().data().toArray().find(r => r.id == id);
+    
+    if (!rowData) {
+        showToast('❌ Data siswa tidak ditemukan', 'error');
+        return;
+    }
+    
+    doSiswaData = rowData;
+    
+    // Isi form dengan data siswa
+    $('#doSiswaId').val(id);
+    $('#doSiswaName').val(rowData.name || '-');
+    $('#doSiswaKelas').val(rowData.kelas_name || '-');
+    $('#doSiswaNis').val(rowData.nis || '-');
+    $('#doSiswaPoint').val((rowData.point || 0) + ' pt');
+    $('#doOrtuName').val(rowData.name_orang_tua || '-');
+    $('#doOrtuTelp').val(rowData.telphone_orang_tua || '-');
+    
+    // Set default tanggal hari ini
+    const today = new Date().toISOString().split('T')[0];
+    $('#doTanggal').val(today);
+    $('#doDetail').val('');
+    $('#doConfirm').prop('checked', false);
+    $('#btnDoSubmit').prop('disabled', true);
+    
+    openModal('doModal');
+}
+// ============================================================
+// Enable/Disable button berdasarkan checkbox
+// ============================================================
+$(document).on('change', '#doConfirm', function() {
+    $('#btnDoSubmit').prop('disabled', !this.checked);
+});
 
     // ============================================================
     // loadAvailableUsers
@@ -1461,12 +1709,34 @@
                     className: 'text-center',
                     render: function(data, type, row) {
                         const pt = parseInt(row.point) || 0;
+                        const sp = parseInt(row.sp) || 0;
 
-                        const spBtn = pt >= 100 ?
-                            `<a href="export_sp.php?id=${row.id}" target="_blank"
-            class="btn-sp me-1 text-decoration-none" title="Download Surat Pernyataan SP">
-            <i class="fas fa-file-download me-1"></i>SP
-        </a>` : '';
+                        let actionBtn = '';
+
+                        // Semua tombol hanya muncul jika point >= 100
+                        if (pt >= 100) {
+                            if (sp === 0) {
+                                // SP = 0: Tombol Download Surat Pernyataan
+                                actionBtn = `<a href="export_sp.php?id=${row.id}" target="_blank"
+                    class="btn btn-primary btn-sm me-1 text-decoration-none" title="Download Surat Pernyataan SP">
+                    <i class="fas fa-file-download me-1"></i>SP
+                </a>`;
+
+                            } else if (sp === 1) {
+                // SP = 1: Tombol Surat Panggil Siswa
+                actionBtn = `<button class="btn btn-warning btn-sm me-1" onclick="callStudent(${row.id}, '${escapeHtml(row.name)}')" 
+                    title="Surat Panggil Siswa">
+                    <i class="fas fa-envelope me-1"></i>Panggil
+                </button>`;
+
+                            } else if (sp === 2) {
+                                // SP = 2: Tombol DO/Drop Out
+                                actionBtn = `<button class="btn btn-dark btn-sm me-1" onclick="DOStudent(${row.id}, '${escapeHtml(row.name)}')" 
+                    title="Surat Keluar dari Sekolah (DO)">
+                    <i class="fas fa-user-slash me-1"></i>DO
+                </button>`;
+                            }
+                        }
 
                         const assignBtn = !row.id_user ?
                             `<button class="btn btn-success btn-sm me-1" onclick="assignUser(${row.id}, '${escapeHtml(row.name)}')" title="Assign Akun Siswa">
@@ -1475,7 +1745,7 @@
 
                         // Edit & Delete hanya untuk admin
                         const editBtn = userRole === 'admin' ?
-                            `<button class="btn btn-warning btn-sm" onclick="editData(${row.id})" title="Edit">
+                            `<button class="btn btn-warning btn-sm me-1" onclick="editData(${row.id})" title="Edit">
                 <i class="fas fa-edit"></i>
             </button>` : '';
 
@@ -1485,8 +1755,8 @@
             </button>` : '';
 
                         return `
-        <div class="d-flex align-items-center justify-content: center flex-wrap gap-1">
-            ${spBtn}
+        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+            ${actionBtn}
             ${assignBtn}
             <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
                 <i class="fas fa-eye"></i>
@@ -1664,6 +1934,78 @@
                 });
         });
 
+        // 9. PANGGIL FORM SUBMIT
+    $('#panggilForm').submit(function(e) {
+        e.preventDefault();
+        
+        const id = $('#panggilSiswaId').val();
+        const tanggal = $('#panggilTanggal').val();
+        const jam = $('#panggilJam').val();
+        const keperluan = $('#panggilKeperluan').val();
+        const tempat = $('#panggilTempat').val();
+        
+        // Build URL ke export_panggil.php dengan parameter
+        const params = new URLSearchParams({
+            id: id,
+            tanggal: tanggal,
+            jam: jam,
+            keperluan: keperluan,
+            tempat: tempat
+        });
+        
+        // Open in new tab untuk download
+        window.open(`export_panggil.php?${params.toString()}`, '_blank');
+        
+        closeModal('panggilModal');
+        showToast('✅ Surat panggilan berhasil dibuat!', 'success');
+    });
+
+    $('#doForm').submit(function(e) {
+        e.preventDefault();
+        
+        if (!$('#doConfirm').is(':checked')) {
+            showToast('❌ Anda harus menyetujui konfirmasi terlebih dahulu', 'error');
+            return;
+        }
+        
+        const id = $('#doSiswaId').val();
+        const tanggal = $('#doTanggal').val();
+        const detail = $('#doDetail').val();
+        
+        const $btn = $('#btnDoSubmit');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+        
+        // Build URL ke export_do.php dengan parameter
+        const params = new URLSearchParams({
+            id: id,
+            tanggal: tanggal,
+            detail: detail
+        });
+        
+        // Open in new tab untuk download surat DO
+        window.open(`export_do.php?${params.toString()}`, '_blank');
+        
+        // Update status siswa di database (optional - bisa juga di handle di export_do.php)
+        $.post('action_siswa.php', {
+            action: 'do_student',
+            id: id,
+            tanggal_do: tanggal,
+            detail: detail
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('doModal');
+                siswaTable.ajax.reload();
+                showToast('✅ Surat DO berhasil diterbitkan!', 'success');
+            } else {
+                showToast(`❌ ${response.message || 'Gagal memproses DO'}`, 'error');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+        }).always(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO');
+        });
+    });
+
     }); // END document.ready
 
     // ============================================================
@@ -1719,6 +2061,22 @@
     }
     // ─────────────────────────────────────────────────────────────
 
+    // Fungsi Panggil Siswa - Ganti yang lama
+
+    function callStudent(id, name) {
+        panggilSiswaId = id;
+        $('#panggilSiswaId').val(id);
+        $('#panggilSiswaName').val(name || 'Siswa');
+
+        // Set default tanggal hari ini
+        const today = new Date().toISOString().split('T')[0];
+        $('#panggilTanggal').val(today);
+        $('#panggilJam').val('08:00');
+
+        openModal('panggilModal');
+    }
+
+    // ============================================================
     function showDetail(id) {
         $('#detailContent').html(`
         <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
