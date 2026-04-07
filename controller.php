@@ -5,75 +5,142 @@ require 'database.php';
 
 use League\Plates\Engine;
 
-// 🔥 RBAC CONFIGURATION - LENGKAP
+// ============================================
+// 🔥 RBAC CONFIGURATION - FINAL VERSION
+// ============================================
+
 $page_access = [
-    // Public pages (semua bisa akses)
+    // Public pages
     'login' => ['public'],
-    'access_denied' => ['public'],  // ✅ WAJIB!
-    'logout' => ['public'],         // ✅ WAJIB!
+    'access_denied' => ['public'],
+    'logout' => ['public'],
 
-    // Dashboard & umum (semua user)
-    'dashboard' => ['admin', 'guru', 'siswa'],
+    // Admin only - Dashboard umum
+    'dashboard' => ['admin'],
 
-    // Guru ke atas
-    'pelanggaran' => ['admin', 'guru'],
-    'siswa' => ['admin', 'siswa'],
-    'siswa_table' => ['admin', 'guru'],
-    'guru' => ['admin', 'guru'],
+    // Guru access
+    'guru' => ['admin', 'guru'],           // Dashboard guru (guru hanya ini)
+    'pelanggaran' => ['admin', 'guru_bk'],    // Guru bisa input pelanggaran
+    'pelanggaran_bk' => ['admin', 'guru_bk' ],
 
-    // Admin only
+    // Siswa access
+    'siswa' => ['admin', 'siswa'],         // Dashboard siswa (siswa hanya ini)
+
+    // Admin only - Data management
+    'siswa_table' => ['admin', 'guru_bk'],
     'guru_table' => ['admin'],
     'users' => ['admin'],
-
-    // Data filler (admin only)
     'mapel' => ['admin'],
     'kelas' => ['admin'],
-    'jenis_pelanggaran' => ['admin'],
-    'alasan_pelanggaran' => ['admin'],
+    'jenis_pelanggaran' => ['admin', 'guru_bk'],
+    'alasan_pelanggaran' => ['admin', 'guru_bk'],
 ];
 
-// 🔥 ACCESS CHECK FUNCTION
+// ============================================
+// 🔥 HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Get default page based on user role
+ */
+function getDefaultPage($role)
+{
+    return match($role) {
+        'siswa' => 'siswa',
+        'guru' => 'guru',
+        'guru_bk' => 'pelanggaran_bk',
+        'admin' => 'dashboard',
+        default => 'login'
+    };
+}
+
+/**
+ * Check if user can access specific page
+ */
 function checkAccess($page, $user_role)
 {
     global $page_access;
 
-    // Public page - skip check
+    // Public page - allow all
     if (in_array('public', $page_access[$page] ?? [])) {
         return true;
     }
 
-    // No session = redirect login
+    // No session - redirect to login
     if (!isset($_SESSION['role'])) {
         header('Location: ?page=login');
         exit;
     }
 
-    // Check if user role ada di allowed roles
+    // Check role permission
     $allowed_roles = $page_access[$page] ?? [];
+    
     if (!in_array($user_role, $allowed_roles)) {
-        header('Location: ?page=access_denied');
+        header('Location: ?page=login');
         exit;
     }
 
     return true;
 }
 
-$page = $_GET['page'] ?? 'dashboard';
+/**
+ * Redirect to role-appropriate dashboard
+ */
+function redirectToRoleDashboard($role)
+{
+    $defaultPage = getDefaultPage($role);
+    header("Location: ?page={$defaultPage}");
+    exit;
+}
 
-// 🔥 URUTAN BENAR: SPECIAL PAGES DULU
+// ============================================
+// 🔥 MAIN ROUTING LOGIC
+// ============================================
+
+$page = $_GET['page'] ?? 'dashboard';
+$current_role = $_SESSION['role'] ?? null;
+
+// 1. Handle Logout
 if ($page === 'logout') {
     session_destroy();
     header('Location: ?page=login');
     exit;
 }
 
+// 2. Handle Already Logged In User Accessing Login Page
 if ($page === 'login' && isset($_SESSION['user_id'])) {
-    header('Location: ?page=dashboard');
+    redirectToRoleDashboard($_SESSION['role']);
+}
+
+// 3. Handle Default Dashboard Access - Redirect to Role-Specific Page
+// Jika siswa/guru akses dashboard, redirect ke halaman mereka
+if ($page === 'dashboard' && $current_role) {
+    if (in_array($current_role, ['siswa', 'guru'])) {
+        redirectToRoleDashboard($current_role);
+    }
+}
+
+// 4. Handle Direct Access to Role Pages by Wrong Role
+// Jika siswa mencoba akses guru page atau sebaliknya
+if ($page === 'guru' && $current_role === 'siswa') {
+    header('Location: ?page=siswa');
+    exit;
+}
+if ($page === 'siswa' && $current_role === 'guru') {
+    header('Location: ?page=guru');
+    exit;
+}
+if ($page === 'siswa' && $current_role === 'guru_bk') {
+    header('Location: ?page=pelanggaran_bk');
     exit;
 }
 
-// 🔥 BARU CHECK ACCESS
-checkAccess($page, $_SESSION['role'] ?? '');
+// 5. Check Access Permission
+checkAccess($page, $current_role ?? '');
+
+// ============================================
+// 🔥 VIEW RENDERING
+// ============================================
 
 $templates = new Engine('./views');
 $templates->addFolder('layouts', './views/layout');
@@ -87,68 +154,121 @@ $user_data = [
     'is_logged_in' => isset($_SESSION['user_id'])
 ];
 
+// ============================================
+// 🔥 PAGE ROUTES
+// ============================================
+
 switch ($page) {
+    // -------- ADMIN DASHBOARD (Admin Only) --------
     case 'dashboard':
         echo $templates->render('dashboard', [
-            'title' => 'Dashboard',
+            'title' => 'Dashboard Admin',
             'user' => $user_data
         ]);
         break;
 
-    case 'pelanggaran':
-        echo $templates->render('pelanggaran', ['title' => 'Pelanggaran', 'user' => $user_data]);
-        break;
-
-    case 'login':
-        echo $templates->render('login', ['title' => 'Login']);
-        break;
-
-    case 'mapel':
-        echo $templates->render('data_filler::mapels', ['title' => 'Data Mapel', 'user' => $user_data]);
-        break;
-
-    case 'kelas':
-        echo $templates->render('data_filler::kelas', ['title' => 'Data Kelas', 'user' => $user_data]);
-        break;
-
-    case 'jenis_pelanggaran':
-        echo $templates->render('data_filler::jenis_pelanggaran', ['title' => 'Jenis Pelanggaran', 'user' => $user_data]);
-        break;
-
-    case 'alasan_pelanggaran':
-        echo $templates->render('data_filler::alasan_pelanggaran', ['title' => 'Alasan Pelanggaran', 'user' => $user_data]);
-        break;
-
-    case 'siswa':
-        echo $templates->render('siswa::siswa', ['title' => 'Siswa', 'user' => $user_data]);
-        break;
-
-    case 'siswa_table':
-        echo $templates->render('siswa::table', ['title' => 'Tabel Siswa', 'user' => $user_data]);
-        break;
-
+    // -------- GURU PAGES --------
     case 'guru':
-        echo $templates->render('guru::guru', ['title' => 'Guru', 'user' => $user_data]);
+        echo $templates->render('guru::guru', [
+            'title' => 'Dashboard Guru',
+            'user' => $user_data
+        ]);
+        break;
+
+    case 'pelanggaran_bk':
+        echo $templates->render('pelanggaran_bk', [
+            'title' => 'Data Pelanggaran_bk',
+            'user' => $user_data
+        ]);
+        break;
+
+        case 'pelanggaran':
+        echo $templates->render('pelanggaran', [
+            'title' => 'Data Pelanggaran',
+            'user' => $user_data
+        ]);
+        break;
+
+
+    // -------- SISWA PAGES --------
+    case 'siswa':
+        echo $templates->render('siswa::siswa', [
+            'title' => 'Dashboard Siswa',
+            'user' => $user_data
+        ]);
+        break;
+
+    // -------- ADMIN ONLY - DATA MANAGEMENT --------
+    case 'siswa_table':
+        echo $templates->render('siswa::table', [
+            'title' => 'Tabel Siswa',
+            'user' => $user_data
+        ]);
         break;
 
     case 'guru_table':
-        echo $templates->render('guru::table', ['title' => 'Data Guru', 'user' => $user_data]);
+        echo $templates->render('guru::table', [
+            'title' => 'Data Guru',
+            'user' => $user_data
+        ]);
         break;
 
     case 'users':
-        echo $templates->render('users', ['title' => 'Users', 'user' => $user_data]);
+        echo $templates->render('users', [
+            'title' => 'Manajemen Users',
+            'user' => $user_data
+        ]);
+        break;
+
+    case 'kelas':
+        echo $templates->render('data_filler::kelas', [
+            'title' => 'Data Kelas',
+            'user' => $user_data
+        ]);
+        break;
+
+    case 'mapel':
+        echo $templates->render('data_filler::mapels', [
+            'title' => 'Data Mapel',
+            'user' => $user_data
+        ]);
+        break;
+
+    case 'jenis_pelanggaran':
+        echo $templates->render('data_filler::jenis_pelanggaran', [
+            'title' => 'Jenis Pelanggaran',
+            'user' => $user_data
+        ]);
+        break;
+
+    case 'alasan_pelanggaran':
+        echo $templates->render('data_filler::alasan_pelanggaran', [
+            'title' => 'Alasan Pelanggaran',
+            'user' => $user_data
+        ]);
+        break;
+
+    // -------- AUTH PAGES --------
+    case 'login':
+        echo $templates->render('login', [
+            'title' => 'Login'
+        ]);
         break;
 
     case 'access_denied':
         echo $templates->render('access_denied', [
-            'title' => 'Access Denied',
+            'title' => 'Akses Ditolak',
             'user' => $user_data,
-            'page' => $page
+            'required_role' => 'Anda tidak memiliki izin untuk mengakses halaman ini.'
         ]);
         break;
 
+    // -------- DEFAULT / 404 --------
     default:
-        echo $templates->render('dashboard', ['title' => 'Dashboard', 'user' => $user_data]);
-        break;
+        // Redirect ke halaman default sesuai role
+        if (isset($_SESSION['role'])) {
+            redirectToRoleDashboard($_SESSION['role']);
+        }
+        header('Location: ?page=login');
+        exit;
 }
-?>

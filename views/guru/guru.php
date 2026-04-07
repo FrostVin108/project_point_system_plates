@@ -797,7 +797,7 @@ $total_point_bulan = array_sum(array_column($pelanggarans, 'total_point'));
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="header-text">
-                    <h1>Dashboard Pelanggaran</h1>
+                    <h1>Dashboard Guru</h1>
                     <p>Sistem Monitoring & Pelaporan Pelanggaran Siswa</p>
                 </div>
             </div>
@@ -811,7 +811,7 @@ $total_point_bulan = array_sum(array_column($pelanggarans, 'total_point'));
                         <span class="stat-label">Total Pelanggaran</span>
                     </div>
                 </div>
-                <div class="stat-pill">
+                <!-- <div class="stat-pill">
                     <div class="stat-icon red">
                         <i class="fas fa-star"></i>
                     </div>
@@ -819,7 +819,7 @@ $total_point_bulan = array_sum(array_column($pelanggarans, 'total_point'));
                         <span class="stat-value" id="statPoints"><?= $total_point_bulan ?></span>
                         <span class="stat-label">Total Poin</span>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 

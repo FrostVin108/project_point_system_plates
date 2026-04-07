@@ -3,750 +3,823 @@
 <?php $this->start('main') ?>
 
 <style>
-/* ============================================
+    /* ============================================
    LIQUID GLASS THEME - SISWA PAGE (Sama dengan Guru)
    ============================================ */
 
-:root {
-    --liquid-bg: rgba(255, 255, 255, 0.05);
-    --liquid-border: rgba(255, 255, 255, 0.15);
-    --liquid-shadow: rgba(0, 0, 0, 0.4);
-    --liquid-blur: blur(20px) saturate(180%);
-    
-    --primary: #3b82f6;
-    --primary-light: #60a5fa;
-    --success: #059669;
-    --warning: #eab308;
-    --danger: #dc2626;
-    --info: #0891b2;
-    --text-primary: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.6);
-}
+    :root {
+        --liquid-bg: rgba(255, 255, 255, 0.05);
+        --liquid-border: rgba(255, 255, 255, 0.15);
+        --liquid-shadow: rgba(0, 0, 0, 0.4);
+        --liquid-blur: blur(20px) saturate(180%);
 
-/* Base */
-.container-custom {
-    position: relative;
-    z-index: 1;
-}
+        --primary: #3b82f6;
+        --primary-light: #60a5fa;
+        --success: #059669;
+        --warning: #eab308;
+        --danger: #dc2626;
+        --info: #0891b2;
+        --text-primary: #ffffff;
+        --text-muted: rgba(255, 255, 255, 0.6);
+    }
 
-/* Header - Sama dengan Guru */
-.page-header-siswa {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
+    /* Base */
+    .container-custom {
+        position: relative;
+        z-index: 1;
+    }
 
-.page-title-siswa {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+    /* Header - Sama dengan Guru */
+    .page-header-siswa {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
 
-.page-title-siswa i {
-    color: var(--primary-light);
-    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
-}
+    .page-title-siswa {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-.page-subtitle {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-top: 4px;
-}
+    .page-title-siswa i {
+        color: var(--primary-light);
+        filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+    }
 
-/* Add Button - Sama dengan Guru */
-.btn-add-siswa {
-    background: linear-gradient(135deg, var(--primary), #1d4ed8) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-    padding: 12px 24px !important;
-    font-weight: 600;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
-    transition: all 0.3s ease;
-}
+    .page-subtitle {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-top: 4px;
+    }
 
-.btn-add-siswa:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
-}
+    /* Add Button - Sama dengan Guru */
+    .btn-add-siswa {
+        background: linear-gradient(135deg, var(--primary), #1d4ed8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+        padding: 12px 24px !important;
+        font-weight: 600;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        transition: all 0.3s ease;
+    }
 
-/* Table - Sama dengan Guru */
-.table-card-siswa {
-    background: var(--liquid-bg);
-    backdrop-filter: var(--liquid-blur);
-    border: 1px solid var(--liquid-border);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px var(--liquid-shadow);
-}
+    .btn-add-siswa:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+    }
 
-.siswa-table-wrapper {
-    padding: 24px;
-}
+    /* Table - Sama dengan Guru */
+    .table-card-siswa {
+        background: var(--liquid-bg);
+        backdrop-filter: var(--liquid-blur);
+        border: 1px solid var(--liquid-border);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px var(--liquid-shadow);
+    }
 
-/* Badges - Sama dengan Guru */
-.badge-point {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(96, 165, 250, 0.2));
-    border: 1px solid rgba(59, 130, 246, 0.4);
-    color: #93c5fd;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .siswa-table-wrapper {
+        padding: 24px;
+    }
 
-.badge-point-danger {
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(239, 68, 68, 0.2));
-    border: 1px solid rgba(220, 38, 38, 0.4);
-    color: #fca5a5;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    animation: pulse-red 1.4s infinite;
-}
+    /* Badges - Sama dengan Guru */
+    .badge-point {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(96, 165, 250, 0.2));
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        color: #93c5fd;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-@keyframes pulse-red {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, .5); }
-    50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-}
+    .badge-point-danger {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(239, 68, 68, 0.2));
+        border: 1px solid rgba(220, 38, 38, 0.4);
+        color: #fca5a5;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        animation: pulse-red 1.4s infinite;
+    }
 
-.badge-aman {
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(52, 211, 153, 0.2));
-    border: 1px solid rgba(5, 150, 105, 0.4);
-    color: #6ee7b7;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    @keyframes pulse-red {
 
-.badge-warned {
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(239, 68, 68, 0.2));
-    border: 1px solid rgba(220, 38, 38, 0.4);
-    color: #fca5a5;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, .5);
+        }
 
-.badge-assigned {
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(52, 211, 153, 0.2));
-    border: 1px solid rgba(5, 150, 105, 0.4);
-    color: #6ee7b7;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+        50% {
+            box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+        }
+    }
 
-.badge-unassigned {
-    background: linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(251, 191, 36, 0.2));
-    border: 1px solid rgba(234, 179, 8, 0.4);
-    color: #fcd34d;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .badge-aman {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(52, 211, 153, 0.2));
+        border: 1px solid rgba(5, 150, 105, 0.4);
+        color: #6ee7b7;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.badge-sp {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.2));
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    color: #c4b5fd;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .badge-warned {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(239, 68, 68, 0.2));
+        border: 1px solid rgba(220, 38, 38, 0.4);
+        color: #fca5a5;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.badge-sp-none {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.5);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .badge-assigned {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(52, 211, 153, 0.2));
+        border: 1px solid rgba(5, 150, 105, 0.4);
+        color: #6ee7b7;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.badge-kelas {
-    background: linear-gradient(135deg, rgba(8, 145, 178, 0.3), rgba(34, 211, 238, 0.2));
-    border: 1px solid rgba(8, 145, 178, 0.4);
-    color: #67e8f9;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .badge-unassigned {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(251, 191, 36, 0.2));
+        border: 1px solid rgba(234, 179, 8, 0.4);
+        color: #fcd34d;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-/* SP Button - Sama dengan Guru */
-.btn-sp {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.6));
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    font-size: .75rem;
-    font-weight: 700;
-    padding: .28rem .55rem;
-    border-radius: .35rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: .3px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
+    .badge-sp {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.2));
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        color: #c4b5fd;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.btn-sp:hover {
-    opacity: .88;
-    transform: scale(1.06);
-}
+    .badge-sp-none {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.5);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.btn-sp:active {
-    transform: scale(.97);
-}
+    .badge-kelas {
+        background: linear-gradient(135deg, rgba(8, 145, 178, 0.3), rgba(34, 211, 238, 0.2));
+        border: 1px solid rgba(8, 145, 178, 0.4);
+        color: #67e8f9;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-/* Action Buttons - Sama dengan Guru */
-.btn-action-sp, .btn-action-assign, .btn-action-detail, .btn-action-edit, .btn-action-delete {
-    width: 36px;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-    border-radius: 10px !important;
-    transition: all 0.3s ease;
-    margin: 0 2px;
-    font-size: 0.85rem;
-}
+    /* SP Button - Sama dengan Guru */
+    .btn-sp {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.6));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: .75rem;
+        font-weight: 700;
+        padding: .28rem .55rem;
+        border-radius: .35rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: .3px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
 
-.btn-action-sp { 
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.6)) !important;
-    width: auto;
-    padding: 0 12px;
-    font-weight: 600;
-    font-size: 0.75rem;
-}
-.btn-action-assign { 
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.8), rgba(52, 211, 153, 0.6)) !important; 
-}
-.btn-action-detail { 
-    background: linear-gradient(135deg, rgba(8, 145, 178, 0.8), rgba(34, 211, 238, 0.6)) !important; 
-}
-.btn-action-edit { 
-    background: linear-gradient(135deg, rgba(234, 179, 8, 0.8), rgba(251, 191, 36, 0.6)) !important; 
-}
-.btn-action-delete { 
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(239, 68, 68, 0.6)) !important; 
-}
+    .btn-sp:hover {
+        opacity: .88;
+        transform: scale(1.06);
+    }
 
-.btn-action-sp:hover, .btn-action-assign:hover, .btn-action-detail:hover, .btn-action-edit:hover, .btn-action-delete:hover {
-    transform: translateY(-2px) scale(1.1);
-}
+    .btn-sp:active {
+        transform: scale(.97);
+    }
 
-/* ============================================
+    /* Action Buttons - Sama dengan Guru */
+    .btn-action-sp,
+    .btn-action-assign,
+    .btn-action-detail,
+    .btn-action-edit,
+    .btn-action-delete {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+        border-radius: 10px !important;
+        transition: all 0.3s ease;
+        margin: 0 2px;
+        font-size: 0.85rem;
+    }
+
+    .btn-action-sp {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.6)) !important;
+        width: auto;
+        padding: 0 12px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .btn-action-assign {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.8), rgba(52, 211, 153, 0.6)) !important;
+    }
+
+    .btn-action-detail {
+        background: linear-gradient(135deg, rgba(8, 145, 178, 0.8), rgba(34, 211, 238, 0.6)) !important;
+    }
+
+    .btn-action-edit {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.8), rgba(251, 191, 36, 0.6)) !important;
+    }
+
+    .btn-action-delete {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(239, 68, 68, 0.6)) !important;
+    }
+
+    .btn-action-sp:hover,
+    .btn-action-assign:hover,
+    .btn-action-detail:hover,
+    .btn-action-edit:hover,
+    .btn-action-delete:hover {
+        transform: translateY(-2px) scale(1.1);
+    }
+
+    /* ============================================
    MODAL STYLES - PORTAL SYSTEM (Sama dengan Guru)
    ============================================ */
 
-.modal-portal-container {
-    position: relative;
-    z-index: 1;
-}
-
-.liquid-modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background: rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(8px);
-    align-items: flex-start;
-    justify-content: center;
-    overflow-y: auto;
-}
-
-.liquid-modal-overlay.active {
-    display: flex;
-    opacity: 1;
-}
-
-.liquid-modal {
-    margin-top: 80px;
-    margin-bottom: 40px;
-    background: rgba(20, 30, 48, 0.1);
-    backdrop-filter: blur(60px) saturate(250%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 28px;
-    width: 90%;
-    max-width: 480px;
-    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.28);
-    transform: scale(0.9) translateY(-20px);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    flex-shrink: 0;
-}
-
-.liquid-modal.large {
-    max-width: 700px;
-}
-
-.liquid-modal.xl {
-    max-width: 900px;
-}
-
-.liquid-modal-overlay.active .liquid-modal {
-    transform: scale(1) translateY(0);
-}
-
-.liquid-modal-header {
-    padding: 22px 26px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.32);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.liquid-modal-header.primary { 
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(96, 165, 250, 0.05)); 
-}
-.liquid-modal-header.success { 
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(52, 211, 153, 0.05)); 
-}
-.liquid-modal-header.warning { 
-    background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(251, 191, 36, 0.05)); 
-}
-.liquid-modal-header.danger { 
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.05)); 
-}
-.liquid-modal-header.info { 
-    background: linear-gradient(135deg, rgba(8, 145, 178, 0.2), rgba(34, 211, 238, 0.05)); 
-}
-.liquid-modal-header.sp { 
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(109, 40, 217, 0.05)); 
-}
-
-.liquid-modal-title {
-    font-weight: 700;
-    font-size: 18px;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
-}
-
-.liquid-modal-close {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.liquid-modal-close:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: rotate(90deg);
-}
-
-.liquid-modal-body {
-    padding: 26px;
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.liquid-modal.xl .liquid-modal-body {
-    max-height: 70vh;
-}
-
-.liquid-modal-footer {
-    padding: 18px 26px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.1);
-}
-
-/* Form Styles - Sama dengan Guru */
-.form-group-siswa { margin-bottom: 20px; }
-.form-group-siswa label {
-    display: block;
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.9);
-}
-.form-group-siswa label .required { 
-    color: #ff6b6b; 
-    margin-left: 4px; 
-}
-.form-group-siswa label .optional { 
-    color: rgba(255, 255, 255, 0.5); 
-    font-weight: 400; 
-    margin-left: 4px; 
-    font-size: 12px; 
-}
-
-.form-input-siswa, .form-select-siswa, .form-textarea-siswa {
-    width: 100%;
-    padding: 14px 18px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    color: white;
-    font-size: 15px;
-    transition: all 0.3s ease;
-}
-
-.form-input-siswa:focus, .form-select-siswa:focus, .form-textarea-siswa:focus {
-    outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-select-siswa option { 
-    background: #1e293b; 
-    color: white; 
-}
-
-.form-textarea-siswa {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.form-hint {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 12px;
-    margin-top: 6px;
-    display: block;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.input-group-siswa {
-    display: flex;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    overflow: hidden;
-}
-
-.input-group-siswa .input-icon {
-    padding: 0 16px;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.input-group-siswa .form-input-siswa {
-    border: none;
-    background: transparent;
-    flex: 1;
-}
-
-/* Detail Card in Modal - Sama dengan Guru */
-.detail-card-liquid {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.detail-card-liquid.user-card {
-    border-left: 4px solid var(--success);
-}
-
-.detail-card-liquid.siswa-card {
-    border-left: 4px solid var(--primary);
-}
-
-.detail-card-liquid.ortu-card {
-    border-left: 4px solid var(--info);
-}
-
-.detail-card-liquid.alamat-card {
-    border-left: 4px solid var(--danger);
-}
-
-.detail-card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.detail-card-header i {
-    font-size: 24px;
-}
-
-.detail-card-header h4 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.detail-row {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.detail-row:last-child {
-    border-bottom: none;
-}
-
-.detail-label {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-}
-
-.detail-value {
-    color: white;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.password-wrapper-liquid {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 8px 16px;
-    border-radius: 10px;
-}
-
-.password-text {
-    font-family: 'JetBrains Mono', monospace;
-    color: white;
-    letter-spacing: 2px;
-}
-
-.btn-toggle-pass {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.btn-toggle-pass:hover {
-    color: white;
-}
-
-/* Modal Buttons - Sama dengan Guru */
-.btn-modal-cancel {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-modal-cancel:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-}
-
-.btn-modal-submit {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(5, 150, 105, 0.9));
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 12px 26px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-}
-
-.btn-modal-submit:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
-}
-
-.btn-modal-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-modal-submit.success {
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.9), rgba(52, 211, 153, 0.9));
-    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.3);
-}
-
-.btn-modal-submit.warning {
-    background: linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(251, 191, 36, 0.9));
-    box-shadow: 0 8px 24px rgba(234, 179, 8, 0.3);
-}
-
-.btn-modal-submit.danger {
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(239, 68, 68, 0.9));
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
-}
-
-.btn-modal-submit.info {
-    background: linear-gradient(135deg, rgba(8, 145, 178, 0.9), rgba(34, 211, 238, 0.9));
-    box-shadow: 0 8px 24px rgba(8, 145, 178, 0.3);
-}
-
-.btn-modal-submit.sp {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(109, 40, 217, 0.9));
-    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
-}
-
-/* Delete Modal Warning - Sama dengan Guru */
-.modal-warning-box { 
-    text-align: center; 
-    padding: 20px 0; 
-}
-.modal-warning-icon {
-    color: #ff6b6b;
-    font-size: 64px;
-    margin-bottom: 16px;
-    animation: pulse-warning 2s ease-in-out infinite;
-}
-@keyframes pulse-warning {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-.modal-warning-title {
-    font-weight: 700;
-    font-size: 24px;
-    color: white;
-    margin-bottom: 12px;
-}
-.modal-warning-text {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 15px;
-}
-.modal-warning-text strong { 
-    color: #ff6b6b; 
-}
-
-/* Toast - Sama dengan Guru */
-.toast-siswa {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    min-width: 320px;
-    z-index: 100000;
-    border-radius: 16px;
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    animation: slideIn 0.4s ease;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(100%); }
-    to { opacity: 1; transform: translateX(0); }
-}
-.toast-siswa.success { 
-    background: rgba(34, 197, 94, 0.9); 
-    border-color: rgba(34, 197, 94, 0.4); 
-    color: white; 
-}
-.toast-siswa.error { 
-    background: rgba(220, 38, 38, 0.9); 
-    border-color: rgba(220, 38, 38, 0.4); 
-    color: white; 
-}
-
-/* DataTable Customization - Sama dengan Guru */
-#siswaTable tbody tr {
-    background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-#siswaTable.dataTable thead th {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 600;
-}
-
-#siswaTable.dataTable tbody td {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-/* Responsive - Sama dengan Guru */
-@media (max-width: 768px) {
-    .page-header-siswa { 
-        flex-direction: column; 
-        align-items: stretch; 
+    .modal-portal-container {
+        position: relative;
+        z-index: 1;
     }
-    .page-title-siswa { 
-        font-size: 24px; 
+
+    .liquid-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 99999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        background: rgba(0, 0, 0, 0.34);
+        backdrop-filter: blur(8px);
+        align-items: flex-start;
+        justify-content: center;
+        overflow-y: auto;
     }
-    .btn-add-siswa { 
-        width: 100%; 
-        justify-content: center; 
+
+    .liquid-modal-overlay.active {
+        display: flex;
+        opacity: 1;
     }
-    .siswa-table-wrapper { 
-        padding: 16px; 
+
+    .liquid-modal {
+        margin-top: 80px;
+        margin-bottom: 40px;
+        background: rgba(20, 30, 48, 0.1);
+        backdrop-filter: blur(60px) saturate(250%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 28px;
+        width: 90%;
+        max-width: 480px;
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.28);
+        transform: scale(0.9) translateY(-20px);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        flex-shrink: 0;
     }
-    .liquid-modal { 
-        margin-top: 20px; 
-        width: 95%; 
-        border-radius: 20px; 
+
+    .liquid-modal.large {
+        max-width: 700px;
     }
-    .liquid-modal.large, .liquid-modal.xl { 
-        max-width: 95%; 
+
+    .liquid-modal.xl {
+        max-width: 900px;
     }
-    .liquid-modal-header { 
-        padding: 18px 20px; 
+
+    .liquid-modal-overlay.active .liquid-modal {
+        transform: scale(1) translateY(0);
     }
-    .liquid-modal-body { 
-        padding: 20px; 
-        max-height: 70vh; 
+
+    .liquid-modal-header {
+        padding: 22px 26px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.32);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
-    .liquid-modal-footer { 
-        padding: 16px 20px; 
-        flex-direction: column-reverse; 
+
+    .liquid-modal-header.primary {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(96, 165, 250, 0.05));
     }
-    .btn-modal-cancel, .btn-modal-submit { 
-        width: 100%; 
-        justify-content: center; 
+
+    .liquid-modal-header.success {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(52, 211, 153, 0.05));
     }
-    .form-row { 
-        grid-template-columns: 1fr; 
+
+    .liquid-modal-header.warning {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(251, 191, 36, 0.05));
     }
-    .detail-row { 
-        grid-template-columns: 1fr; 
-        gap: 4px; 
+
+    .liquid-modal-header.danger {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.05));
     }
-    .btn-action-sp, .btn-action-assign, .btn-action-detail, .btn-action-edit, .btn-action-delete {
-        width: 32px;
-        height: 32px;
-        font-size: 0.75rem;
+
+    .liquid-modal-header.info {
+        background: linear-gradient(135deg, rgba(8, 145, 178, 0.2), rgba(34, 211, 238, 0.05));
     }
-}
+
+    .liquid-modal-header.sp {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(109, 40, 217, 0.05));
+    }
+
+    .liquid-modal-title {
+        font-weight: 700;
+        font-size: 18px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+    }
+
+    .liquid-modal-close {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .liquid-modal-close:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: rotate(90deg);
+    }
+
+    .liquid-modal-body {
+        padding: 26px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .liquid-modal.xl .liquid-modal-body {
+        max-height: 70vh;
+    }
+
+    .liquid-modal-footer {
+        padding: 18px 26px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form Styles - Sama dengan Guru */
+    .form-group-siswa {
+        margin-bottom: 20px;
+    }
+
+    .form-group-siswa label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-group-siswa label .required {
+        color: #ff6b6b;
+        margin-left: 4px;
+    }
+
+    .form-group-siswa label .optional {
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 400;
+        margin-left: 4px;
+        font-size: 12px;
+    }
+
+    .form-input-siswa,
+    .form-select-siswa,
+    .form-textarea-siswa {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        color: white;
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-input-siswa:focus,
+    .form-select-siswa:focus,
+    .form-textarea-siswa:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-select-siswa option {
+        background: #1e293b;
+        color: white;
+    }
+
+    .form-textarea-siswa {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-hint {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .input-group-siswa {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .input-group-siswa .input-icon {
+        padding: 0 16px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .input-group-siswa .form-input-siswa {
+        border: none;
+        background: transparent;
+        flex: 1;
+    }
+
+    /* Detail Card in Modal - Sama dengan Guru */
+    .detail-card-liquid {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .detail-card-liquid.user-card {
+        border-left: 4px solid var(--success);
+    }
+
+    .detail-card-liquid.siswa-card {
+        border-left: 4px solid var(--primary);
+    }
+
+    .detail-card-liquid.ortu-card {
+        border-left: 4px solid var(--info);
+    }
+
+    .detail-card-liquid.alamat-card {
+        border-left: 4px solid var(--danger);
+    }
+
+    .detail-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .detail-card-header i {
+        font-size: 24px;
+    }
+
+    .detail-card-header h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+    }
+
+    .detail-value {
+        color: white;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .password-wrapper-liquid {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 16px;
+        border-radius: 10px;
+    }
+
+    .password-text {
+        font-family: 'JetBrains Mono', monospace;
+        color: white;
+        letter-spacing: 2px;
+    }
+
+    .btn-toggle-pass {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .btn-toggle-pass:hover {
+        color: white;
+    }
+
+    /* Modal Buttons - Sama dengan Guru */
+    .btn-modal-cancel {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-modal-cancel:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+    }
+
+    .btn-modal-submit {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(5, 150, 105, 0.9));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px 26px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-modal-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-modal-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-modal-submit.success {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.9), rgba(52, 211, 153, 0.9));
+        box-shadow: 0 8px 24px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-modal-submit.warning {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(251, 191, 36, 0.9));
+        box-shadow: 0 8px 24px rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-modal-submit.danger {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(239, 68, 68, 0.9));
+        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-modal-submit.info {
+        background: linear-gradient(135deg, rgba(8, 145, 178, 0.9), rgba(34, 211, 238, 0.9));
+        box-shadow: 0 8px 24px rgba(8, 145, 178, 0.3);
+    }
+
+    .btn-modal-submit.sp {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(109, 40, 217, 0.9));
+        box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Delete Modal Warning - Sama dengan Guru */
+    .modal-warning-box {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .modal-warning-icon {
+        color: #ff6b6b;
+        font-size: 64px;
+        margin-bottom: 16px;
+        animation: pulse-warning 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-warning {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .modal-warning-title {
+        font-weight: 700;
+        font-size: 24px;
+        color: white;
+        margin-bottom: 12px;
+    }
+
+    .modal-warning-text {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 15px;
+    }
+
+    .modal-warning-text strong {
+        color: #ff6b6b;
+    }
+
+    /* Toast - Sama dengan Guru */
+    .toast-siswa {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        min-width: 320px;
+        z-index: 100000;
+        border-radius: 16px;
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        animation: slideIn 0.4s ease;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .toast-siswa.success {
+        background: rgba(34, 197, 94, 0.9);
+        border-color: rgba(34, 197, 94, 0.4);
+        color: white;
+    }
+
+    .toast-siswa.error {
+        background: rgba(220, 38, 38, 0.9);
+        border-color: rgba(220, 38, 38, 0.4);
+        color: white;
+    }
+
+    /* DataTable Customization - Sama dengan Guru */
+    #siswaTable tbody tr {
+        background: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    #siswaTable.dataTable thead th {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+    }
+
+    #siswaTable.dataTable tbody td {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Responsive - Sama dengan Guru */
+    @media (max-width: 768px) {
+        .page-header-siswa {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .page-title-siswa {
+            font-size: 24px;
+        }
+
+        .btn-add-siswa {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .siswa-table-wrapper {
+            padding: 16px;
+        }
+
+        .liquid-modal {
+            margin-top: 20px;
+            width: 95%;
+            border-radius: 20px;
+        }
+
+        .liquid-modal.large,
+        .liquid-modal.xl {
+            max-width: 95%;
+        }
+
+        .liquid-modal-header {
+            padding: 18px 20px;
+        }
+
+        .liquid-modal-body {
+            padding: 20px;
+            max-height: 70vh;
+        }
+
+        .liquid-modal-footer {
+            padding: 16px 20px;
+            flex-direction: column-reverse;
+        }
+
+        .btn-modal-cancel,
+        .btn-modal-submit {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-row {
+            grid-template-columns: 1fr;
+            gap: 4px;
+        }
+
+        .btn-action-sp,
+        .btn-action-assign,
+        .btn-action-detail,
+        .btn-action-edit,
+        .btn-action-delete {
+            width: 32px;
+            height: 32px;
+            font-size: 0.75rem;
+        }
+    }
 </style>
 
 <div class="container-custom">
@@ -758,9 +831,11 @@
             </h1>
             <p class="page-subtitle">Kelola data siswa & assign akun siswa (role: siswa)</p>
         </div>
-        <button class="btn btn-add-siswa" onclick="openModal('addModal')">
-            <i class="fas fa-plus me-2"></i>Tambah Siswa Baru
-        </button>
+<?php if ($_SESSION['role'] === 'admin'): ?>
+<button class="btn btn-add-siswa" onclick="openModal('addModal')">
+    <i class="fas fa-plus me-2"></i>Tambah Siswa Baru
+</button>
+<?php endif; ?>
     </div>
 
     <!-- TABLE - Sama dengan Guru -->
@@ -1110,6 +1185,8 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
+    var userRole = '<?= $_SESSION['role'] ?? '' ?>';
+
     // ═══════════════════════════════════════════════════════════════════════════
     // MODAL PORTAL SYSTEM
     // ═══════════════════════════════════════════════════════════════════════════
@@ -1135,7 +1212,7 @@
 
         document.body.appendChild(portalContainer);
         sourceContainer.remove();
-        
+
         reattachModalEventListeners();
     }
 
@@ -1152,7 +1229,9 @@
         });
 
         document.querySelectorAll('.liquid-modal').forEach(function(modal) {
-            modal.addEventListener('click', function(e) { e.stopPropagation(); });
+            modal.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         });
 
         document.querySelectorAll('.liquid-modal-overlay').forEach(function(overlay) {
@@ -1166,11 +1245,11 @@
         if (!window.modalsPorted) initModalPortal();
         var overlay = document.getElementById(modalId);
         if (!overlay) return;
-        
+
         overlay.scrollTop = 0;
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
+
         setTimeout(function() {
             var firstInput = overlay.querySelector('input, select, textarea');
             if (firstInput) firstInput.focus();
@@ -1182,9 +1261,9 @@
         if (!overlay) return;
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-        
+
         if (modalId === 'addModal') {
-            setTimeout(function() { 
+            setTimeout(function() {
                 document.getElementById('addForm').reset();
             }, 300);
         }
@@ -1375,6 +1454,7 @@
                     }
                 },
                 // ── Aksi ── tombol SP muncul hanya jika point >= 100
+                // ── Aksi ──
                 {
                     data: null,
                     orderable: false,
@@ -1384,26 +1464,36 @@
 
                         const spBtn = pt >= 100 ?
                             `<a href="export_sp.php?id=${row.id}" target="_blank"
-                            class="btn-sp me-1 text-decoration-none" title="Download Surat Pernyataan SP">
-                            <i class="fas fa-file-download me-1"></i>SP
-                        </a>` :
-                            '';
+            class="btn-sp me-1 text-decoration-none" title="Download Surat Pernyataan SP">
+            <i class="fas fa-file-download me-1"></i>SP
+        </a>` : '';
 
-                        // Tombol Assign: hanya jika belum assign
                         const assignBtn = !row.id_user ?
                             `<button class="btn btn-success btn-sm me-1" onclick="assignUser(${row.id}, '${escapeHtml(row.name)}')" title="Assign Akun Siswa">
-                               <i class="fas fa-user-plus"></i>
-                           </button>` :
-                            '';
+               <i class="fas fa-user-plus"></i>
+           </button>` : '';
+
+                        // Edit & Delete hanya untuk admin
+                        const editBtn = userRole === 'admin' ?
+                            `<button class="btn btn-warning btn-sm" onclick="editData(${row.id})" title="Edit">
+                <i class="fas fa-edit"></i>
+            </button>` : '';
+
+                        const deleteBtn = userRole === 'admin' ?
+                            `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus">
+                <i class="fas fa-trash"></i>
+            </button>` : '';
 
                         return `
-                        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
-                            ${spBtn}
-                            ${assignBtn}
-                            <button class="btn btn-info btn-sm"    onclick="showDetail(${row.id})"                       title="Detail"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-warning btn-sm" onclick="editData(${row.id})"                          title="Edit"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm"  onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus"><i class="fas fa-trash"></i></button>
-                        </div>`;
+        <div class="d-flex align-items-center justify-content: center flex-wrap gap-1">
+            ${spBtn}
+            ${assignBtn}
+            <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
+                <i class="fas fa-eye"></i>
+            </button>
+            ${editBtn}
+            ${deleteBtn}
+        </div>`;
                     }
                 }
             ],
@@ -1429,7 +1519,7 @@
             e.preventDefault();
             var $btn = $(this).find('[type=submit]');
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
-            
+
             $.post('action_siswa.php', {
                 action: 'add',
                 name: $('#addName').val().trim(),
@@ -1463,7 +1553,7 @@
             e.preventDefault();
             var $btn = $(this).find('[type=submit]');
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
-            
+
             $.post('action_siswa.php', {
                 action: 'update',
                 id: $('#editId').val(),
@@ -1498,7 +1588,7 @@
             e.preventDefault();
             var $btn = $(this).find('[type=submit]');
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Assign...');
-            
+
             $.post('action_siswa.php', {
                 action: 'assign',
                 siswa_id: $('#assignSiswaId').val(),
@@ -1524,7 +1614,7 @@
             if (!spSiswaId) return;
             var $btn = $(this);
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
-            
+
             $.post('action_siswa.php', {
                     action: 'issue_sp',
                     id: spSiswaId
@@ -1551,7 +1641,7 @@
             if (!deleteSiswaId) return;
             var $btn = $(this);
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
-            
+
             $.post('action_siswa.php', {
                     action: 'delete',
                     id: deleteSiswaId
@@ -1787,7 +1877,7 @@
         var pwdText = document.getElementById('pwdText');
         var btn = event.currentTarget;
         var icon = btn.querySelector('i');
-        
+
         if (pwdText.textContent === '••••••••') {
             pwdText.textContent = realPass;
             icon.className = 'fas fa-eye-slash';
@@ -1813,7 +1903,7 @@
     function showToast(message, type = 'success') {
         // Remove existing toasts
         $('.toast-guru').remove();
-        
+
         const bgClass = type === 'success' ? 'success' : 'error';
         const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
         const toastHtml = `
@@ -1827,7 +1917,9 @@
         </div>`;
         $('body').append(toastHtml);
         setTimeout(function() {
-            $('.toast-guru').fadeOut(300, function() { $(this).remove(); });
+            $('.toast-guru').fadeOut(300, function() {
+                $(this).remove();
+            });
         }, 4000);
     }
 </script>

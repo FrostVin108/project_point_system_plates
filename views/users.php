@@ -1208,9 +1208,6 @@ $(document).ready(function() {
                             ' data-id="' + id + '" data-name="' + name + '" data-role="' + row.role + '"' +
                             ' title="Lihat Username & Password">' +
                             '<i class="fas fa-key"></i></button>' +
-                        '<button class="btn btn-action-word btn-sm btn-word-tbl"' +
-                            ' data-id="' + id + '" data-name="' + name + '" title="Export Word">' +
-                            '<i class="fas fa-file-word"></i></button>' +
                         '<button class="btn btn-action-edit btn-sm btn-edit-tbl"' +
                             ' data-id="' + id + '" title="Edit">' +
                             '<i class="fas fa-edit"></i></button>' +

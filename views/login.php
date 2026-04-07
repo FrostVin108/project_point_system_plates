@@ -5,7 +5,7 @@
 <div class="login-card">
     <div class="login-header">
         <div class="login-logo"><i class="fas fa-school"></i></div>
-        <h1 class="login-title">Vin Web</h1>
+        <h1 class="login-title">SchoolTrack</h1>
         <p class="login-subtitle">Sistem Manajemen Pelanggaran Siswa</p>
     </div>
 

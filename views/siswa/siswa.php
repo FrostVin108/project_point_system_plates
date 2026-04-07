@@ -74,7 +74,11 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
 ?>
 
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -109,7 +113,7 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         position: relative;
         overflow: hidden;
     }
@@ -148,7 +152,10 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         flex-shrink: 0;
     }
 
-    .profile-info { flex: 1; min-width: 0; }
+    .profile-info {
+        flex: 1;
+        min-width: 0;
+    }
 
     .profile-name {
         font-size: 24px;
@@ -254,8 +261,14 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
     }
 
     @media (max-width: 1024px) {
-        .content-grid { grid-template-columns: 1fr; }
-        .profile-content { flex-wrap: wrap; }
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-content {
+            flex-wrap: wrap;
+        }
+
         .profile-stats {
             width: 100%;
             margin-left: 0;
@@ -265,11 +278,29 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
     }
 
     @media (max-width: 640px) {
-        .profile-header { padding: 20px; }
-        .profile-avatar { width: 56px; height: 56px; font-size: 22px; }
-        .profile-name { font-size: 18px; }
-        .profile-stats { flex-direction: row; width: 100%; }
-        .stat-pill { flex: 1; min-width: auto; }
+        .profile-header {
+            padding: 20px;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+        }
+
+        .profile-name {
+            font-size: 18px;
+        }
+
+        .profile-stats {
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .stat-pill {
+            flex: 1;
+            min-width: auto;
+        }
     }
 
     .section-header {
@@ -318,8 +349,14 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
     }
 
-    .table-container::-webkit-scrollbar { width: 6px; }
-    .table-container::-webkit-scrollbar-track { background: transparent; }
+    .table-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
     .table-container::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 3px;
@@ -346,8 +383,13 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .data-table th:first-child { padding-left: 24px; }
-    .data-table th:last-child { padding-right: 24px; }
+    .data-table th:first-child {
+        padding-left: 24px;
+    }
+
+    .data-table th:last-child {
+        padding-right: 24px;
+    }
 
     .data-table td {
         padding: 16px;
@@ -356,11 +398,21 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         vertical-align: top;
     }
 
-    .data-table td:first-child { padding-left: 24px; }
-    .data-table td:last-child { padding-right: 24px; }
+    .data-table td:first-child {
+        padding-left: 24px;
+    }
 
-    .data-table tbody tr { transition: all 0.2s ease; }
-    .data-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+    .data-table td:last-child {
+        padding-right: 24px;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
 
     .date-cell {
         color: rgba(255, 255, 255, 0.7);
@@ -369,9 +421,15 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         width: 120px;
     }
 
-    .date-cell i { margin-right: 8px; opacity: 0.5; font-size: 12px; }
+    .date-cell i {
+        margin-right: 8px;
+        opacity: 0.5;
+        font-size: 12px;
+    }
 
-    .violation-info { max-width: 300px; }
+    .violation-info {
+        max-width: 300px;
+    }
 
     .violation-type {
         color: #fff;
@@ -424,7 +482,10 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         white-space: nowrap;
     }
 
-    .teacher-cell i { color: #60a5fa; font-size: 11px; }
+    .teacher-cell i {
+        color: #60a5fa;
+        font-size: 11px;
+    }
 
     .empty-state {
         text-align: center;
@@ -441,8 +502,16 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         -webkit-text-fill-color: transparent;
     }
 
-    .empty-state h3 { font-size: 16px; margin-bottom: 8px; color: white; font-weight: 600; }
-    .empty-state p { font-size: 13px; }
+    .empty-state h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: white;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+    }
 
     .detail-section {
         display: flex;
@@ -453,7 +522,10 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
     }
 
     @media (max-width: 1024px) {
-        .detail-section { position: relative; top: 0; }
+        .detail-section {
+            position: relative;
+            top: 0;
+        }
     }
 
     .detail-card {
@@ -492,9 +564,14 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .detail-row:last-child { border-bottom: none; }
+    .detail-row:last-child {
+        border-bottom: none;
+    }
 
-    .detail-label { color: rgba(255, 255, 255, 0.5); font-size: 12px; }
+    .detail-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+    }
 
     .detail-value {
         color: #fff;
@@ -517,8 +594,13 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         margin-top: 12px;
     }
 
-    .credential-item { margin-bottom: 14px; }
-    .credential-item:last-child { margin-bottom: 0; }
+    .credential-item {
+        margin-bottom: 14px;
+    }
+
+    .credential-item:last-child {
+        margin-bottom: 0;
+    }
 
     .credential-label {
         font-size: 11px;
@@ -574,7 +656,9 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         transform: scale(1.05);
     }
 
-    .btn-toggle:active { transform: scale(0.95); }
+    .btn-toggle:active {
+        transform: scale(0.95);
+    }
 
     .info-note {
         margin-top: 14px;
@@ -590,7 +674,11 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
         line-height: 1.4;
     }
 
-    .info-note i { color: #60a5fa; font-size: 12px; flex-shrink: 0; }
+    .info-note i {
+        color: #60a5fa;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
 
     .toast-container {
         position: fixed;
@@ -603,14 +691,17 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
     }
 
     @media (max-width: 768px) {
-        .toast-container { left: 24px; right: 24px; }
+        .toast-container {
+            left: 24px;
+            right: 24px;
+        }
     }
 </style>
 
 <div class="dashboard-container">
     <!-- Profile Header -->
     <div class="glass-card">
-        <div >
+        <div>
             <div class="profile-content">
                 <div class="profile-avatar">
                     <?= strtoupper(substr($siswa['name'], 0, 1)) ?>
@@ -627,15 +718,15 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                             <span>NIS: <?= htmlspecialchars($siswa['nis']) ?></span>
                         </div>
                     </div>
-                    
+
                     <?php if (($siswa['sp'] ?? 0) > 0): ?>
-                    <div class="sp-badge">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>SP Ke-<?= $siswa['sp'] ?> (Surat Peringatan)</span>
-                    </div>
+                        <div class="sp-badge">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>SP Ke-<?= $siswa['sp'] ?> (Surat Peringatan)</span>
+                        </div>
                     <?php endif; ?>
                 </div>
-                
+
                 <div class="profile-stats">
                     <div class="stat-pill">
                         <span class="stat-value danger"><?= $total_point ?></span>
@@ -661,7 +752,7 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                 </div>
                 <span class="section-count"><?= count($pelanggarans) ?> Records</span>
             </div>
-            
+
             <div class="table-container">
                 <?php if (empty($pelanggarans)): ?>
                     <div class="empty-state">
@@ -680,7 +771,7 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($pelanggarans as $item): 
+                            <?php foreach ($pelanggarans as $item):
                                 $date = new DateTime($item['date']);
                                 $dateStr = $date->format('d') . ' ' . $months[(int)$date->format('m') - 1] . ' ' . $date->format('Y');
                             ?>
@@ -719,7 +810,7 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                     <i class="fas fa-user"></i>
                     <span>Detail Siswa</span>
                 </div>
-                
+
                 <div class="detail-row">
                     <span class="detail-label">Nama Lengkap</span>
                     <span class="detail-value"><?= htmlspecialchars($siswa['name']) ?></span>
@@ -752,134 +843,134 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
 
             <!-- Ganti bagian Login Credentials Card dan Script dengan ini -->
 
-<!-- Login Credentials Card -->
-<div class="glass-card detail-card login-card">
-    <div class="detail-header">
-        <i class="fas fa-lock"></i>
-        <span>Informasi Login</span>
-    </div>
-    
-    <div class="credential-box">
-        <div class="credential-item">
-            <div class="credential-label">Username</div>
-            <div class="credential-value">
-                <span class="credential-text" id="usernameField"><?= htmlspecialchars($user_data['name'] ?? '-') ?></span>
-                <button type="button" class="btn-toggle" onclick="copyUsername()" title="Copy Username">
-                    <i class="fas fa-copy"></i>
-                </button>
+            <!-- Login Credentials Card -->
+            <div class="glass-card detail-card login-card">
+                <div class="detail-header">
+                    <i class="fas fa-lock"></i>
+                    <span>Informasi Login</span>
+                </div>
+
+                <div class="credential-box">
+                    <div class="credential-item">
+                        <div class="credential-label">Username</div>
+                        <div class="credential-value">
+                            <span class="credential-text" id="usernameField"><?= htmlspecialchars($user_data['name'] ?? '-') ?></span>
+                            <button type="button" class="btn-toggle" onclick="copyUsername()" title="Copy Username">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="credential-item">
+                        <div class="credential-label">Password</div>
+                        <div class="credential-value">
+                            <span class="credential-text password-hidden" id="passwordDisplay">••••••••</span>
+                            <button type="button" class="btn-toggle" id="btnTogglePassword" title="Show/Hide Password">
+                                <i class="fas fa-eye" id="iconToggle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Informasi login bersifat rahasia. Jangan bagikan kepada orang lain.</span>
+                </div>
             </div>
-        </div>
-        
-        <div class="credential-item">
-            <div class="credential-label">Password</div>
-            <div class="credential-value">
-                <span class="credential-text password-hidden" id="passwordDisplay">••••••••</span>
-                <button type="button" class="btn-toggle" id="btnTogglePassword" title="Show/Hide Password">
-                    <i class="fas fa-eye" id="iconToggle"></i>
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <div class="info-note">
-        <i class="fas fa-info-circle"></i>
-        <span>Informasi login bersifat rahasia. Jangan bagikan kepada orang lain.</span>
-    </div>
-</div>
+            <!-- Hidden field untuk simpan password asli -->
+            <input type="hidden" id="realPassword" value="<?= htmlspecialchars($user_data['password'] ?? '') ?>">
 
-<!-- Hidden field untuk simpan password asli -->
-<input type="hidden" id="realPassword" value="<?= htmlspecialchars($user_data['password'] ?? '') ?>">
+            <!-- Toast Container -->
+            <div class="toast-container" id="toastContainer"></div>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
+            <script>
+                (function() {
+                    'use strict';
 
-<script>
-(function() {
-    'use strict';
-    
-    // State management
-    let passwordVisible = false;
-    
-    // Elements
-    const passwordDisplay = document.getElementById('passwordDisplay');
-    const realPasswordInput = document.getElementById('realPassword');
-    const btnToggle = document.getElementById('btnTogglePassword');
-    const iconToggle = document.getElementById('iconToggle');
-    
-    // Toggle Password Function
-    function togglePassword() {
-        const realPassword = realPasswordInput.value;
-        
-        passwordVisible = !passwordVisible;
-        
-        if (passwordVisible) {
-            passwordDisplay.textContent = realPassword || '-';
-            passwordDisplay.classList.remove('password-hidden');
-            iconToggle.classList.remove('fa-eye');
-            iconToggle.classList.add('fa-eye-slash');
-        } else {
-            passwordDisplay.textContent = '••••••••';
-            passwordDisplay.classList.add('password-hidden');
-            iconToggle.classList.remove('fa-eye-slash');
-            iconToggle.classList.add('fa-eye');
-        }
-    }
-    
-    // Attach event listener
-    if (btnToggle) {
-        btnToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            togglePassword();
-        });
-    }
-    
-    // Copy Username Function
-    window.copyUsername = function() {
-        const username = document.getElementById('usernameField').textContent.trim();
-        
-        if (!username || username === '-') {
-            showToast('Tidak ada data untuk disalin', 'error');
-            return;
-        }
-        
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(username).then(() => {
-                showToast('Username disalin!', 'success');
-            }).catch(() => {
-                fallbackCopy(username);
-            });
-        } else {
-            fallbackCopy(username);
-        }
-    };
-    
-    function fallbackCopy(text) {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.left = '-9999px';
-        document.body.appendChild(textarea);
-        textarea.select();
-        
-        try {
-            document.execCommand('copy');
-            showToast('Username disalin!', 'success');
-        } catch (err) {
-            showToast('Gagal menyalin', 'error');
-        }
-        
-        document.body.removeChild(textarea);
-    }
-    
-    // Toast Notification
-    window.showToast = function(message, type) {
-        const container = document.getElementById('toastContainer');
-        if (!container) return;
-        
-        const toast = document.createElement('div');
-        const isSuccess = type === 'success';
-        
-        toast.style.cssText = `
+                    // State management
+                    let passwordVisible = false;
+
+                    // Elements
+                    const passwordDisplay = document.getElementById('passwordDisplay');
+                    const realPasswordInput = document.getElementById('realPassword');
+                    const btnToggle = document.getElementById('btnTogglePassword');
+                    const iconToggle = document.getElementById('iconToggle');
+
+                    // Toggle Password Function
+                    function togglePassword() {
+                        const realPassword = realPasswordInput.value;
+
+                        passwordVisible = !passwordVisible;
+
+                        if (passwordVisible) {
+                            passwordDisplay.textContent = realPassword || '-';
+                            passwordDisplay.classList.remove('password-hidden');
+                            iconToggle.classList.remove('fa-eye');
+                            iconToggle.classList.add('fa-eye-slash');
+                        } else {
+                            passwordDisplay.textContent = '••••••••';
+                            passwordDisplay.classList.add('password-hidden');
+                            iconToggle.classList.remove('fa-eye-slash');
+                            iconToggle.classList.add('fa-eye');
+                        }
+                    }
+
+                    // Attach event listener
+                    if (btnToggle) {
+                        btnToggle.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            togglePassword();
+                        });
+                    }
+
+                    // Copy Username Function
+                    window.copyUsername = function() {
+                        const username = document.getElementById('usernameField').textContent.trim();
+
+                        if (!username || username === '-') {
+                            showToast('Tidak ada data untuk disalin', 'error');
+                            return;
+                        }
+
+                        if (navigator.clipboard && window.isSecureContext) {
+                            navigator.clipboard.writeText(username).then(() => {
+                                showToast('Username disalin!', 'success');
+                            }).catch(() => {
+                                fallbackCopy(username);
+                            });
+                        } else {
+                            fallbackCopy(username);
+                        }
+                    };
+
+                    function fallbackCopy(text) {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        textarea.style.position = 'fixed';
+                        textarea.style.left = '-9999px';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+
+                        try {
+                            document.execCommand('copy');
+                            showToast('Username disalin!', 'success');
+                        } catch (err) {
+                            showToast('Gagal menyalin', 'error');
+                        }
+
+                        document.body.removeChild(textarea);
+                    }
+
+                    // Toast Notification
+                    window.showToast = function(message, type) {
+                        const container = document.getElementById('toastContainer');
+                        if (!container) return;
+
+                        const toast = document.createElement('div');
+                        const isSuccess = type === 'success';
+
+                        toast.style.cssText = `
             background: rgba(20, 30, 48, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -895,8 +986,8 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
             color: white;
             margin-bottom: 10px;
         `;
-        
-        toast.innerHTML = `
+
+                        toast.innerHTML = `
             <div style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: ${isSuccess ? 'rgba(5, 150, 105, 0.2)' : 'rgba(220, 38, 38, 0.2)'}; color: ${isSuccess ? '#34d399' : '#f87171'};">
                 <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
             </div>
@@ -905,20 +996,20 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                 <div style="font-size: 13px; color: rgba(255,255,255,0.6);">${message}</div>
             </div>
         `;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    };
-    
-    // Add animations
-    if (!document.getElementById('animStyles')) {
-        const style = document.createElement('style');
-        style.id = 'animStyles';
-        style.textContent = `
+
+                        container.appendChild(toast);
+
+                        setTimeout(() => {
+                            toast.style.animation = 'slideOut 0.3s ease forwards';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                    };
+
+                    // Add animations
+                    if (!document.getElementById('animStyles')) {
+                        const style = document.createElement('style');
+                        style.id = 'animStyles';
+                        style.textContent = `
             @keyframes slideIn {
                 from { opacity: 0; transform: translateX(100%); }
                 to { opacity: 1; transform: translateX(0); }
@@ -928,9 +1019,9 @@ $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
                 to { opacity: 0; transform: translateX(100%); }
             }
         `;
-        document.head.appendChild(style);
-    }
-})();
-</script>
+                        document.head.appendChild(style);
+                    }
+                })();
+            </script>
 
-<?php $this->stop() ?>
+            <?php $this->stop() ?>
