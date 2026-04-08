@@ -2380,16 +2380,6 @@ $isAuthPage = in_array($currentPage, ['login', 'register', 'forgot_password']);
                                     </li>
 
                                     <!-- Dashboard -->
-                                    <li class="dropdown">
-                                        <button class="dropdown-btn <?= in_array($currentPage, ['dashboard']) ? 'active' : '' ?>" onclick="toggleDropdown(this)">
-                                            <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
-                                            Dashboard
-                                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <a href="?page=dashboard" class="<?= $currentPage == 'dashboard' ? 'active' : '' ?>">Overview</a>
-                                        </div>
-                                    </li>
 
                                     <!-- Data Filler -->
                                     <li class="dropdown">

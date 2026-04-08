@@ -207,8 +207,8 @@
     z-index: 99999;
     opacity: 0;
     transition: opacity 0.3s ease;
-    background: rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.54);
+    backdrop-filter: blur(50px);
     align-items: flex-start;
     justify-content: center;
     overflow-y: auto;
