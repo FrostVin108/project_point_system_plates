@@ -331,13 +331,116 @@ case 'do_student':
     exit;
     break;
 
-        case 'delete':
-            $id = (int) ($_POST['id'] ?? 0);
-            $stmt = $pdo->prepare("DELETE FROM siswas WHERE id = ?");
-            $success = $stmt->execute([$id]);
-            echo json_encode(['success' => $success]);
+case 'delete':
+    $id = (int) ($_POST['id'] ?? 0);
+    $mode = $_POST['mode'] ?? 'full'; // 'full' | 'unassign' | 'clear_pelanggaran'
+    
+    if ($id == 0) {
+        echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
+        exit;
+    }
+
+    // Ambil data siswa untuk cek SP dan id_user
+    $check = $pdo->prepare("SELECT id, sp, id_user FROM siswas WHERE id = ?");
+    $check->execute([$id]);
+    $siswa = $check->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$siswa) {
+        echo json_encode(['success' => false, 'message' => 'Siswa tidak ditemukan']);
+        exit;
+    }
+    
+    $sp = (int)$siswa['sp'];
+    $userId = $siswa['id_user'];
+
+    // Mode 1: FULL DELETE (untuk SP >= 3 atau hapus permanen)
+    if ($mode === 'full') {
+        $pdo->beginTransaction();
+        try {
+            // 1. Hapus semua pelanggaran siswa
+            $deletePelanggaran = $pdo->prepare("DELETE FROM pelanggarans WHERE id_siswa = ?");
+            $deletePelanggaran->execute([$id]);
+            $pelanggaranDeleted = $deletePelanggaran->rowCount();
+            
+            // 2. Hapus user dari users jika ada
+            if ($userId) {
+                $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
+                $deleteUser->execute([$userId]);
+            }
+            
+            // 3. Hapus siswa
+            $deleteSiswa = $pdo->prepare("DELETE FROM siswas WHERE id = ?");
+            $deleteSiswa->execute([$id]);
+            
+            $pdo->commit();
+            
+            echo json_encode([
+                'success' => true,
+                'message' => "Siswa DO berhasil dihapus! {$pelanggaranDeleted} riwayat pelanggaran ikut terhapus.",
+                'mode' => 'full',
+                'pelanggaran_deleted' => $pelanggaranDeleted
+            ]);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    // Mode 2: UNASSIGN USER ONLY
+    if ($mode === 'unassign') {
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Siswa ini tidak memiliki user yang diassign']);
             exit;
-            break;
+        }
+        
+        $pdo->beginTransaction();
+        try {
+            // 1. Hapus user dari users
+            $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
+            $deleteUser->execute([$userId]);
+            
+            // 2. Update siswa: set id_user = NULL
+            $updateSiswa = $pdo->prepare("UPDATE siswas SET id_user = NULL WHERE id = ?");
+            $updateSiswa->execute([$id]);
+            
+            $pdo->commit();
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'User berhasil di-unassign dan dihapus dari sistem!',
+                'mode' => 'unassign',
+                'deleted_user_id' => $userId
+            ]);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    // Mode 3: CLEAR RIWAYAT PELANGGARAN ONLY
+    if ($mode === 'clear_pelanggaran') {
+        $deletePelanggaran = $pdo->prepare("DELETE FROM pelanggarans WHERE id_siswa = ?");
+        $deletePelanggaran->execute([$id]);
+        $deletedCount = $deletePelanggaran->rowCount();
+        
+        // Reset point siswa ke 0
+        $resetPoint = $pdo->prepare("UPDATE siswas SET point = 0 WHERE id = ?");
+        $resetPoint->execute([$id]);
+        
+        echo json_encode([
+            'success' => true,
+            'message' => "{$deletedCount} riwayat pelanggaran berhasil dihapus! Point siswa direset ke 0.",
+            'mode' => 'clear_pelanggaran',
+            'pelanggaran_deleted' => $deletedCount
+        ]);
+        exit;
+    }
+    
+    echo json_encode(['success' => false, 'message' => 'Mode tidak valid']);
+    exit;
+    break;
 
         default:
             http_response_code(404);

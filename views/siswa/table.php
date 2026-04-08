@@ -1176,10 +1176,10 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════
-         DELETE CONFIRM MODAL
+        DELETE CONFIRM MODAL - DENGAN 2 OPSI
     ══════════════════════════════════════════════════════ -->
     <div class="liquid-modal-overlay" id="deleteModal" data-modal="true">
-        <div class="liquid-modal" style="max-width: 400px;">
+        <div class="liquid-modal" style="max-width: 450px;">
             <div class="liquid-modal-header danger">
                 <h5 class="liquid-modal-title">
                     <i class="fas fa-trash"></i>Konfirmasi Hapus
@@ -1190,17 +1190,96 @@
             </div>
             <div class="liquid-modal-body">
                 <input type="hidden" id="deleteId">
-                <div class="modal-warning-box">
-                    <i class="fas fa-exclamation-triangle modal-warning-icon"></i>
-                    <h4 class="modal-warning-title">Apakah Anda Yakin?</h4>
-                    <p class="modal-warning-text" id="deleteMessage"></p>
+                <div class="modal-warning-box" style="padding: 10px 0;">
+                    <i class="fas fa-exclamation-triangle modal-warning-icon" style="font-size: 48px;"></i>
+                    <p class="modal-warning-text" id="deleteMessage" style="margin-top: 12px;"></p>
+                </div>
+                
+                <!-- Opsi untuk SP < 3 -->
+                <div id="deleteOptions" style="display: none; margin-top: 20px;">
+                    <div style="display: grid; gap: 12px;">
+                        <!-- Opsi 1: Unassign User -->
+                        <button type="button" class="btn-delete-option" id="btnUnassignUser" style="
+                            background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(251, 191, 36, 0.1));
+                            border: 1px solid rgba(234, 179, 8, 0.4);
+                            color: #fcd34d;
+                            padding: 14px;
+                            border-radius: 12px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            text-align: left;
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                        ">
+                            <div style="background: rgba(234, 179, 8, 0.3); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-slash" style="color: #fcd34d; font-size: 18px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Unassign & Hapus User</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus akun login siswa dari sistem</div>
+                            </div>
+                        </button>
+                        
+                        <!-- Opsi 2: Hapus Riwayat Pelanggaran -->
+                        <button type="button" class="btn-delete-option" id="btnClearPelanggaran" style="
+                            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.1));
+                            border: 1px solid rgba(220, 38, 38, 0.4);
+                            color: #fca5a5;
+                            padding: 14px;
+                            border-radius: 12px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            text-align: left;
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                        ">
+                            <div style="background: rgba(220, 38, 38, 0.3); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-history" style="color: #fca5a5; font-size: 18px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Hapus Riwayat Pelanggaran</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus semua data pelanggaran & reset point</div>
+                            </div>
+                        </button>
+                        
+                        <!-- Divider -->
+                        <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 12px; margin: 8px 0;">
+                            — atau —
+                        </div>
+                        
+                        <!-- Opsi 3: Hapus Permanen (Full Delete) -->
+                        <button type="button" class="btn-delete-option" id="btnFullDelete" style="
+                            background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(0, 0, 0, 0.2));
+                            border: 2px solid rgba(220, 38, 38, 0.6);
+                            color: #fca5a5;
+                            padding: 14px;
+                            border-radius: 12px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            text-align: left;
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                        ">
+                            <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 14px;">HAPUS PERMANEN</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus siswa + user + pelanggaran</div>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="liquid-modal-footer" style="justify-content: center;">
                 <button type="button" class="btn-modal-cancel" onclick="closeModal('deleteModal')">
                     <i class="fas fa-times me-2"></i>Batal
                 </button>
-                <button type="button" class="btn-modal-submit danger" id="confirmDelete">
+                <!-- Tombol ini hanya untuk SP >= 3 (DO) -->
+                <button type="button" class="btn-modal-submit danger" id="confirmDelete" style="display: none;">
                     <i class="fas fa-trash me-2"></i>Hapus Permanen
                 </button>
             </div>
@@ -1687,8 +1766,8 @@
                         if (sp === 0) {
                             return '<span class="badge badge-aman">✓ Aman</span>';
                         } else if (sp >= 3) {
-                            // SP3 atau lebih = Drop Out
-                            return '<span class="badge" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(0, 0, 0, 0.3)); border: 1px solid rgba(220, 38, 38, 0.6); color: #fca5a5; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">🚫 DROP OUT</span>';
+                            // SP3 atau lebih = Drop Out (hanya admin yang lihat)
+                            return '<span class="badge" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.5), rgba(0, 0, 0, 0.4)); border: 2px solid rgba(220, 38, 38, 0.8); color: #fca5a5; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">🚫 DROP OUT</span>';
                         } else {
                             return '<span class="badge badge-warned">⚠️ Warned</span>';
                         }
@@ -1704,7 +1783,6 @@
                             '<span class="badge badge-unassigned">⏳ Belum Assign</span>';
                     }
                 },
-                // ── Aksi ── tombol SP muncul hanya jika point >= 100
                 // ── Aksi ──
                 {
                     data: null,
@@ -1714,13 +1792,14 @@
                         const pt = parseInt(row.point) || 0;
                         const sp = parseInt(row.sp) || 0;
 
-                        // Jika sudah DO (SP >= 3), tidak ada tombol aksi SP/DO lagi
+                        // Jika sudah DO (SP >= 3), hanya admin yang lihat dan hanya tombol DELETE
                         if (sp >= 3) {
+                            // Hanya untuk admin (karena non-admin tidak akan lihat data ini)
                             return `
                             <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
-                                <span class="badge" style="background: rgba(220,38,38,0.2); color: #fca5a5; font-size: 11px;">Siswa DO</span>
-                                <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
-                                    <i class="fas fa-eye"></i>
+                                <span class="badge" style="background: rgba(220,38,38,0.3); color: #fca5a5; font-size: 11px; padding: 4px 8px; margin-right: 4px;">DO</span>
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus Data DO">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>`;
                         }
@@ -1764,7 +1843,7 @@
                             </button>` : '';
 
                         const deleteBtn = userRole === 'admin' ?
-                            `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus">
+                            `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}', ${row.sp})" title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>` : '';
 
@@ -2040,6 +2119,133 @@
             });
         });
 
+        // Handler untuk tombol Unassign User
+$(document).on('click', '#btnUnassignUser', function() {
+    if (!deleteSiswaId) return;
+    
+    const $btn = $(this);
+    $btn.prop('disabled', true).css('opacity', '0.5');
+    
+    $.post('action_siswa.php', {
+        action: 'delete',
+        id: deleteSiswaId,
+        mode: 'unassign'
+    }).done(function(response) {
+        if (response.success) {
+            closeModal('deleteModal');
+            siswaTable.ajax.reload();
+            loadAvailableUsers();
+            showToast(`✅ ${response.message}`, 'success');
+        } else {
+            showToast(`❌ ${response.message}`, 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        }
+    }).fail(function() {
+        showToast('❌ Koneksi gagal', 'error');
+        $btn.prop('disabled', false).css('opacity', '1');
+    });
+});
+
+// Handler untuk tombol Clear Pelanggaran
+$(document).on('click', '#btnClearPelanggaran', function() {
+    if (!deleteSiswaId) return;
+    
+    const $btn = $(this);
+    $btn.prop('disabled', true).css('opacity', '0.5');
+    
+    $.post('action_siswa.php', {
+        action: 'delete',
+        id: deleteSiswaId,
+        mode: 'clear_pelanggaran'
+    }).done(function(response) {
+        if (response.success) {
+            closeModal('deleteModal');
+            siswaTable.ajax.reload();
+            showToast(`✅ ${response.message}`, 'success');
+        } else {
+            showToast(`❌ ${response.message}`, 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        }
+    }).fail(function() {
+        showToast('❌ Koneksi gagal', 'error');
+        $btn.prop('disabled', false).css('opacity', '1');
+    });
+});
+
+// Handler untuk tombol Full Delete (SP < 3)
+$(document).on('click', '#btnFullDelete', function() {
+    if (!deleteSiswaId) return;
+    
+    const $btn = $(this);
+    $btn.prop('disabled', true).css('opacity', '0.5').html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+    
+    $.post('action_siswa.php', {
+        action: 'delete',
+        id: deleteSiswaId,
+        mode: 'full'
+    }).done(function(response) {
+        if (response.success) {
+            closeModal('deleteModal');
+            siswaTable.ajax.reload();
+            loadAvailableUsers();
+            showToast(`✅ Siswa berhasil dihapus permanen!`, 'success');
+        } else {
+            showToast(`❌ ${response.message}`, 'error');
+            $btn.prop('disabled', false).css('opacity', '1').html(`
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px;">HAPUS PERMANEN</div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus siswa + user + pelanggaran</div>
+                    </div>
+                </div>
+            `);
+        }
+    }).fail(function() {
+        showToast('❌ Koneksi gagal', 'error');
+        $btn.prop('disabled', false).css('opacity', '1').html(`
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 14px;">HAPUS PERMANEN</div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus siswa + user + pelanggaran</div>
+                </div>
+            </div>
+        `);
+    });
+});
+
+// Update handler untuk confirmDelete (SP >= 3)
+$('#confirmDelete').click(function() {
+    if (!deleteSiswaId) return;
+    
+    const $btn = $(this);
+    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+    
+    $.post('action_siswa.php', {
+        action: 'delete',
+        id: deleteSiswaId,
+        mode: 'full'
+    }).done(function(response) {
+        if (response.success) {
+            closeModal('deleteModal');
+            siswaTable.ajax.reload();
+            loadAvailableUsers();
+            showToast(`✅ ${response.message}`, 'success');
+        } else {
+            showToast(`❌ ${response.message}`, 'error');
+        }
+    }).fail(function() {
+        showToast('❌ Koneksi gagal', 'error');
+    }).always(function() {
+        $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus Permanen');
+    });
+});
+
     }); // END document.ready
 
     // ============================================================
@@ -2281,9 +2487,44 @@
         }
     }
 
-    function confirmDelete(id, name) {
+    function confirmDelete(id, name, sp = null) {
         deleteSiswaId = id;
-        $('#deleteMessage').html(`Siswa <strong style="color: #ff6b6b;">"${name || 'Siswa'}"</strong> akan dihapus <span style="color: #ff6b6b; font-weight: 700;">PERMANEN!</span>`);
+        
+        // Jika SP tidak dikirim, ambil dari DataTable
+        if (sp === null) {
+            const rowData = $('#siswaTable').DataTable().rows().data().toArray().find(r => r.id == id);
+            sp = rowData ? parseInt(rowData.sp) || 0 : 0;
+        }
+        
+        // Simpan SP untuk digunakan saat confirm
+        $('#deleteId').data('sp', sp);
+        
+        if (sp >= 3) {
+            // Mode DO: Langsung hapus semua (pelanggaran + siswa)
+            $('#deleteMessage').html(`
+                <div style="background: rgba(220,38,38,0.2); border: 1px solid rgba(220,38,38,0.4); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i>
+                    <strong style="color: #fca5a5;">SISWA DROP OUT (SP${sp})</strong>
+                </div>
+                Siswa <strong style="color: #ff6b6b;">"${name || 'Siswa'}"</strong> akan dihapus <span style="color: #ff6b6b; font-weight: 700;">PERMANEN!</span><br><br>
+                <span style="color: #fca5a5; font-size: 13px;">
+                    <i class="fas fa-info-circle"></i> Semua riwayat pelanggaran juga akan ikut terhapus otomatis.
+                </span>
+            `);
+            // Sembunyikan tombol opsi, hanya tampilkan tombol hapus permanen
+            $('#deleteOptions').hide();
+            $('#confirmDelete').show().data('mode', 'full');
+        } else {
+            // Mode Normal: Tampilkan 2 opsi
+            $('#deleteMessage').html(`
+                Siswa <strong style="color: #ff6b6b;">"${name || 'Siswa'}"</strong> akan dihapus.<br>
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Pilih opsi penghapusan:</span>
+            `);
+            // Tampilkan tombol opsi
+            $('#deleteOptions').show();
+            $('#confirmDelete').hide().data('mode', '');
+        }
+        
         openModal('deleteModal');
     }
 
