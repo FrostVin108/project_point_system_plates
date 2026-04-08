@@ -10,9 +10,11 @@ try {
         case 'read':
             $stmt = $pdo->prepare("
                 SELECT s.*, 
-                       k.tingkat, k.jurusan, k.kelas as kelas_name,
-                       CONCAT(COALESCE(k.tingkat, ''), ' ', COALESCE(k.jurusan, ''), ' ', COALESCE(k.kelas, '')) as kelas_full,
-                       CASE WHEN s.id_user IS NOT NULL THEN 'Assigned' ELSE 'Belum Assign' END as user_status
+                    k.tingkat, 
+                    k.jurusan, 
+                    k.kelas as kelas_name,
+                    CONCAT(COALESCE(k.tingkat, ''), ' ', COALESCE(k.jurusan, ''), ' ', COALESCE(k.kelas, '')) as kelas_full,
+                    CASE WHEN s.id_user IS NOT NULL THEN 'Assigned' ELSE 'Belum Assign' END as user_status
                 FROM siswas s 
                 LEFT JOIN kelas k ON s.id_kelas = k.id 
                 ORDER BY s.id DESC

@@ -1721,13 +1721,24 @@
                 },
                 // Kelas
                 {
-                    data: null,
-                    render: function(data) {
-                        return data.kelas_name ?
-                            `<span class="badge bg-info">${data.kelas_name}</span>` :
-                            '<span class="text-muted">Belum ada kelas</span>';
-                    }
-                },
+                            data: null, // Gunakan null untuk akses multiple fields
+                            render: function(data, type, row) {
+                                // Cek apakah ada data kelas dari JOIN
+                                if (!row.tingkat && !row.jurusan && !row.kelas) {
+                                    return '<span class="text-muted">Belum ada kelas</span>';
+                                }
+                                
+                                // Gabungkan: tingkat + jurusan + kelas
+                                // Contoh hasil: "X RPL 2", "XI TKJ 1", "XII DKV 2"
+                                const kelasDisplay = [
+                                    row.tingkat || '',
+                                    row.jurusan || '',
+                                    row.kelas_name  || ''
+                                ].join(' ').trim();
+                                
+                                return `<span class="badge badge-kelas">${kelasDisplay}</span>`;
+                            }
+                        },
                 // Telp
                 {
                     data: 'telphone',
@@ -2351,6 +2362,18 @@ $('#confirmDelete').click(function() {
                         '<span class="badge-aman">✓ Aman</span>' :
                         '<span class="badge-warned">⚠️ Warned</span>';
 
+                    // ════════════════════════════════════════════════════════
+                    // PERBAIKAN: Format kelas lengkap untuk detail modal
+                    // ════════════════════════════════════════════════════════
+                    let kelasDisplay = 'Belum ada kelas';
+                    if (data.tingkat || data.jurusan || data.kelas_name) {
+                        kelasDisplay = [
+                            data.tingkat || '',
+                            data.jurusan || '',
+                            data.kelas_name || ''
+                        ].join(' ').trim();
+                    }
+
                     const userInfo = data.user_id ? `
                     <div class="detail-card-liquid user-card">
                         <div class="detail-card-header">
@@ -2388,9 +2411,10 @@ $('#confirmDelete').click(function() {
                             <span class="detail-label">NIS:</span>
                             <span class="detail-value">${data.nis || '—'}</span>
                         </div>
+                        <!-- PERBAIKAN: Gunakan kelasDisplay yang sudah diformat -->
                         <div class="detail-row">
                             <span class="detail-label">Kelas:</span>
-                            <span class="detail-value">${data.kelas_name || 'Belum ada'}</span>
+                            <span class="detail-value"><span class="badge badge-kelas">${kelasDisplay}</span></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Telp:</span>
