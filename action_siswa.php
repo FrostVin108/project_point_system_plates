@@ -178,11 +178,6 @@ try {
             exit;
             break;
 
-        // ============================================================
-        // ACTION: issue_sp
-        // Reset point → 0, tambah sp +1
-        // Status ditentukan dari nilai sp (0 = Aman, >=1 = Warned)
-        // ============================================================
         case 'issue_sp':
             $id = (int) ($_POST['id'] ?? 0);
             if ($id == 0) {
@@ -190,8 +185,8 @@ try {
                 exit;
             }
 
-            // Ambil data siswa dulu untuk validasi point >= 100
-            $check = $pdo->prepare("SELECT id, point, sp FROM siswas WHERE id = ?");
+            // Ambil data siswa dulu
+            $check = $pdo->prepare("SELECT id, point, sp, id_user FROM siswas WHERE id = ?");
             $check->execute([$id]);
             $siswa = $check->fetch(PDO::FETCH_ASSOC);
 
@@ -200,28 +195,141 @@ try {
                 exit;
             }
 
-            if ((int)$siswa['point'] < 100) {
-                echo json_encode(['success' => false, 'message' => 'Point belum mencapai 100']);
+            $currentPoint = (int)$siswa['point'];
+            $currentSp = (int)$siswa['sp'];
+
+            // Validasi minimal 90 point untuk muncul tombol
+            if ($currentPoint < 90) {
+                echo json_encode(['success' => false, 'message' => 'Point belum mencapai 90']);
                 exit;
             }
 
-            $newSp = (int)$siswa['sp'] + 1;
+            // Hitung point baru dan SP baru
+            $newSp = $currentSp + 1;
 
-            // Reset point ke 0, tambah sp (TANPA update status)
+            if ($currentPoint >= 100) {
+                // Jika >= 100, kurangi 100
+                $newPoint = $currentPoint - 100;
+            } else {
+                // Jika 90-99, langsung jadi 0
+                $newPoint = 0;
+            }
+
+            // Update database
             $stmt = $pdo->prepare("
                 UPDATE siswas 
-                SET point = 0, sp = ?
+                SET point = ?, sp = ?
                 WHERE id = ?
             ");
-            $success = $stmt->execute([$newSp, $id]);
+            $success = $stmt->execute([$newPoint, $newSp, $id]);
+
+            // Tentukan URL download berdasarkan level SP baru
+            $downloadUrl = '';
+            if ($success) {
+                if ($newSp === 1) {
+                    // SP1: Surat Pernyataan
+                    $downloadUrl = "export_sp.php?id={$id}";
+                } elseif ($newSp === 2) {
+                    // SP2: Surat Panggilan (butuh parameter default)
+                    $today = date('Y-m-d');
+                    $downloadUrl = "export_panggil.php?id={$id}&tanggal={$today}&jam=08:00&keperluan=Masalah%20Disiplin%20Siswa&tempat=SMK%20TI%20Bali%20Global%20Denpasar";
+                } elseif ($newSp >= 3) {
+                    // SP3+: Surat DO (butuh parameter default)
+                    $today = date('Y-m-d');
+                    $downloadUrl = "export_do.php?id={$id}&tanggal={$today}&detail=";
+                }
+            }
 
             echo json_encode([
                 'success' => $success,
                 'new_sp'  => $newSp,
-                'message' => $success ? "SP{$newSp} berhasil diterbitkan" : 'Gagal menerbitkan SP'
+                'new_point' => $newPoint,
+                'download_url' => $downloadUrl,
+                'message' => $success ? "SP{$newSp} berhasil diterbitkan. Point: {$currentPoint} → {$newPoint}" : 'Gagal menerbitkan SP'
             ]);
             exit;
             break;
+        // ============================================================
+        // ACTION: do_student - MODIFIED
+        // 1. SP + 1, 2. Reset point (kurangi 100 atau jadi 0), 
+        // 3. Hapus user_id dari siswas, 4. Hapus user dari users
+        // ============================================================
+case 'do_student':
+    $id = (int) ($_POST['id'] ?? 0);
+    $tanggal_do = $_POST['tanggal_do'] ?? date('Y-m-d');
+    $detail = trim($_POST['detail'] ?? '');
+
+    if ($id == 0) {
+        echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
+        exit;
+    }
+
+    // Ambil data siswa termasuk id_user
+    $check = $pdo->prepare("SELECT id, name, id_user, sp, point FROM siswas WHERE id = ?");
+    $check->execute([$id]);
+    $siswa = $check->fetch(PDO::FETCH_ASSOC);
+
+    if (!$siswa) {
+        echo json_encode(['success' => false, 'message' => 'Siswa tidak ditemukan']);
+        exit;
+    }
+
+    // Validasi: harus sudah SP2 untuk DO
+    $currentSp = (int)$siswa['sp'];
+    if ($currentSp < 2) {
+        echo json_encode(['success' => false, 'message' => 'Minimal harus SP2 untuk Drop Out']);
+        exit;
+    }
+
+    $userId = $siswa['id_user'];
+    
+    // Hitung SP baru (SP3 = DO) dan Point baru
+    $newSp = $currentSp + 1; // SP3 = Drop Out
+    $currentPoint = (int)$siswa['point'];
+    
+    if ($currentPoint >= 100) {
+        $newPoint = $currentPoint - 100;
+    } else {
+        $newPoint = 0;
+    }
+
+    $pdo->beginTransaction();
+
+    try {
+        // 1. Update siswa: SP+1 (jadi SP3), reset point, HAPUS id_user (set NULL), tambah catatan DO
+        // PERBAIKAN: Hilangkan koma berlebih sebelum WHERE
+        $updateSiswa = $pdo->prepare("
+            UPDATE siswas 
+            SET sp = ?, 
+                point = ?,
+                id_user = NULL, 
+                detail = CONCAT(COALESCE(detail, ''), '\n[DO] Tanggal: ', ?, ' - ', ?)
+            WHERE id = ?
+        ");
+        $updateSiswa->execute([$newSp, $newPoint, $tanggal_do, $detail, $id]);
+
+        // 2. HAPUS user dari tabel users jika ada
+        if ($userId) {
+            $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
+            $deleteUser->execute([$userId]);
+        }
+
+        $pdo->commit();
+
+        echo json_encode([
+            'success' => true,
+            'message' => "DO berhasil! Siswa diberi SP{$newSp} (Drop Out). Point: {$currentPoint} → {$newPoint}. Akun siswa dihapus.",
+            'deleted_user_id' => $userId,
+            'new_sp' => $newSp,
+            'new_point' => $newPoint,
+            'is_do' => true // Flag bahwa ini sudah DO
+        ]);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    }
+    exit;
+    break;
 
         case 'delete':
             $id = (int) ($_POST['id'] ?? 0);
@@ -241,4 +349,3 @@ try {
     echo json_encode(['error' => 'Server Error: ' . $e->getMessage()]);
     exit;
 }
-?>

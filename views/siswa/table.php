@@ -821,36 +821,36 @@
         }
 
         /* DO Modal specific styles */
-#doModal .detail-card-liquid {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 16px;
-}
+        #doModal .detail-card-liquid {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+        }
 
-#doModal .detail-card-liquid .form-group-siswa {
-    margin-bottom: 0;
-}
+        #doModal .detail-card-liquid .form-group-siswa {
+            margin-bottom: 0;
+        }
 
-#doModal .detail-card-liquid .form-group-siswa label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 4px;
-}
+        #doModal .detail-card-liquid .form-group-siswa label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4px;
+        }
 
-#doModal .detail-card-liquid .form-input-siswa {
-    padding: 10px 14px;
-    font-size: 14px;
-}
+        #doModal .detail-card-liquid .form-input-siswa {
+            padding: 10px 14px;
+            font-size: 14px;
+        }
 
-/* Checkbox styling */
-#doConfirm {
-    cursor: pointer;
-}
+        /* Checkbox styling */
+        #doConfirm {
+            cursor: pointer;
+        }
 
-#doConfirm:checked {
-    accent-color: #dc2626;
-}
+        #doConfirm:checked {
+            accent-color: #dc2626;
+        }
     }
 </style>
 
@@ -1276,111 +1276,111 @@
     <!-- ══════════════════════════════════════════════════════
      DO/DROP OUT MODAL - Tanggal & Konfirmasi
 ══════════════════════════════════════════════════════ -->
-<div class="liquid-modal-overlay" id="doModal" data-modal="true">
-    <div class="liquid-modal large">
-        <div class="liquid-modal-header danger">
-            <h5 class="liquid-modal-title">
-                <i class="fas fa-user-slash"></i>Surat Keputusan Drop Out (DO)
-            </h5>
-            <button type="button" class="liquid-modal-close" onclick="closeModal('doModal')">
-                <i class="fas fa-times"></i>
-            </button>
+    <div class="liquid-modal-overlay" id="doModal" data-modal="true">
+        <div class="liquid-modal large">
+            <div class="liquid-modal-header danger">
+                <h5 class="liquid-modal-title">
+                    <i class="fas fa-user-slash"></i>Surat Keputusan Drop Out (DO)
+                </h5>
+                <button type="button" class="liquid-modal-close" onclick="closeModal('doModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="doForm">
+                <div class="liquid-modal-body">
+                    <input type="hidden" id="doSiswaId">
+
+                    <!-- Warning Box -->
+                    <div class="modal-warning-box" style="padding: 20px; margin-bottom: 20px; background: rgba(220, 38, 38, 0.1); border-radius: 12px; border: 1px solid rgba(220, 38, 38, 0.3);">
+                        <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 48px; margin-bottom: 12px;"></i>
+                        <h4 style="color: #fca5a5; margin-bottom: 8px;">PERINGATAN: TINDAKAN PERMANEN</h4>
+                        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+                            Keputusan DO akan mengakhiri status pendidikan siswa secara permanen.
+                            Pastikan semua proses pembinaan sudah dilalui.
+                        </p>
+                    </div>
+
+                    <!-- Info Siswa -->
+                    <div class="detail-card-liquid" style="margin-bottom: 20px;">
+                        <div class="detail-card-header">
+                            <i class="fas fa-user-graduate" style="color: var(--danger);"></i>
+                            <h4 style="color: var(--danger);">Data Siswa</h4>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group-siswa">
+                                <label>Nama Siswa</label>
+                                <input type="text" class="form-input-siswa" id="doSiswaName" readonly style="background: rgba(255,255,255,0.05);">
+                            </div>
+                            <div class="form-group-siswa">
+                                <label>Kelas</label>
+                                <input type="text" class="form-input-siswa" id="doSiswaKelas" readonly style="background: rgba(255,255,255,0.05);">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group-siswa">
+                                <label>NIS</label>
+                                <input type="text" class="form-input-siswa" id="doSiswaNis" readonly style="background: rgba(255,255,255,0.05);">
+                            </div>
+                            <div class="form-group-siswa">
+                                <label>Point Pelanggaran</label>
+                                <input type="text" class="form-input-siswa" id="doSiswaPoint" readonly style="background: rgba(255,255,255,0.05); color: #fca5a5; font-weight: bold;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Orang Tua -->
+                    <div class="detail-card-liquid" style="margin-bottom: 20px;">
+                        <div class="detail-card-header">
+                            <i class="fas fa-users" style="color: var(--info);"></i>
+                            <h4 style="color: var(--info);">Data Orang Tua/Wali</h4>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group-siswa">
+                                <label>Nama Orang Tua</label>
+                                <input type="text" class="form-input-siswa" id="doOrtuName" readonly style="background: rgba(255,255,255,0.05);">
+                            </div>
+                            <div class="form-group-siswa">
+                                <label>No. Telepon</label>
+                                <input type="text" class="form-input-siswa" id="doOrtuTelp" readonly style="background: rgba(255,255,255,0.05);">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Tanggal DO -->
+                    <div class="form-group-siswa">
+                        <label>Tanggal Efektif DO <span class="required">*</span></label>
+                        <input type="date" class="form-input-siswa" id="doTanggal" required>
+                        <small class="form-hint"><i class="fas fa-info-circle me-1"></i>Tanggal mulai berlakunya keputusan DO</small>
+                    </div>
+
+                    <!-- Alasan/Detail -->
+                    <div class="form-group-siswa">
+                        <label>Detail Keputusan <span class="optional">(opsional)</span></label>
+                        <textarea class="form-textarea-siswa" id="doDetail" rows="3" placeholder="Tambahan detail keputusan jika diperlukan..."></textarea>
+                    </div>
+
+                    <!-- Checkbox Konfirmasi -->
+                    <div class="form-group-siswa" style="margin-top: 20px;">
+                        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
+                            <input type="checkbox" id="doConfirm" required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #dc2626;">
+                            <span style="color: rgba(255,255,255,0.9); font-size: 14px;">
+                                Saya menyetujui dan memahami bahwa keputusan ini bersifat <strong style="color: #fca5a5;">PERMANEN</strong>
+                                dan telah melalui proses pembinaan yang sesuai.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="liquid-modal-footer" style="justify-content: center;">
+                    <button type="button" class="btn-modal-cancel" onclick="closeModal('doModal')">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="submit" class="btn-modal-submit danger" id="btnDoSubmit" disabled>
+                        <i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO
+                    </button>
+                </div>
+            </form>
         </div>
-        <form id="doForm">
-            <div class="liquid-modal-body">
-                <input type="hidden" id="doSiswaId">
-                
-                <!-- Warning Box -->
-                <div class="modal-warning-box" style="padding: 20px; margin-bottom: 20px; background: rgba(220, 38, 38, 0.1); border-radius: 12px; border: 1px solid rgba(220, 38, 38, 0.3);">
-                    <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 48px; margin-bottom: 12px;"></i>
-                    <h4 style="color: #fca5a5; margin-bottom: 8px;">PERINGATAN: TINDAKAN PERMANEN</h4>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
-                        Keputusan DO akan mengakhiri status pendidikan siswa secara permanen. 
-                        Pastikan semua proses pembinaan sudah dilalui.
-                    </p>
-                </div>
-                
-                <!-- Info Siswa -->
-                <div class="detail-card-liquid" style="margin-bottom: 20px;">
-                    <div class="detail-card-header">
-                        <i class="fas fa-user-graduate" style="color: var(--danger);"></i>
-                        <h4 style="color: var(--danger);">Data Siswa</h4>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group-siswa">
-                            <label>Nama Siswa</label>
-                            <input type="text" class="form-input-siswa" id="doSiswaName" readonly style="background: rgba(255,255,255,0.05);">
-                        </div>
-                        <div class="form-group-siswa">
-                            <label>Kelas</label>
-                            <input type="text" class="form-input-siswa" id="doSiswaKelas" readonly style="background: rgba(255,255,255,0.05);">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group-siswa">
-                            <label>NIS</label>
-                            <input type="text" class="form-input-siswa" id="doSiswaNis" readonly style="background: rgba(255,255,255,0.05);">
-                        </div>
-                        <div class="form-group-siswa">
-                            <label>Point Pelanggaran</label>
-                            <input type="text" class="form-input-siswa" id="doSiswaPoint" readonly style="background: rgba(255,255,255,0.05); color: #fca5a5; font-weight: bold;">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Detail Orang Tua -->
-                <div class="detail-card-liquid" style="margin-bottom: 20px;">
-                    <div class="detail-card-header">
-                        <i class="fas fa-users" style="color: var(--info);"></i>
-                        <h4 style="color: var(--info);">Data Orang Tua/Wali</h4>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group-siswa">
-                            <label>Nama Orang Tua</label>
-                            <input type="text" class="form-input-siswa" id="doOrtuName" readonly style="background: rgba(255,255,255,0.05);">
-                        </div>
-                        <div class="form-group-siswa">
-                            <label>No. Telepon</label>
-                            <input type="text" class="form-input-siswa" id="doOrtuTelp" readonly style="background: rgba(255,255,255,0.05);">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Input Tanggal DO -->
-                <div class="form-group-siswa">
-                    <label>Tanggal Efektif DO <span class="required">*</span></label>
-                    <input type="date" class="form-input-siswa" id="doTanggal" required>
-                    <small class="form-hint"><i class="fas fa-info-circle me-1"></i>Tanggal mulai berlakunya keputusan DO</small>
-                </div>
-                
-                <!-- Alasan/Detail -->
-                <div class="form-group-siswa">
-                    <label>Detail Keputusan <span class="optional">(opsional)</span></label>
-                    <textarea class="form-textarea-siswa" id="doDetail" rows="3" placeholder="Tambahan detail keputusan jika diperlukan..."></textarea>
-                </div>
-                
-                <!-- Checkbox Konfirmasi -->
-                <div class="form-group-siswa" style="margin-top: 20px;">
-                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
-                        <input type="checkbox" id="doConfirm" required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #dc2626;">
-                        <span style="color: rgba(255,255,255,0.9); font-size: 14px;">
-                            Saya menyetujui dan memahami bahwa keputusan ini bersifat <strong style="color: #fca5a5;">PERMANEN</strong> 
-                            dan telah melalui proses pembinaan yang sesuai.
-                        </span>
-                    </label>
-                </div>
-            </div>
-            <div class="liquid-modal-footer" style="justify-content: center;">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('doModal')">
-                    <i class="fas fa-times me-2"></i>Batal
-                </button>
-                <button type="submit" class="btn-modal-submit danger" id="btnDoSubmit" disabled>
-                    <i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 
 </div><!-- END MODAL PORTAL SOURCE -->
 
@@ -1496,43 +1496,43 @@
     let doSiswaData = null;
 
     // ============================================================
-// Fungsi DO Student - Ganti yang lama
-// ============================================================
-function DOStudent(id, name) {
-    // Ambil data lengkap siswa dari DataTable
-    const rowData = $('#siswaTable').DataTable().rows().data().toArray().find(r => r.id == id);
-    
-    if (!rowData) {
-        showToast('❌ Data siswa tidak ditemukan', 'error');
-        return;
+    // Fungsi DO Student - Ganti yang lama
+    // ============================================================
+    function DOStudent(id, name) {
+        // Ambil data lengkap siswa dari DataTable
+        const rowData = $('#siswaTable').DataTable().rows().data().toArray().find(r => r.id == id);
+
+        if (!rowData) {
+            showToast('❌ Data siswa tidak ditemukan', 'error');
+            return;
+        }
+
+        doSiswaData = rowData;
+
+        // Isi form dengan data siswa
+        $('#doSiswaId').val(id);
+        $('#doSiswaName').val(rowData.name || '-');
+        $('#doSiswaKelas').val(rowData.kelas_name || '-');
+        $('#doSiswaNis').val(rowData.nis || '-');
+        $('#doSiswaPoint').val((rowData.point || 0) + ' pt');
+        $('#doOrtuName').val(rowData.name_orang_tua || '-');
+        $('#doOrtuTelp').val(rowData.telphone_orang_tua || '-');
+
+        // Set default tanggal hari ini
+        const today = new Date().toISOString().split('T')[0];
+        $('#doTanggal').val(today);
+        $('#doDetail').val('');
+        $('#doConfirm').prop('checked', false);
+        $('#btnDoSubmit').prop('disabled', true);
+
+        openModal('doModal');
     }
-    
-    doSiswaData = rowData;
-    
-    // Isi form dengan data siswa
-    $('#doSiswaId').val(id);
-    $('#doSiswaName').val(rowData.name || '-');
-    $('#doSiswaKelas').val(rowData.kelas_name || '-');
-    $('#doSiswaNis').val(rowData.nis || '-');
-    $('#doSiswaPoint').val((rowData.point || 0) + ' pt');
-    $('#doOrtuName').val(rowData.name_orang_tua || '-');
-    $('#doOrtuTelp').val(rowData.telphone_orang_tua || '-');
-    
-    // Set default tanggal hari ini
-    const today = new Date().toISOString().split('T')[0];
-    $('#doTanggal').val(today);
-    $('#doDetail').val('');
-    $('#doConfirm').prop('checked', false);
-    $('#btnDoSubmit').prop('disabled', true);
-    
-    openModal('doModal');
-}
-// ============================================================
-// Enable/Disable button berdasarkan checkbox
-// ============================================================
-$(document).on('change', '#doConfirm', function() {
-    $('#btnDoSubmit').prop('disabled', !this.checked);
-});
+    // ============================================================
+    // Enable/Disable button berdasarkan checkbox
+    // ============================================================
+    $(document).on('change', '#doConfirm', function() {
+        $('#btnDoSubmit').prop('disabled', !this.checked);
+    });
 
     // ============================================================
     // loadAvailableUsers
@@ -1678,7 +1678,7 @@ $(document).on('change', '#doConfirm', function() {
                         return `<span class="badge badge-sp">SP${sp}</span>`;
                     }
                 },
-                // ── Status ── berdasarkan nilai sp (0 = Aman, >=1 = Warned)
+                // ── Status ── berdasarkan nilai sp (0 = Aman, 1-2 = Warned, 3+ = DO/Drop Out)
                 {
                     data: 'sp',
                     className: 'text-center',
@@ -1686,6 +1686,9 @@ $(document).on('change', '#doConfirm', function() {
                         const sp = parseInt(data) || 0;
                         if (sp === 0) {
                             return '<span class="badge badge-aman">✓ Aman</span>';
+                        } else if (sp >= 3) {
+                            // SP3 atau lebih = Drop Out
+                            return '<span class="badge" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(0, 0, 0, 0.3)); border: 1px solid rgba(220, 38, 38, 0.6); color: #fca5a5; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">🚫 DROP OUT</span>';
                         } else {
                             return '<span class="badge badge-warned">⚠️ Warned</span>';
                         }
@@ -1711,6 +1714,17 @@ $(document).on('change', '#doConfirm', function() {
                         const pt = parseInt(row.point) || 0;
                         const sp = parseInt(row.sp) || 0;
 
+                        // Jika sudah DO (SP >= 3), tidak ada tombol aksi SP/DO lagi
+                        if (sp >= 3) {
+                            return `
+                            <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+                                <span class="badge" style="background: rgba(220,38,38,0.2); color: #fca5a5; font-size: 11px;">Siswa DO</span>
+                                <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>`;
+                        }
+
                         let actionBtn = '';
 
                         // Semua tombol hanya muncul jika point >= 100
@@ -1718,52 +1732,52 @@ $(document).on('change', '#doConfirm', function() {
                             if (sp === 0) {
                                 // SP = 0: Tombol Download Surat Pernyataan
                                 actionBtn = `<a href="export_sp.php?id=${row.id}" target="_blank"
-                    class="btn btn-primary btn-sm me-1 text-decoration-none" title="Download Surat Pernyataan SP">
-                    <i class="fas fa-file-download me-1"></i>SP
-                </a>`;
+                                    class="btn btn-primary btn-sm me-1 text-decoration-none" title="Download Surat Pernyataan SP">
+                                    <i class="fas fa-file-download me-1"></i>SP
+                                </a>`;
 
                             } else if (sp === 1) {
-                // SP = 1: Tombol Surat Panggil Siswa
-                actionBtn = `<button class="btn btn-warning btn-sm me-1" onclick="callStudent(${row.id}, '${escapeHtml(row.name)}')" 
-                    title="Surat Panggil Siswa">
-                    <i class="fas fa-envelope me-1"></i>Panggil
-                </button>`;
+                                // SP = 1: Tombol Surat Panggil Siswa
+                                actionBtn = `<button class="btn btn-warning btn-sm me-1" onclick="callStudent(${row.id}, '${escapeHtml(row.name)}')" 
+                                    title="Surat Panggil Siswa">
+                                    <i class="fas fa-envelope me-1"></i>Panggil
+                                </button>`;
 
                             } else if (sp === 2) {
                                 // SP = 2: Tombol DO/Drop Out
                                 actionBtn = `<button class="btn btn-dark btn-sm me-1" onclick="DOStudent(${row.id}, '${escapeHtml(row.name)}')" 
-                    title="Surat Keluar dari Sekolah (DO)">
-                    <i class="fas fa-user-slash me-1"></i>DO
-                </button>`;
+                                    title="Surat Keluar dari Sekolah (DO)">
+                                    <i class="fas fa-user-slash me-1"></i>DO
+                                </button>`;
                             }
                         }
 
                         const assignBtn = !row.id_user ?
                             `<button class="btn btn-success btn-sm me-1" onclick="assignUser(${row.id}, '${escapeHtml(row.name)}')" title="Assign Akun Siswa">
-               <i class="fas fa-user-plus"></i>
-           </button>` : '';
+                            <i class="fas fa-user-plus"></i>
+                        </button>` : '';
 
                         // Edit & Delete hanya untuk admin
                         const editBtn = userRole === 'admin' ?
                             `<button class="btn btn-warning btn-sm me-1" onclick="editData(${row.id})" title="Edit">
-                <i class="fas fa-edit"></i>
-            </button>` : '';
+                                <i class="fas fa-edit"></i>
+                            </button>` : '';
 
                         const deleteBtn = userRole === 'admin' ?
                             `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus">
-                <i class="fas fa-trash"></i>
-            </button>` : '';
+                                <i class="fas fa-trash"></i>
+                            </button>` : '';
 
                         return `
-        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
-            ${actionBtn}
-            ${assignBtn}
-            <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
-                <i class="fas fa-eye"></i>
-            </button>
-            ${editBtn}
-            ${deleteBtn}
-        </div>`;
+                        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+                            ${actionBtn}
+                            ${assignBtn}
+                            <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${editBtn}
+                            ${deleteBtn}
+                        </div>`;
                     }
                 }
             ],
@@ -1935,76 +1949,96 @@ $(document).on('change', '#doConfirm', function() {
         });
 
         // 9. PANGGIL FORM SUBMIT
-    $('#panggilForm').submit(function(e) {
-        e.preventDefault();
-        
-        const id = $('#panggilSiswaId').val();
-        const tanggal = $('#panggilTanggal').val();
-        const jam = $('#panggilJam').val();
-        const keperluan = $('#panggilKeperluan').val();
-        const tempat = $('#panggilTempat').val();
-        
-        // Build URL ke export_panggil.php dengan parameter
-        const params = new URLSearchParams({
-            id: id,
-            tanggal: tanggal,
-            jam: jam,
-            keperluan: keperluan,
-            tempat: tempat
-        });
-        
-        // Open in new tab untuk download
-        window.open(`export_panggil.php?${params.toString()}`, '_blank');
-        
-        closeModal('panggilModal');
-        showToast('✅ Surat panggilan berhasil dibuat!', 'success');
-    });
+        $('#panggilForm').submit(function(e) {
+            e.preventDefault();
 
-    $('#doForm').submit(function(e) {
-        e.preventDefault();
-        
-        if (!$('#doConfirm').is(':checked')) {
-            showToast('❌ Anda harus menyetujui konfirmasi terlebih dahulu', 'error');
-            return;
-        }
-        
-        const id = $('#doSiswaId').val();
-        const tanggal = $('#doTanggal').val();
-        const detail = $('#doDetail').val();
-        
-        const $btn = $('#btnDoSubmit');
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
-        
-        // Build URL ke export_do.php dengan parameter
-        const params = new URLSearchParams({
-            id: id,
-            tanggal: tanggal,
-            detail: detail
+            const id = $('#panggilSiswaId').val();
+            const tanggal = $('#panggilTanggal').val();
+            const jam = $('#panggilJam').val();
+            const keperluan = $('#panggilKeperluan').val();
+            const tempat = $('#panggilTempat').val();
+
+            const $btn = $(this).find('[type=submit]');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+
+            // Step 1: Update SP dan Point via AJAX terlebih dahulu
+            $.post('action_siswa.php', {
+                action: 'issue_sp',
+                id: id
+            }).done(function(response) {
+                if (response.success) {
+                    // Step 2: Jika update SP berhasil, buka surat panggilan
+                    const params = new URLSearchParams({
+                        id: id,
+                        tanggal: tanggal,
+                        jam: jam,
+                        keperluan: keperluan,
+                        tempat: tempat
+                    });
+
+                    // Open in new tab untuk download surat
+                    window.open(`export_panggil.php?${params.toString()}`, '_blank');
+
+                    // Reload DataTable untuk menampilkan perubahan SP dan Point
+                    siswaTable.ajax.reload();
+
+                    closeModal('panggilModal');
+                    showToast(`✅ ${response.message || 'Surat panggilan berhasil dibuat dan SP diterbitkan!'}`, 'success');
+                } else {
+                    showToast(`❌ ${response.message || 'Gagal menerbitkan SP'}`, 'error');
+                }
+            }).fail(function() {
+                showToast('❌ Koneksi gagal saat update SP', 'error');
+            }).always(function() {
+                $btn.prop('disabled', false).html('<i class="fas fa-envelope me-2"></i>Buat Surat Panggilan');
+            });
         });
-        
-        // Open in new tab untuk download surat DO
-        window.open(`export_do.php?${params.toString()}`, '_blank');
-        
-        // Update status siswa di database (optional - bisa juga di handle di export_do.php)
-        $.post('action_siswa.php', {
-            action: 'do_student',
-            id: id,
-            tanggal_do: tanggal,
-            detail: detail
-        }).done(function(response) {
-            if (response.success) {
-                closeModal('doModal');
-                siswaTable.ajax.reload();
-                showToast('✅ Surat DO berhasil diterbitkan!', 'success');
-            } else {
-                showToast(`❌ ${response.message || 'Gagal memproses DO'}`, 'error');
+
+        // 10. DO FORM SUBMIT - FIXED
+        $('#doForm').submit(function(e) {
+            e.preventDefault();
+
+            if (!$('#doConfirm').is(':checked')) {
+                showToast('❌ Anda harus menyetujui konfirmasi terlebih dahulu', 'error');
+                return;
             }
-        }).fail(function() {
-            showToast('❌ Koneksi gagal', 'error');
-        }).always(function() {
-            $btn.prop('disabled', false).html('<i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO');
+
+            const id = $('#doSiswaId').val();
+            const tanggal = $('#doTanggal').val();
+            const detail = $('#doDetail').val();
+
+            const $btn = $('#btnDoSubmit');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+
+            // Langsung kirim ke do_student (sudah include issue_sp logic)
+            $.post('action_siswa.php', {
+                action: 'do_student',
+                id: id,
+                tanggal_do: tanggal,
+                detail: detail
+            }).done(function(response) {
+                if (response.success) {
+                    // Open surat DO di tab baru
+                    const params = new URLSearchParams({
+                        id: id,
+                        tanggal: tanggal,
+                        detail: detail
+                    });
+                    window.open(`export_do.php?${params.toString()}`, '_blank');
+
+                    closeModal('doModal');
+                    siswaTable.ajax.reload();
+                    loadAvailableUsers(); // Refresh daftar user yang tersedia
+                    showToast(`✅ ${response.message}`, 'success');
+                } else {
+                    showToast(`❌ ${response.message}`, 'error');
+                }
+            }).fail(function() {
+                showToast('❌ Koneksi gagal saat proses DO', 'error');
+            }).always(function() {
+                $btn.prop('disabled', false).html('<i class="fas fa-user-slash me-2"></i>Terbitkan Surat DO');
+            });
         });
-    });
 
     }); // END document.ready
 
