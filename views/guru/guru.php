@@ -973,261 +973,297 @@ $total_point_bulan = array_sum(array_column($pelanggarans, 'total_point'));
         </div>
     </div>
 
-    <script>
-        // State management
-        let currentFilter = 'month';
-        const guruId = document.getElementById('id_guru').value;
+<script>
+    // State management
+    let currentFilter = 'month';
+    const guruId = document.getElementById('id_guru').value;
 
-        // Filter functionality
-        function setFilter(type, btn) {
-            currentFilter = type;
+    // Filter functionality
+    function setFilter(type, btn) {
+        currentFilter = type;
 
-            // Update UI
-            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            btn.classList.add('active');
+        // Update UI
+        document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+        btn.classList.add('active');
 
-            // Load data
-            loadData();
-        }
+        // Load data dengan delay kecil untuk memastikan DOM ready
+        setTimeout(() => loadData(), 100);
+    }
 
-        async function loadData() {
-            const container = document.getElementById('dataContainer');
+    async function loadData() {
+        const container = document.getElementById('dataContainer');
 
-            // Show loading skeleton
-            container.innerHTML = `
-        <div class="violation-grid">
-            ${Array(6).fill(0).map(() => `
-                <div class="violation-card" style="height: 220px;">
-                    <div class="skeleton" style="width: 100px; height: 24px; position: absolute; top: 16px; left: 16px;"></div>
-                    <div class="skeleton" style="width: 60px; height: 24px; position: absolute; top: 16px; right: 16px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 60px; margin-top: 55px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 40px; margin-top: 10px;"></div>
-                </div>
-            `).join('')}
-        </div>
-    `;
-
-            try {
-                // GANTI: menggunakan action_dashboard_guru.php
-                const response = await fetch(`action_dashboard_guru.php?action=get_data&filter=${currentFilter}`);
-                const data = await response.json();
-
-                // Update stats
-                document.getElementById('statTotal').textContent = data.total;
-                document.getElementById('statPoints').textContent = data.total_points;
-
-                // Render cards
-                container.innerHTML = renderCards(data.items);
-
-            } catch (error) {
-                showToast('Gagal memuat data', 'error');
-                container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Terjadi Kesalahan</h3>
-                <p>Gagal memuat data pelanggaran</p>
-            </div>
-        `;
-            }
-        }
-
-        function renderCards(items) {
-            if (items.length === 0) {
-                return `
-            <div class="empty-state">
-                <i class="fas fa-clipboard-check"></i>
-                <h3>Tidak Ada Data</h3>
-                <p>Belum ada pelanggaran tercatat untuk periode ini</p>
-            </div>
-        `;
-            }
-
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-
-            return `
-        <div class="violation-grid">
-            ${items.map(item => {
-                const date = new Date(item.date);
-                const dateStr = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-                const initial = (item.siswa_name || 'S').charAt(0).toUpperCase();
-                
-                return `
-                    <div class="violation-card">
-                        <div class="violation-date">
-                            <i class="fas fa-calendar-day"></i>
-                            ${dateStr}
-                        </div>
-                        <div class="violation-point">
-                            ${item.total_point} PT
-                        </div>
-                        
-                        <div class="violation-content">
-                            <div class="student-row">
-                                <div class="student-avatar">${initial}</div>
-                                <div class="student-info">
-                                    <h4>${escapeHtml(item.siswa_name || '-')}</h4>
-                                    <span>NIS: ${item.siswa_nis || '-'}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="violation-type">
-                                <i class="fas fa-exclamation-circle"></i>
-                                ${escapeHtml(item.jenis_name || '-')}
-                            </div>
-                            
-                            <div class="violation-reason">
-                                <i class="fas fa-quote-left"></i>
-                                ${escapeHtml(item.alasan_detail || '-')}
-                            </div>
-                            
-                            <div class="violation-footer">
-                                <div class="teacher-badge">
-                                    <i class="fas fa-chalkboard-teacher"></i>
-                                    <span>Oleh: ${escapeHtml(item.guru_name || '-')}</span>
-                                </div>
-                            </div>
-                        </div>
+        // Show loading skeleton
+        container.innerHTML = `
+            <div class="violation-grid">
+                ${Array(6).fill(0).map(() => `
+                    <div class="violation-card" style="height: 220px;">
+                        <div class="skeleton" style="width: 100px; height: 24px; position: absolute; top: 16px; left: 16px;"></div>
+                        <div class="skeleton" style="width: 60px; height: 24px; position: absolute; top: 16px; right: 16px;"></div>
+                        <div class="skeleton" style="width: 100%; height: 60px; margin-top: 55px;"></div>
+                        <div class="skeleton" style="width: 100%; height: 40px; margin-top: 10px;"></div>
                     </div>
-                `;
-            }).join('')}
-        </div>
-    `;
-        }
+                `).join('')}
+            </div>
+        `;
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        try {
+            // TAMBAH: Timestamp untuk bust cache
+            const timestamp = new Date().getTime();
+            const response = await fetch(`action_dashboard_guru.php?action=get_data&filter=${currentFilter}&_=${timestamp}`, {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
 
-        // Form handling - Jenis Pelanggaran change
-        document.getElementById('id_jenis_pelanggaran').addEventListener('change', async function() {
-            const jenisId = this.value;
-            const alasanSelect = document.getElementById('id_alasan_pelanggaran');
-            const pointDisplay = document.getElementById('displayPoint');
-
-            if (!jenisId) {
-                alasanSelect.innerHTML = '<option value="">Pilih Jenis</option>';
-                alasanSelect.disabled = true;
-                pointDisplay.textContent = '0';
-                validateForm();
-                return;
+            if (!data.success) {
+                throw new Error(data.message || 'Gagal memuat data');
             }
 
-            // Get point from selected option
-            const selectedOption = this.options[this.selectedIndex];
-            const point = selectedOption.dataset.point || 0;
-            pointDisplay.textContent = point;
+            // Update stats
+            document.getElementById('statTotal').textContent = data.total;
+            const statPoints = document.getElementById('statPoints');
+            if (statPoints) statPoints.textContent = data.total_points;
 
-            // Load alasan
-            try {
-                // GANTI: menggunakan action_dashboard_guru.php
-                const response = await fetch(`action_dashboard_guru.php?action=alasan&id_jenis=${jenisId}`);
-                const data = await response.json();
+            // Render cards
+            container.innerHTML = renderCards(data.items);
 
-                alasanSelect.innerHTML = '<option value="">Pilih Alasan</option>';
+        } catch (error) {
+            console.error('LoadData Error:', error);
+            showToast('Gagal memuat data: ' + error.message, 'error');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Terjadi Kesalahan</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderCards(items) {
+        if (!items || items.length === 0) {
+            return `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>Tidak Ada Data</h3>
+                    <p>Belum ada pelanggaran tercatat untuk periode ini</p>
+                </div>
+            `;
+        }
+
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        return `
+            <div class="violation-grid">
+                ${items.map(item => {
+                    const date = new Date(item.date);
+                    const dateStr = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                    const initial = (item.siswa_name || 'S').charAt(0).toUpperCase();
+                    
+                    return `
+                        <div class="violation-card">
+                            <div class="violation-date">
+                                <i class="fas fa-calendar-day"></i>
+                                ${dateStr}
+                            </div>
+                            <div class="violation-point">
+                                ${item.total_point} PT
+                            </div>
+                            
+                            <div class="violation-content">
+                                <div class="student-row">
+                                    <div class="student-avatar">${initial}</div>
+                                    <div class="student-info">
+                                        <h4>${escapeHtml(item.siswa_name || '-')}</h4>
+                                        <span>NIS: ${item.siswa_nis || '-'}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="violation-type">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    ${escapeHtml(item.jenis_name || '-')}
+                                </div>
+                                
+                                <div class="violation-reason">
+                                    <i class="fas fa-quote-left"></i>
+                                    ${escapeHtml(item.alasan_detail || '-')}
+                                </div>
+                                
+                                <div class="violation-footer">
+                                    <div class="teacher-badge">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Oleh: ${escapeHtml(item.guru_name || '-')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '-';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Form handling - Jenis Pelanggaran change
+    document.getElementById('id_jenis_pelanggaran').addEventListener('change', async function() {
+        const jenisId = this.value;
+        const alasanSelect = document.getElementById('id_alasan_pelanggaran');
+        const pointDisplay = document.getElementById('displayPoint');
+
+        if (!jenisId) {
+            alasanSelect.innerHTML = '<option value="">Pilih Jenis</option>';
+            alasanSelect.disabled = true;
+            pointDisplay.textContent = '0';
+            validateForm();
+            return;
+        }
+
+        // Get point from selected option
+        const selectedOption = this.options[this.selectedIndex];
+        const point = selectedOption.dataset.point || 0;
+        pointDisplay.textContent = point;
+
+        // Load alasan
+        try {
+            const timestamp = new Date().getTime();
+            const response = await fetch(`action_dashboard_guru.php?action=alasan&id_jenis=${jenisId}&_=${timestamp}`);
+            const data = await response.json();
+
+            alasanSelect.innerHTML = '<option value="">Pilih Alasan</option>';
+            if (Array.isArray(data)) {
                 data.forEach(alasan => {
                     alasanSelect.innerHTML += `<option value="${alasan.id}">${escapeHtml(alasan.detail)}</option>`;
                 });
-                alasanSelect.disabled = false;
-            } catch (error) {
-                showToast('Gagal memuat alasan', 'error');
             }
-
-            validateForm();
-        });
-
-        // Form validation
-        function validateForm() {
-            const siswa = document.getElementById('id_siswa').value;
-            const jenis = document.getElementById('id_jenis_pelanggaran').value;
-            const alasan = document.getElementById('id_alasan_pelanggaran').value;
-
-            const isValid = siswa && jenis && alasan;
-            document.getElementById('btnSubmit').disabled = !isValid;
+            alasanSelect.disabled = false;
+        } catch (error) {
+            showToast('Gagal memuat alasan', 'error');
         }
 
-        document.getElementById('id_siswa').addEventListener('change', validateForm);
-        document.getElementById('id_alasan_pelanggaran').addEventListener('change', validateForm);
+        validateForm();
+    });
 
-        // Form submission
-        document.getElementById('pelanggaranForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+    // Form validation
+    function validateForm() {
+        const siswa = document.getElementById('id_siswa').value;
+        const jenis = document.getElementById('id_jenis_pelanggaran').value;
+        const alasan = document.getElementById('id_alasan_pelanggaran').value;
 
-            const btn = document.getElementById('btnSubmit');
-            const originalContent = btn.innerHTML;
+        const isValid = siswa && jenis && alasan;
+        document.getElementById('btnSubmit').disabled = !isValid;
+    }
 
-            btn.disabled = true;
-            btn.classList.add('loading');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Menyimpan...</span>';
+    document.getElementById('id_siswa').addEventListener('change', validateForm);
+    document.getElementById('id_alasan_pelanggaran').addEventListener('change', validateForm);
 
-            const formData = {
-                action: 'add',
-                id_siswa: document.getElementById('id_siswa').value,
-                id_guru: guruId,
-                id_jenis_pelanggaran: document.getElementById('id_jenis_pelanggaran').value,
-                id_alasan_pelanggaran: document.getElementById('id_alasan_pelanggaran').value,
-                total_point: document.getElementById('displayPoint').textContent
-            };
+    // Form submission - FIXED VERSION
+    document.getElementById('pelanggaranForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-            try {
-                // GANTI: menggunakan action_dashboard_guru.php
-                const response = await fetch('action_dashboard_guru.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams(formData)
-                });
+        const btn = document.getElementById('btnSubmit');
+        const originalContent = btn.innerHTML;
 
-                const result = await response.json();
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Menyimpan...</span>';
 
-                if (result.success) {
-                    showToast('Pelanggaran berhasil dicatat!', 'success');
-                    this.reset();
-                    document.getElementById('id_alasan_pelanggaran').innerHTML = '<option value="">Pilih Jenis</option>';
-                    document.getElementById('id_alasan_pelanggaran').disabled = true;
-                    document.getElementById('displayPoint').textContent = '0';
-                    loadData(); // Refresh data
-                } else {
-                    showToast(result.message || 'Gagal menyimpan', 'error');
-                }
+        const formData = {
+            action: 'add',
+            id_siswa: document.getElementById('id_siswa').value,
+            id_guru: guruId,
+            id_jenis_pelanggaran: document.getElementById('id_jenis_pelanggaran').value,
+            id_alasan_pelanggaran: document.getElementById('id_alasan_pelanggaran').value,
+            total_point: document.getElementById('displayPoint').textContent
+        };
 
-            } catch (error) {
-                showToast('Terjadi kesalahan server', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-                btn.innerHTML = originalContent;
+        try {
+            const response = await fetch('action_dashboard_guru.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cache-Control': 'no-cache'
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Pelanggaran berhasil dicatat!', 'success');
+                
+                // Reset form
+                this.reset();
+                document.getElementById('id_alasan_pelanggaran').innerHTML = '<option value="">Pilih Jenis</option>';
+                document.getElementById('id_alasan_pelanggaran').disabled = true;
+                document.getElementById('displayPoint').textContent = '0';
+                
+                // FIX UTAMA: Tunggu sebentar lalu reload data 2x untuk memastikan
+                setTimeout(() => {
+                    loadData();
+                    // Double refresh untuk memastikan data muncul
+                    setTimeout(() => loadData(), 500);
+                }, 300);
+                
+            } else {
+                showToast(result.message || 'Gagal menyimpan', 'error');
             }
-        });
 
-        // Toast notification
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            const title = type === 'success' ? 'Berhasil' : 'Error';
-
-            toast.innerHTML = `
-        <div class="toast-icon">
-            <i class="fas ${icon}"></i>
-        </div>
-        <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-message">${message}</div>
-        </div>
-    `;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.4s ease reverse';
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
+        } catch (error) {
+            console.error('Submit Error:', error);
+            showToast('Terjadi kesalahan server', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.innerHTML = originalContent;
         }
-    </script>
+    });
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        const title = type === 'success' ? 'Berhasil' : 'Error';
+
+        toast.innerHTML = `
+            <div class="toast-icon">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+        `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideIn 0.4s ease reverse';
+            setTimeout(() => toast.remove(), 400);
+        }, 4000);
+    }
+
+    // Load initial data saat page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadData();
+    });
+</script>
 
     <?php $this->stop() ?>

@@ -406,8 +406,9 @@
 
 <!-- 
   MODALS - DITEMPATKAN DI SINI SEMENTARA, AKAN DIPINDAHKAN KE BODY VIA JAVASCRIPT
-  Ini adalah trik PORTAL untuk menghindari stacking context issues
 -->
+
+
 <div id="modal-portal-source" style="display: none;">
 
     <!-- ADD MODAL -->
@@ -530,6 +531,41 @@
             </div>
         </div>
     </div>
+
+    <!-- DELETE MODAL -->
+<div class="liquid-modal-overlay" id="deleteModal" data-modal="true">
+    <div class="liquid-modal" style="max-width: 400px;">
+        <div class="liquid-modal-header danger">
+            <h5 class="liquid-modal-title">
+                <i class="fas fa-exclamation-triangle"></i>Hapus Kelas
+            </h5>
+            <button type="button" class="liquid-modal-close" onclick="closeModal('deleteModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="liquid-modal-body">
+            <input type="hidden" id="deleteId">
+            <div class="modal-warning-box">
+                <i class="fas fa-exclamation-triangle modal-warning-icon"></i>
+                <h4 class="modal-warning-title">Apakah Anda Yakin?</h4>
+                <p class="modal-warning-text">
+                    Kelas <strong id="deleteName"></strong> akan dihapus permanen.
+                    <br><small style="color: rgba(255,255,255,0.5); display: block; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> Data tidak dapat dikembalikan
+                    </small>
+                </p>
+            </div>
+        </div>
+        <div class="liquid-modal-footer" style="justify-content: center;">
+            <button type="button" class="btn-modal-cancel" onclick="closeModal('deleteModal')">
+                <i class="fas fa-times me-2"></i>Batal
+            </button>
+            <button type="button" class="btn-modal-submit danger" id="confirmDelete">
+                <i class="fas fa-trash me-2"></i>Hapus
+            </button>
+        </div>
+    </div>
+</div>
 
 </div><!-- END MODAL PORTAL SOURCE -->
 
@@ -737,11 +773,9 @@ $(document).ready(function() {
                     var id = row.id;
                     var name = $('<div>').text(row.tingkat + ' ' + row.jurusan + ' ' + row.kelas).html();
                     return '<div class="d-flex justify-content-center gap-2 flex-wrap">' +
-                        '<button class="btn btn-action-edit btn-sm btn-edit-tbl"' +
-                            ' data-id="' + id + '" title="Edit">' +
+                        '<button class="btn btn-action-edit btn-sm" onclick="editKelas(' + id + ')" title="Edit">' +
                             '<i class="fas fa-edit"></i></button>' +
-                        '<button class="btn btn-action-delete btn-sm btn-delete-tbl"' +
-                            ' data-id="' + id + '" data-name="' + name + '" title="Hapus">' +
+                        '<button class="btn btn-action-delete btn-sm" onclick="confirmDeleteKelas(' + id + ', \'' + name + '\')" title="Hapus">' +
                             '<i class="fas fa-trash"></i></button>' +
                     '</div>';
                 }
@@ -763,34 +797,10 @@ $(document).ready(function() {
         order: [[1, 'asc'], [2, 'asc']]
     });
 
-    // ── Event Handlers ────────────────────────────────
-    $(document).on('click', '.btn-edit-tbl', function() {
-        var id = $(this).data('id');
-        $.get('action_kelas.php?action=get&id=' + id)
-            .done(function(data) {
-                if (!data || !data.id) {
-                    showToast('Data tidak ditemukan', 'error');
-                    return;
-                }
-                $('#editId').val(data.id);
-                $('#editTingkat').val(data.tingkat || '');
-                $('#editJurusan').val(data.jurusan || '');
-                $('#editKelas').val(data.kelas || '');
-                openModal('editModal');
-            })
-            .fail(function() { showToast('Gagal memuat data', 'error'); });
-    });
-
-    $(document).on('click', '.btn-delete-tbl', function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        $('#deleteId').val(id);
-        $('#deleteName').text(name);
-        openModal('deleteModal');
-    });
-
     // ── Form Submissions ─────────────────────────────
-    $(document).on('submit', '#addForm', function(e) {
+    
+    // ADD FORM
+    $('#addForm').on('submit', function(e) {
         e.preventDefault();
         var $btn = $(this).find('[type=submit]');
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
@@ -816,7 +826,8 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('submit', '#editForm', function(e) {
+    // EDIT FORM
+    $('#editForm').on('submit', function(e) {
         e.preventDefault();
         var $btn = $(this).find('[type=submit]');
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
@@ -842,28 +853,68 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', '#confirmDelete', function() {
+    // DELETE CONFIRM BUTTON
+    $('#confirmDelete').on('click', function() {
         var id   = $('#deleteId').val();
+        if (!id) {
+            showToast('ID tidak valid', 'error');
+            return;
+        }
+        
         var $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
 
-        $.post('action_kelas.php', { action: 'delete', id: id })
-            .done(function(res) {
-                if (res.success) {
-                    closeModal('deleteModal');
-                    table.ajax.reload(null, false);
-                    showToast('Kelas berhasil dihapus!', 'success');
-                } else {
-                    showToast(res.message || 'Gagal hapus kelas', 'error');
-                }
-            }).fail(function() {
-                showToast('Koneksi gagal', 'error');
-            }).always(function() {
-                $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus');
-            });
+        $.post('action_kelas.php', { 
+            action: 'delete', 
+            id: id 
+        }).done(function(res) {
+            if (res.success) {
+                closeModal('deleteModal');
+                table.ajax.reload(null, false);
+                showToast(res.message || 'Kelas berhasil dihapus!', 'success');
+            } else {
+                showToast(res.message || 'Gagal hapus kelas', 'error');
+            }
+        }).fail(function(xhr) {
+            showToast('Koneksi gagal: ' + xhr.statusText, 'error');
+        }).always(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus');
+        });
     });
 
 }); // END ready
+
+// ════════════════════════════════════════════════════════
+// GLOBAL FUNCTIONS (Outside document.ready)
+// ════════════════════════════════════════════════════════
+
+function tingkatBadge(tingkat) {
+    var cls = { 'X': 'tingkat-x', 'XI': 'tingkat-xi', 'XII': 'tingkat-xii' }[tingkat] || 'tingkat-x';
+    var label = { 'X': 'X', 'XI': 'XI', 'XII': 'XII' }[tingkat] || tingkat;
+    return '<span class="tingkat-badge ' + cls + '">' + label + '</span>';
+}
+
+function editKelas(id) {
+    $.get('action_kelas.php?action=get&id=' + id)
+        .done(function(data) {
+            if (!data || !data.id) {
+                showToast('Data tidak ditemukan', 'error');
+                return;
+            }
+            $('#editId').val(data.id);
+            $('#editTingkat').val(data.tingkat || '');
+            $('#editJurusan').val(data.jurusan || '');
+            $('#editKelas').val(data.kelas || '');
+            openModal('editModal');
+        })
+        .fail(function() { showToast('Gagal memuat data', 'error'); });
+}
+
+function confirmDeleteKelas(id, name) {
+    $('#deleteId').val(id);
+    $('#deleteName').text(name);
+    openModal('deleteModal');
+}// END ready
 </script>
 
 <?php $this->stop() ?>

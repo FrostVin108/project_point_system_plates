@@ -50,6 +50,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    color: #ffffff !important;
 }
 
 .page-title-alasan i {
@@ -144,13 +145,11 @@
    MODAL STYLES - PORTAL VERSION
    ============================================ */
 
-/* Modal Portal Container (di body) */
 .modal-portal-container {
     position: relative;
     z-index: 1;
 }
 
-/* Modal Overlay - TRUE FULLSCREEN DI BODY */
 .liquid-modal-overlay {
     display: none;
     position: fixed;
@@ -524,10 +523,7 @@
     </div>
 </div>
 
-<!-- 
-  MODALS - DITEMPATKAN DI SINI SEMENTARA, AKAN DIPINDAHKAN KE BODY VIA JAVASCRIPT
-  Ini adalah trik PORTAL untuk menghindari stacking context issues
--->
+<!-- MODALS -->
 <div id="modal-portal-source" style="display: none;">
 
     <!-- ADD MODAL -->
@@ -543,7 +539,6 @@
             </div>
             <form id="multiForm">
                 <div class="liquid-modal-body">
-                    <!-- Jenis Pelanggaran -->
                     <div class="form-group-alasan">
                         <label>Jenis Pelanggaran <span class="required">*</span></label>
                         <select class="form-select-alasan" id="id_jenis_pelanggaran" required>
@@ -562,7 +557,6 @@
                         </select>
                     </div>
 
-                    <!-- Detail Alasan -->
                     <div class="form-group-alasan">
                         <label>Detail Alasan <span class="required">*</span></label>
                         <div class="detail-container" id="detailContainer">
@@ -610,7 +604,6 @@
                 <div class="liquid-modal-body">
                     <input type="hidden" id="editId">
                     
-                    <!-- Jenis Pelanggaran -->
                     <div class="form-group-alasan">
                         <label>Jenis Pelanggaran <span class="required">*</span></label>
                         <select class="form-select-alasan" id="edit_jenis_pelanggaran" required>
@@ -629,7 +622,6 @@
                         </select>
                     </div>
 
-                    <!-- Detail Alasan -->
                     <div class="form-group-alasan">
                         <label>Detail Alasan <span class="required">*</span></label>
                         <textarea class="form-textarea-alasan" id="edit_detail" rows="5" 
@@ -684,7 +676,7 @@
         </div>
     </div>
 
-</div><!-- END MODAL PORTAL SOURCE -->
+</div>
 
 <!-- Bootstrap + DataTables CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -698,84 +690,42 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// MODAL PORTAL SYSTEM - MEMINDAHKAN MODAL KE BODY UNTUK AVOID STACKING CONTEXT
+// GLOBAL VARIABLES - PERBAIKAN UTAMA
+// ═══════════════════════════════════════════════════════════════════════════
+window.modalsPorted = false;
+window.deleteId = null;
+window.table = null;
+window.rowCount = 1;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODAL PORTAL SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Global variable untuk track modal yang sudah dipindahkan
-window.modalsPorted = window.modalsPorted || false;
-
 function initModalPortal() {
-    // Hindari double initialization
     if (window.modalsPorted) return;
     window.modalsPorted = true;
 
-    // Cari container sumber
     var sourceContainer = document.getElementById('modal-portal-source');
     if (!sourceContainer) {
         console.error('Modal portal source not found');
         return;
     }
 
-    // Buat container di body untuk modal
     var portalContainer = document.createElement('div');
     portalContainer.id = 'modal-portal-destination';
     portalContainer.className = 'modal-portal-container';
-    // Pastikan container ini tidak membuat stacking context baru
     portalContainer.style.cssText = 'position: static; z-index: auto; transform: none; filter: none;';
 
-    // Pindahkan semua modal ke body
     var modals = sourceContainer.querySelectorAll('[data-modal="true"]');
     modals.forEach(function(modal) {
-        // Clone modal untuk memastikan event listeners tetap berfungsi
         var clonedModal = modal.cloneNode(true);
         portalContainer.appendChild(clonedModal);
     });
 
-    // Append ke body (di luar semua container)
     document.body.appendChild(portalContainer);
-
-    // Hapus source container
     sourceContainer.remove();
 
     console.log('Modal portal initialized: ' + modals.length + ' modals moved to body');
-
-    // Re-attach event listeners untuk modal yang sudah dipindahkan
-    reattachModalEventListeners();
-}
-
-function reattachModalEventListeners() {
-    // Close button click
-    document.querySelectorAll('.liquid-modal-close, .btn-modal-cancel').forEach(function(btn) {
-        // Remove old listeners (if any) by cloning
-        var newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-
-        // Add new listener
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var modalOverlay = this.closest('.liquid-modal-overlay');
-            if (modalOverlay) {
-                closeModal(modalOverlay.id);
-            }
-        });
-    });
-
-    // Prevent modal content click from closing
-    document.querySelectorAll('.liquid-modal').forEach(function(modal) {
-        modal.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
-
-    // Close on overlay click
-    document.querySelectorAll('.liquid-modal-overlay').forEach(function(overlay) {
-        overlay.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal(this.id);
-            }
-        });
-    });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -783,7 +733,6 @@ function reattachModalEventListeners() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function openModal(modalId) {
-    // Pastikan portal sudah diinisialisasi
     if (!window.modalsPorted) {
         initModalPortal();
     }
@@ -794,16 +743,10 @@ function openModal(modalId) {
         return;
     }
 
-    // Reset scroll
     overlay.scrollTop = 0;
-
-    // Show modal
     overlay.classList.add('active');
-
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
 
-    // Focus trap (optional)
     setTimeout(function() {
         var firstInput = overlay.querySelector('input, select, textarea');
         if (firstInput) firstInput.focus();
@@ -817,16 +760,18 @@ function closeModal(modalId) {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
 
-    // Reset form jika add modal
     if (modalId === 'addModal') {
         resetForm();
     }
-    // Reset form jika edit modal
     if (modalId === 'editModal') {
         $('#editId').val('');
         $('#edit_jenis_pelanggaran').val('').trigger('change');
         $('#edit_detail').val('');
         updateEditSubmitButton();
+    }
+    if (modalId === 'deleteModal') {
+        window.deleteId = null;
+        $('#deleteId').val('');
     }
 }
 
@@ -865,15 +810,13 @@ function showToast(msg, type) {
 // FORM FUNCTIONS
 // ════════════════════════════════════════════════════════
 
-let rowCount = 1;
-
 function addNewRow() {
-    rowCount++;
+    window.rowCount++;
     var newRow = document.createElement('div');
     newRow.className = 'input-row';
-    newRow.id = 'row-' + rowCount;
+    newRow.id = 'row-' + window.rowCount;
     newRow.innerHTML = 
-        '<span class="input-row-number">Alasan #' + rowCount + '</span>' +
+        '<span class="input-row-number">Alasan #' + window.rowCount + '</span>' +
         '<div style="display: flex; gap: 12px;">' +
             '<textarea class="form-textarea-alasan detail-input" name="detail[]" rows="3" ' +
                 'placeholder="Ketik alasan pelanggaran..." maxlength="500"></textarea>' +
@@ -892,11 +835,10 @@ function removeRow(btn) {
     var row = btn.closest('.input-row');
     if (document.querySelectorAll('#detailContainer .input-row').length > 1) {
         row.remove();
-        // Renumber rows
         document.querySelectorAll('#detailContainer .input-row').forEach(function(r, index) {
             r.querySelector('.input-row-number').textContent = 'Alasan #' + (index + 1);
         });
-        rowCount--;
+        window.rowCount--;
         updateAddSubmitButton();
     }
 }
@@ -942,36 +884,30 @@ function resetForm() {
         '</div>';
     document.getElementById('addRowBtn').style.display = 'none';
     document.getElementById('id_jenis_pelanggaran').value = '';
-    rowCount = 1;
+    window.rowCount = 1;
     updateAddSubmitButton();
 }
 
-// Handle input events for dynamic rows
-$(document).on('input', '.detail-input', function() {
-    var $row = $(this).closest('.input-row');
-    var value = $(this).val().trim();
-    
-    if (value && $row.hasClass('temporary')) {
-        $row.removeClass('temporary');
-        $row.find('.btn-remove-row').prop('disabled', false);
-        document.getElementById('addRowBtn').style.display = 'block';
-    }
-    updateAddSubmitButton();
-});
+// ════════════════════════════════════════════════════════
+// CRUD FUNCTIONS
+// ════════════════════════════════════════════════════════
 
-$('#id_jenis_pelanggaran').on('change', updateAddSubmitButton);
-$('#edit_jenis_pelanggaran, #edit_detail').on('change input', updateEditSubmitButton);
+function confirmDeleteAlasan(id) {
+    window.deleteId = id;
+    $('#deleteId').val(id);
+    openModal('deleteModal');
+}
 
 // ════════════════════════════════════════════════════════
-// DOCUMENT READY
+// DOCUMENT READY - SEMUA EVENT HANDLER DI SINI
 // ════════════════════════════════════════════════════════
 $(document).ready(function() {
 
-    // Inisialisasi modal portal segera
+    // Inisialisasi modal portal
     initModalPortal();
 
     // ── DataTable ──────────────────────────────────────
-    var table = $('#alasanTable').DataTable({
+    window.table = $('#alasanTable').DataTable({
         ajax: {
             url: 'action_alasan.php?action=read',
             dataSrc: '',
@@ -1007,7 +943,7 @@ $(document).ready(function() {
                         '<button class="btn btn-action-edit btn-sm btn-edit-tbl" data-id="' + data.id + '" title="Edit">' +
                             '<i class="fas fa-edit"></i>' +
                         '</button>' +
-                        '<button class="btn btn-action-delete btn-sm btn-delete-tbl" data-id="' + data.id + '" title="Hapus">' +
+                        '<button class="btn btn-action-delete btn-sm" onclick="confirmDeleteAlasan(' + data.id + ')" title="Hapus">' +
                             '<i class="fas fa-trash"></i>' +
                         '</button>' +
                     '</div>';
@@ -1029,9 +965,25 @@ $(document).ready(function() {
         autoWidth: false
     });
 
-    // ── Event Handlers ────────────────────────────────
+    // ── Event Handlers untuk Form Inputs ───────────────
     
-    // Edit button
+    $(document).on('input', '.detail-input', function() {
+        var $row = $(this).closest('.input-row');
+        var value = $(this).val().trim();
+        
+        if (value && $row.hasClass('temporary')) {
+            $row.removeClass('temporary');
+            $row.find('.btn-remove-row').prop('disabled', false);
+            document.getElementById('addRowBtn').style.display = 'block';
+        }
+        updateAddSubmitButton();
+    });
+
+    $('#id_jenis_pelanggaran').on('change', updateAddSubmitButton);
+    $('#edit_jenis_pelanggaran, #edit_detail').on('change input', updateEditSubmitButton);
+
+    // ── Edit Button Handler ───────────────────────────
+    
     $(document).on('click', '.btn-edit-tbl', function() {
         var id = $(this).data('id');
         $.get('action_alasan.php?action=get&id=' + id)
@@ -1049,13 +1001,6 @@ $(document).ready(function() {
             .fail(function() {
                 showToast('Gagal memuat data', 'error');
             });
-    });
-
-    // Delete button
-    $(document).on('click', '.btn-delete-tbl', function() {
-        var id = $(this).data('id');
-        $('#deleteId').val(id);
-        openModal('deleteModal');
     });
 
     // ── Form Submissions ─────────────────────────────
@@ -1084,7 +1029,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     closeModal('addModal');
-                    table.ajax.reload(null, false);
+                    window.table.ajax.reload(null, false);
                     showToast(response.inserted + ' alasan berhasil disimpan!', 'success');
                 } else {
                     showToast(response.message || 'Gagal menyimpan', 'error');
@@ -1113,7 +1058,7 @@ $(document).ready(function() {
         }).done(function(response) {
             if (response.success) {
                 closeModal('editModal');
-                table.ajax.reload(null, false);
+                window.table.ajax.reload(null, false);
                 showToast('Alasan berhasil diupdate!', 'success');
             } else {
                 showToast(response.message || 'Gagal update', 'error');
@@ -1125,26 +1070,42 @@ $(document).ready(function() {
         });
     });
 
-    // Delete confirm
-    $(document).on('click', '#confirmDelete', function() {
-        var id = $('#deleteId').val();
+    // ════════════════════════════════════════════════════════
+    // DELETE HANDLER - HANYA SATU INI
+    // ════════════════════════════════════════════════════════
+    
+    $(document).on('click', '#confirmDelete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var id = window.deleteId;
+        if (!id) {
+            showToast('ID tidak valid', 'error');
+            return;
+        }
+        
         var $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
 
-        $.post('action_alasan.php', { action: 'delete', id: id })
-            .done(function(response) {
-                if (response.success) {
-                    closeModal('deleteModal');
-                    table.ajax.reload(null, false);
-                    showToast('Alasan berhasil dihapus!', 'success');
-                } else {
-                    showToast(response.message || 'Gagal hapus', 'error');
-                }
-            }).fail(function() {
-                showToast('Koneksi gagal', 'error');
-            }).always(function() {
-                $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus');
-            });
+        $.post('action_alasan.php', { 
+            action: 'delete', 
+            id: id 
+        })
+        .done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                window.table.ajax.reload(null, false);
+                showToast('Alasan berhasil dihapus!', 'success');
+            } else {
+                showToast(response.message || 'Gagal menghapus data', 'error');
+            }
+        })
+        .fail(function(xhr) {
+            showToast('Koneksi gagal: ' + xhr.statusText, 'error');
+        })
+        .always(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus');
+        });
     });
 
 }); // END ready

@@ -48,6 +48,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    color: #ffffff !important; /* TAMBAHKAN INI */
 }
 
 .page-title-pelanggaran i {
@@ -543,84 +544,41 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// MODAL PORTAL SYSTEM - MEMINDAHKAN MODAL KE BODY UNTUK AVOID STACKING CONTEXT
+// GLOBAL VARIABLES
+// ═══════════════════════════════════════════════════════════════════════════
+window.modalsPorted = window.modalsPorted || false;
+window.deleteId = null;  // Global variable untuk delete ID
+window.table = null;     // Global DataTable instance
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODAL PORTAL SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Global variable untuk track modal yang sudah dipindahkan
-window.modalsPorted = window.modalsPorted || false;
-
 function initModalPortal() {
-    // Hindari double initialization
     if (window.modalsPorted) return;
     window.modalsPorted = true;
 
-    // Cari container sumber
     var sourceContainer = document.getElementById('modal-portal-source');
     if (!sourceContainer) {
         console.error('Modal portal source not found');
         return;
     }
 
-    // Buat container di body untuk modal
     var portalContainer = document.createElement('div');
     portalContainer.id = 'modal-portal-destination';
     portalContainer.className = 'modal-portal-container';
-    // Pastikan container ini tidak membuat stacking context baru
     portalContainer.style.cssText = 'position: static; z-index: auto; transform: none; filter: none;';
 
-    // Pindahkan semua modal ke body
     var modals = sourceContainer.querySelectorAll('[data-modal="true"]');
     modals.forEach(function(modal) {
-        // Clone modal untuk memastikan event listeners tetap berfungsi
         var clonedModal = modal.cloneNode(true);
         portalContainer.appendChild(clonedModal);
     });
 
-    // Append ke body (di luar semua container)
     document.body.appendChild(portalContainer);
-
-    // Hapus source container
     sourceContainer.remove();
 
     console.log('Modal portal initialized: ' + modals.length + ' modals moved to body');
-
-    // Re-attach event listeners untuk modal yang sudah dipindahkan
-    reattachModalEventListeners();
-}
-
-function reattachModalEventListeners() {
-    // Close button click
-    document.querySelectorAll('.liquid-modal-close, .btn-modal-cancel').forEach(function(btn) {
-        // Remove old listeners (if any) by cloning
-        var newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-
-        // Add new listener
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var modalOverlay = this.closest('.liquid-modal-overlay');
-            if (modalOverlay) {
-                closeModal(modalOverlay.id);
-            }
-        });
-    });
-
-    // Prevent modal content click from closing
-    document.querySelectorAll('.liquid-modal').forEach(function(modal) {
-        modal.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
-
-    // Close on overlay click
-    document.querySelectorAll('.liquid-modal-overlay').forEach(function(overlay) {
-        overlay.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal(this.id);
-            }
-        });
-    });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -628,7 +586,6 @@ function reattachModalEventListeners() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function openModal(modalId) {
-    // Pastikan portal sudah diinisialisasi
     if (!window.modalsPorted) {
         initModalPortal();
     }
@@ -639,16 +596,10 @@ function openModal(modalId) {
         return;
     }
 
-    // Reset scroll
     overlay.scrollTop = 0;
-
-    // Show modal
     overlay.classList.add('active');
-
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
 
-    // Focus trap (optional)
     setTimeout(function() {
         var firstInput = overlay.querySelector('input, select, textarea');
         if (firstInput) firstInput.focus();
@@ -662,7 +613,6 @@ function closeModal(modalId) {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
 
-    // Reset form jika add modal
     if (modalId === 'addModal') {
         var form = overlay.querySelector('form');
         if (form) {
@@ -703,15 +653,33 @@ function showToast(msg, type) {
 }
 
 // ════════════════════════════════════════════════════════
+// CRUD FUNCTIONS
+// ════════════════════════════════════════════════════════
+
+function editJenis(id, name, point) {
+    $('#editId').val(id);
+    $('#editName').val(name);
+    $('#editPoint').val(point);
+    openModal('editModal');
+}
+
+function confirmDeleteJenis(id, name) {
+    window.deleteId = id;
+    $('#deleteId').val(id);
+    $('#deleteName').text(name);
+    openModal('deleteModal');
+}
+
+// ════════════════════════════════════════════════════════
 // DOCUMENT READY
 // ════════════════════════════════════════════════════════
 $(document).ready(function() {
 
-    // Inisialisasi modal portal segera
+    // Inisialisasi modal portal
     initModalPortal();
 
     // ── DataTable ──────────────────────────────────────
-    let table = $('#jenisTable').DataTable({
+    window.table = $('#jenisTable').DataTable({
         ajax: {
             url: 'action_jenis.php?action=read',
             dataSrc: ''
@@ -741,11 +709,12 @@ $(document).ready(function() {
                 orderable: false,
                 className: 'text-center align-middle',
                 render: function (data) {
+                    var safeName = data.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     return '<div class="d-flex justify-content-center gap-2 flex-wrap">' +
-                        '<button class="btn btn-action-edit btn-sm" onclick="editData(' + data.id + ', \'' + data.name.replace(/'/g, "\\'") + '\', ' + data.point + ')" title="Edit">' +
+                        '<button class="btn btn-action-edit btn-sm" onclick="editJenis(' + data.id + ', \'' + safeName + '\', ' + data.point + ')" title="Edit">' +
                             '<i class="fas fa-edit"></i>' +
                         '</button>' +
-                        '<button class="btn btn-action-delete btn-sm" onclick="deleteData(' + data.id + ', \'' + data.name.replace(/'/g, "\\'") + '\')" title="Hapus">' +
+                        '<button class="btn btn-action-delete btn-sm" onclick="confirmDeleteJenis(' + data.id + ', \'' + safeName + '\')" title="Hapus">' +
                             '<i class="fas fa-trash"></i>' +
                         '</button>' +
                     '</div>';
@@ -770,22 +739,23 @@ $(document).ready(function() {
     // ── Form Submissions ─────────────────────────────
     
     // Add form
-    $(document).on('submit', '#addForm', function(e) {
+    $('#addForm').on('submit', function(e) {
         e.preventDefault();
         var $btn = $(this).find('[type=submit]');
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
 
         $.post('action_jenis.php', {
             action: 'add',
-            name: $('#addName').val(),
+            name: $('#addName').val().trim(),
             point: $('#addPoint').val()
         }).done(function(response) {
             if (response.success) {
                 closeModal('addModal');
-                table.ajax.reload();
+                $('#addForm')[0].reset();
+                window.table.ajax.reload();
                 showToast('Jenis pelanggaran berhasil ditambahkan!', 'success');
             } else {
-                showToast('Error: ' + response.message, 'error');
+                showToast(response.message || 'Gagal menambahkan data', 'error');
             }
         }).fail(function() {
             showToast('Koneksi gagal', 'error');
@@ -795,7 +765,7 @@ $(document).ready(function() {
     });
 
     // Edit form
-    $(document).on('submit', '#editForm', function(e) {
+    $('#editForm').on('submit', function(e) {
         e.preventDefault();
         var $btn = $(this).find('[type=submit]');
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...');
@@ -803,15 +773,15 @@ $(document).ready(function() {
         $.post('action_jenis.php', {
             action: 'edit',
             id: $('#editId').val(),
-            name: $('#editName').val(),
+            name: $('#editName').val().trim(),
             point: $('#editPoint').val()
         }).done(function(response) {
             if (response.success) {
                 closeModal('editModal');
-                table.ajax.reload();
+                window.table.ajax.reload();
                 showToast('Jenis pelanggaran berhasil diupdate!', 'success');
             } else {
-                showToast('Error: ' + response.message, 'error');
+                showToast(response.message || 'Gagal mengupdate data', 'error');
             }
         }).fail(function() {
             showToast('Koneksi gagal', 'error');
@@ -820,45 +790,40 @@ $(document).ready(function() {
         });
     });
 
-    // Delete confirm
-    $(document).on('click', '#confirmDelete', function() {
+    // Delete confirm - HANYA SATU EVENT HANDLER INI
+    $(document).on('click', '#confirmDelete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var id = window.deleteId;
+        if (!id) {
+            showToast('ID tidak valid', 'error');
+            return;
+        }
+        
         var $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
 
         $.post('action_jenis.php', {
             action: 'delete',
-            id: $('#deleteId').val()
+            id: id
         }).done(function(response) {
             if (response.success) {
                 closeModal('deleteModal');
-                table.ajax.reload();
-                showToast('Jenis pelanggaran berhasil dihapus!', 'success');
+                window.table.ajax.reload();
+                showToast(response.message || 'Jenis pelanggaran berhasil dihapus!', 'success');
+                window.deleteId = null;
             } else {
-                showToast('Error: ' + response.message, 'error');
+                showToast(response.message || 'Gagal menghapus data', 'error');
             }
-        }).fail(function() {
-            showToast('Koneksi gagal', 'error');
+        }).fail(function(xhr) {
+            showToast('Koneksi gagal: ' + xhr.statusText, 'error');
         }).always(function() {
             $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus');
         });
     });
 
 }); // END ready
-
-// Edit function (global scope)
-function editData(id, name, point) {
-    $('#editId').val(id);
-    $('#editName').val(name);
-    $('#editPoint').val(point);
-    openModal('editModal');
-}
-
-// Delete function (global scope)
-function deleteData(id, name) {
-    $('#deleteId').val(id);
-    $('#deleteName').text(name);
-    openModal('deleteModal');
-}
 </script>
 
 <?php $this->stop() ?>

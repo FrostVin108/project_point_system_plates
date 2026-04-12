@@ -153,10 +153,13 @@ case 'trend':
         break;
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // RECENT DATA FOR TABLE (20 TERAKHIR)
+    // RECENT DATA FOR TABLE (6 HARI TERAKHIR)
     // ═══════════════════════════════════════════════════════════════════════════
     case 'recent_table':
-        $stmt = $pdo->query("
+        $date_start = $_GET['date_start'] ?? date('Y-m-d', strtotime('-6 days'));
+        $date_end = $_GET['date_end'] ?? date('Y-m-d');
+        
+        $stmt = $pdo->prepare("
             SELECT 
                 p.date,
                 p.total_point,
@@ -169,9 +172,10 @@ case 'trend':
             LEFT JOIN kelas k ON s.id_kelas = k.id
             LEFT JOIN jenis_pelanggarans jp ON p.id_jenis_pelanggaran = jp.id
             LEFT JOIN gurus g ON p.id_guru = g.id
+            WHERE DATE(p.date) BETWEEN ? AND ?
             ORDER BY p.id DESC
-            LIMIT 20
         ");
+        $stmt->execute([$date_start, $date_end]);
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         break;
 

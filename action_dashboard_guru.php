@@ -2,7 +2,11 @@
 session_start();
 require 'database.php';
 
+// TAMBAHKAN: Anti-cache headers untuk memastikan data selalu fresh
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 // ============================================
 // AUTO-DETECT GURU DARI USER SESSION
@@ -129,9 +133,6 @@ switch ($action) {
                 throw new Exception('Semua field harus diisi');
             }
             
-            // Gunakan guru_id yang sudah terdeteksi otomatis
-            // Tidak menerima id_guru dari POST untuk keamanan!
-            
             $pdo->beginTransaction();
             
             // Insert pelanggaran dengan guru yang terdeteksi otomatis
@@ -142,7 +143,7 @@ switch ($action) {
             ");
             $stmt->execute([
                 $id_siswa,
-                $logged_in_guru_id,  // ← AUTO-DETECTED, tidak dari POST
+                $logged_in_guru_id,
                 $id_jenis_pelanggaran,
                 $id_alasan_pelanggaran,
                 $total_point
@@ -154,9 +155,17 @@ switch ($action) {
             
             $pdo->commit();
             
+            // TAMBAHKAN: Return data yang baru diinsert untuk langsung ditampilkan
             echo json_encode([
                 'success' => true,
-                'message' => 'Pelanggaran berhasil dicatat oleh ' . $logged_in_guru_name
+                'message' => 'Pelanggaran berhasil dicatat oleh ' . $logged_in_guru_name,
+                'new_data' => [
+                    'id' => $pdo->lastInsertId(),
+                    'date' => date('Y-m-d'),
+                    'total_point' => $total_point,
+                    'siswa_name' => $_POST['siswa_name'] ?? 'Siswa', // Optional: fetch from DB if needed
+                    'jenis_name' => $_POST['jenis_name'] ?? 'Pelanggaran'
+                ]
             ]);
             
         } catch (Exception $e) {

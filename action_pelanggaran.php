@@ -7,6 +7,16 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Shared\Html;
 use League\Plates\Engine;
 
+function requireAdmin() {
+    session_start();
+    $role = $_SESSION['role'] ?? '';
+    if ($role !== 'admin') {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Akses ditolak: hanya admin yang dapat melakukan ini']);
+        exit;
+    }
+}
+
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 // Case export stream file Word, bukan JSON
@@ -256,6 +266,7 @@ switch ($action) {
         break;
 
     case 'update':
+        requireAdmin(); // <-- TAMBAH INI
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare("SELECT id_siswa, total_point FROM pelanggarans WHERE id = ?");
@@ -302,6 +313,7 @@ switch ($action) {
         break;
 
     case 'delete':
+        requireAdmin(); // <-- TAMBAH INI
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare("SELECT id_siswa, total_point FROM pelanggarans WHERE id = ?");

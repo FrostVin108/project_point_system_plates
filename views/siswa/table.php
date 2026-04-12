@@ -943,7 +943,6 @@
                         <div class="form-group-siswa">
                             <label>Telp Orang Tua</label>
                             <div class="input-group-siswa">
-                                <span class="input-icon"><i class="fas fa-phone"></i></span>
                                 <input type="tel" class="form-input-siswa" id="addTelpOrtu" placeholder="08xx-xxxx-xxxx">
                             </div>
                         </div>
@@ -1028,14 +1027,12 @@
                         <div class="form-group-siswa">
                             <label>Telp Orang Tua</label>
                             <div class="input-group-siswa">
-                                <span class="input-icon"><i class="fas fa-phone"></i></span>
                                 <input type="tel" class="form-input-siswa" id="editTelpOrtu">
                             </div>
                         </div>
                         <div class="form-group-siswa">
                             <label>Telp Siswa</label>
                             <div class="input-group-siswa">
-                                <span class="input-icon"><i class="fas fa-mobile-alt"></i></span>
                                 <input type="tel" class="form-input-siswa" id="editTelp">
                             </div>
                         </div>
@@ -1143,40 +1140,7 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════
-         SP CONFIRM MODAL
-    ══════════════════════════════════════════════════════ -->
-    <div class="liquid-modal-overlay" id="spModal" data-modal="true">
-        <div class="liquid-modal" style="max-width: 400px;">
-            <div class="liquid-modal-header sp">
-                <h5 class="liquid-modal-title">
-                    <i class="fas fa-file-signature"></i>Konfirmasi SP
-                </h5>
-                <button type="button" class="liquid-modal-close" onclick="closeModal('spModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="liquid-modal-body">
-                <div class="modal-warning-box">
-                    <i class="fas fa-triangle-exclamation modal-warning-icon" style="color: #8b5cf6; animation: none;"></i>
-                    <h4 class="modal-warning-title" id="spMessage"></h4>
-                    <p class="modal-warning-text">
-                        Point siswa akan direset ke <strong>0</strong> dan SP akan bertambah
-                    </p>
-                </div>
-            </div>
-            <div class="liquid-modal-footer" style="justify-content: center;">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('spModal')">
-                    <i class="fas fa-times me-2"></i>Batal
-                </button>
-                <button type="button" class="btn-modal-submit sp" id="confirmSp">
-                    <i class="fas fa-file-signature me-2"></i>Terbitkan SP
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════════
-        DELETE CONFIRM MODAL - DENGAN 2 OPSI
+        DELETE CONFIRM MODAL - DENGAN 2 OPSI (FIXED)
     ══════════════════════════════════════════════════════ -->
     <div class="liquid-modal-overlay" id="deleteModal" data-modal="true">
         <div class="liquid-modal" style="max-width: 450px;">
@@ -1194,12 +1158,12 @@
                     <i class="fas fa-exclamation-triangle modal-warning-icon" style="font-size: 48px;"></i>
                     <p class="modal-warning-text" id="deleteMessage" style="margin-top: 12px;"></p>
                 </div>
-                
+
                 <!-- Opsi untuk SP < 3 -->
                 <div id="deleteOptions" style="display: none; margin-top: 20px;">
                     <div style="display: grid; gap: 12px;">
                         <!-- Opsi 1: Unassign User -->
-                        <button type="button" class="btn-delete-option" id="btnUnassignUser" style="
+                        <button type="button" class="btn-delete-option" onclick="handleUnassignUser()" style="
                             background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(251, 191, 36, 0.1));
                             border: 1px solid rgba(234, 179, 8, 0.4);
                             color: #fcd34d;
@@ -1220,9 +1184,9 @@
                                 <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus akun login siswa dari sistem</div>
                             </div>
                         </button>
-                        
+
                         <!-- Opsi 2: Hapus Riwayat Pelanggaran -->
-                        <button type="button" class="btn-delete-option" id="btnClearPelanggaran" style="
+                        <button type="button" class="btn-delete-option" onclick="handleClearPelanggaran()" style="
                             background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.1));
                             border: 1px solid rgba(220, 38, 38, 0.4);
                             color: #fca5a5;
@@ -1243,14 +1207,14 @@
                                 <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus semua data pelanggaran & reset point</div>
                             </div>
                         </button>
-                        
+
                         <!-- Divider -->
                         <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 12px; margin: 8px 0;">
                             — atau —
                         </div>
-                        
+
                         <!-- Opsi 3: Hapus Permanen (Full Delete) -->
-                        <button type="button" class="btn-delete-option" id="btnFullDelete" style="
+                        <button type="button" class="btn-delete-option" onclick="handleFullDelete()" style="
                             background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(0, 0, 0, 0.2));
                             border: 2px solid rgba(220, 38, 38, 0.6);
                             color: #fca5a5;
@@ -1279,7 +1243,7 @@
                     <i class="fas fa-times me-2"></i>Batal
                 </button>
                 <!-- Tombol ini hanya untuk SP >= 3 (DO) -->
-                <button type="button" class="btn-modal-submit danger" id="confirmDelete" style="display: none;">
+                <button type="button" class="btn-modal-submit danger" id="confirmDelete" onclick="handleConfirmDelete()" style="display: none;">
                     <i class="fas fa-trash me-2"></i>Hapus Permanen
                 </button>
             </div>
@@ -1287,12 +1251,12 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════
-     PANGGIL SISWA MODAL - Tanggal & Jam
+     PANGGIL SISWA MODAL - Tanggal & Jam (DIGUNAKAN JUGA UNTUK SP2)
 ══════════════════════════════════════════════════════ -->
     <div class="liquid-modal-overlay" id="panggilModal" data-modal="true">
         <div class="liquid-modal">
             <div class="liquid-modal-header warning">
-                <h5 class="liquid-modal-title">
+                <h5 class="liquid-modal-title" id="panggilModalTitle">
                     <i class="fas fa-envelope"></i>Surat Panggil Siswa / Orang Tua
                 </h5>
                 <button type="button" class="liquid-modal-close" onclick="closeModal('panggilModal')">
@@ -1302,11 +1266,30 @@
             <form id="panggilForm">
                 <div class="liquid-modal-body">
                     <input type="hidden" id="panggilSiswaId">
+                    <input type="hidden" id="panggilMode" value="panggil"> <!-- NEW: 'panggil' atau 'sp2' -->
+                    <input type="hidden" id="panggilSpLevel" value=""> <!-- NEW: level SP (1, 2, 3) -->
 
                     <!-- Info Siswa -->
                     <div class="form-group-siswa">
                         <label>Nama Siswa</label>
                         <input type="text" class="form-input-siswa" id="panggilSiswaName" readonly style="background: rgba(255,255,255,0.05);">
+                    </div>
+
+                    <!-- Info SP (tampil hanya saat mode SP) -->
+                    <div id="spInfoBox" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <div style="background: rgba(139, 92, 246, 0.3); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-signature" style="color: #c4b5fd; font-size: 20px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; color: #c4b5fd; font-size: 16px;">Penerbitan SP2</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Surat Pernyataan ke-2</div>
+                            </div>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.5;">
+                            <i class="fas fa-info-circle me-1" style="color: #c4b5fd;"></i>
+                            Point siswa akan direset ke <strong style="color: #fca5a5;">0</strong> dan status SP naik ke level 2.
+                        </div>
                     </div>
 
                     <!-- Tanggal -->
@@ -1323,15 +1306,21 @@
                     </div>
 
                     <!-- Keperluan -->
-                    <div class="form-group-siswa">
+                    <div class="form-group-siswa" id="panggilKeperluanGroup">
                         <label>Keperluan <span class="required">*</span></label>
                         <select class="form-select-siswa" id="panggilKeperluan" required>
                             <option value="">-- Pilih Keperluan --</option>
-                            <option value="Masalah Disiplin Siswa" selected>Masalah Disiplin Siswa</option>
+                            <option value="Masalah Disiplin Siswa">Masalah Disiplin Siswa</option>
                             <option value="Konseling Siswa">Konseling Siswa</option>
                             <option value="Pembahasan Akademik">Pembahasan Akademik</option>
                             <option value="Lainnya">Lainnya</option>
                         </select>
+                    </div>
+
+                    <!-- Alasan SP (tampil hanya saat mode SP2) -->
+                    <div class="form-group-siswa" id="spAlasanGroup" style="display: none;">
+                        <label>Alasan SP <span class="required">*</span></label>
+                        <textarea class="form-textarea-siswa" id="spAlasan" rows="3" placeholder="Alasan penerbitan SP2...">Melanggar tata tertib sekolah dengan point kumulatif mencapai batas</textarea>
                     </div>
 
                     <!-- Tempat -->
@@ -1344,7 +1333,7 @@
                     <button type="button" class="btn-modal-cancel" onclick="closeModal('panggilModal')">
                         <i class="fas fa-times me-2"></i>Batal
                     </button>
-                    <button type="submit" class="btn-modal-submit warning">
+                    <button type="submit" class="btn-modal-submit warning" id="panggilSubmitBtn">
                         <i class="fas fa-envelope me-2"></i>Buat Surat Panggilan
                     </button>
                 </div>
@@ -1548,6 +1537,10 @@
         overlay.classList.remove('active');
         document.body.style.overflow = '';
 
+        if (modalId === 'panggilModal') {
+            setTimeout(resetPanggilModal, 300); // Reset setelah animasi tutup
+        }
+
         if (modalId === 'addModal') {
             setTimeout(function() {
                 document.getElementById('addForm').reset();
@@ -1611,6 +1604,145 @@
     // ============================================================
     $(document).on('change', '#doConfirm', function() {
         $('#btnDoSubmit').prop('disabled', !this.checked);
+    });
+
+    // Handler untuk tombol Unassign User - FIX: pakai event delegation yang benar
+    $(document).off('click', '#btnUnassignUser').on('click', '#btnUnassignUser', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!deleteSiswaId) return;
+
+        const $btn = $(this);
+        $btn.prop('disabled', true).css('opacity', '0.5');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'unassign'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                siswaTable.ajax.reload();
+                loadAvailableUsers();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        });
+    });
+
+    // Handler untuk tombol Clear Pelanggaran - FIX
+    $(document).off('click', '#btnClearPelanggaran').on('click', '#btnClearPelanggaran', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!deleteSiswaId) return;
+
+        const $btn = $(this);
+        $btn.prop('disabled', true).css('opacity', '0.5');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'clear_pelanggaran'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                siswaTable.ajax.reload();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        });
+    });
+
+    // Handler untuk tombol Full Delete (SP < 3) - FIX
+    $(document).off('click', '#btnFullDelete').on('click', '#btnFullDelete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!deleteSiswaId) return;
+
+        const $btn = $(this);
+        $btn.prop('disabled', true).css('opacity', '0.5').html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'full'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                siswaTable.ajax.reload();
+                loadAvailableUsers();
+                showToast(`✅ Siswa berhasil dihapus permanen!`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1').html(`
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 14px;">HAPUS PERMANEN</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus siswa + user + pelanggaran</div>
+                            </div>
+                        </div>
+                    `);
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1').html(`
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px;">HAPUS PERMANEN</div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Hapus siswa + user + pelanggaran</div>
+                        </div>
+                    </div>
+                `);
+        });
+    });
+
+    // Update handler untuk confirmDelete (SP >= 3) - FIX
+    $(document).off('click', '#confirmDelete').on('click', '#confirmDelete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!deleteSiswaId) return;
+
+        const $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'full'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                siswaTable.ajax.reload();
+                loadAvailableUsers();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+        }).always(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus Permanen');
+        });
     });
 
     // ============================================================
@@ -1721,24 +1853,24 @@
                 },
                 // Kelas
                 {
-                            data: null, // Gunakan null untuk akses multiple fields
-                            render: function(data, type, row) {
-                                // Cek apakah ada data kelas dari JOIN
-                                if (!row.tingkat && !row.jurusan && !row.kelas) {
-                                    return '<span class="text-muted">Belum ada kelas</span>';
-                                }
-                                
-                                // Gabungkan: tingkat + jurusan + kelas
-                                // Contoh hasil: "X RPL 2", "XI TKJ 1", "XII DKV 2"
-                                const kelasDisplay = [
-                                    row.tingkat || '',
-                                    row.jurusan || '',
-                                    row.kelas_name  || ''
-                                ].join(' ').trim();
-                                
-                                return `<span class="badge badge-kelas">${kelasDisplay}</span>`;
-                            }
-                        },
+                    data: null, // Gunakan null untuk akses multiple fields
+                    render: function(data, type, row) {
+                        // Cek apakah ada data kelas dari JOIN
+                        if (!row.tingkat && !row.jurusan && !row.kelas) {
+                            return '<span class="text-muted">Belum ada kelas</span>';
+                        }
+
+                        // Gabungkan: tingkat + jurusan + kelas
+                        // Contoh hasil: "X RPL 2", "XI TKJ 1", "XII DKV 2"
+                        const kelasDisplay = [
+                            row.tingkat || '',
+                            row.jurusan || '',
+                            row.kelas_name || ''
+                        ].join(' ').trim();
+
+                        return `<span class="badge badge-kelas">${kelasDisplay}</span>`;
+                    }
+                },
                 // Telp
                 {
                     data: 'telphone',
@@ -1753,8 +1885,8 @@
                     className: 'text-center fw-bold',
                     render: function(data) {
                         const pt = parseInt(data) || 0;
-                        const cls = pt >= 100 ? 'badge-point-danger' : 'badge-point';
-                        const icon = pt >= 100 ? '🔴 ' : '';
+                        const cls = pt >= 95 ? 'badge-point-danger' : 'badge-point';
+                        const icon = pt >= 95 ? '🔴 ' : '';
                         return `<span class="badge ${cls}">${icon}${pt} pt</span>`;
                     }
                 },
@@ -1805,69 +1937,67 @@
 
                         // Jika sudah DO (SP >= 3), hanya admin yang lihat dan hanya tombol DELETE
                         if (sp >= 3) {
-                            // Hanya untuk admin (karena non-admin tidak akan lihat data ini)
                             return `
-                            <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
-                                <span class="badge" style="background: rgba(220,38,38,0.3); color: #fca5a5; font-size: 11px; padding: 4px 8px; margin-right: 4px;">DO</span>
-                                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus Data DO">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>`;
+            <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+                <span class="badge" style="background: rgba(220,38,38,0.3); color: #fca5a5; font-size: 11px; padding: 4px 8px; margin-right: 4px;">DO</span>
+                ${userRole === 'admin' ? `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}')" title="Hapus Data DO">
+                    <i class="fas fa-trash"></i>
+                </button>` : ''}
+            </div>`;
                         }
 
                         let actionBtn = '';
 
-                        // Semua tombol hanya muncul jika point >= 100
-                        if (pt >= 100) {
+                        // Tombol SP muncul jika point >= 100
+                        if (pt >= 95) {
+                            // SP0 → SP1, SP1 → SP2, SP2 → SP3 (DO)
                             if (sp === 0) {
-                                // SP = 0: Tombol Download Surat Pernyataan
-                                actionBtn = `<a href="export_sp.php?id=${row.id}" target="_blank"
-                                    class="btn btn-primary btn-sm me-1 text-decoration-none" title="Download Surat Pernyataan SP">
-                                    <i class="fas fa-file-download me-1"></i>SP
-                                </a>`;
-
+                                // SP0 → SP1: Download langsung
+                                actionBtn = `<button class="btn btn-primary btn-sm me-1" onclick="issueSp1(${row.id}, '${escapeHtml(row.name)}')" 
+                    title="Download Surat Pernyataan SP1">
+                    <i class="fas fa-file-download me-1"></i>SP
+                </button>`;
                             } else if (sp === 1) {
-                                // SP = 1: Tombol Surat Panggil Siswa
-                                actionBtn = `<button class="btn btn-warning btn-sm me-1" onclick="callStudent(${row.id}, '${escapeHtml(row.name)}')" 
-                                    title="Surat Panggil Siswa">
-                                    <i class="fas fa-envelope me-1"></i>Panggil
-                                </button>`;
-
+                                // SP1 → SP2: Buka panggilModal (dengan Tanggal & Jam)
+                                actionBtn = `<button class="btn btn-warning btn-sm me-1" onclick="openSp2Modal(${row.id}, '${escapeHtml(row.name)}')" 
+                    title="Surat Panggilan SP2">
+                    <i class="fas fa-envelope me-1"></i>Panggil
+                </button>`;
                             } else if (sp === 2) {
-                                // SP = 2: Tombol DO/Drop Out
+                                // SP2 → SP3: Buka DO Modal
                                 actionBtn = `<button class="btn btn-dark btn-sm me-1" onclick="DOStudent(${row.id}, '${escapeHtml(row.name)}')" 
-                                    title="Surat Keluar dari Sekolah (DO)">
-                                    <i class="fas fa-user-slash me-1"></i>DO
-                                </button>`;
+                    title="Drop Out SP3">
+                    <i class="fas fa-user-slash me-1"></i>DO
+                </button>`;
                             }
                         }
 
                         const assignBtn = !row.id_user ?
                             `<button class="btn btn-success btn-sm me-1" onclick="assignUser(${row.id}, '${escapeHtml(row.name)}')" title="Assign Akun Siswa">
-                            <i class="fas fa-user-plus"></i>
-                        </button>` : '';
+                <i class="fas fa-user-plus"></i>
+            </button>` : '';
 
                         // Edit & Delete hanya untuk admin
                         const editBtn = userRole === 'admin' ?
                             `<button class="btn btn-warning btn-sm me-1" onclick="editData(${row.id})" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>` : '';
+                <i class="fas fa-edit"></i>
+            </button>` : '';
 
                         const deleteBtn = userRole === 'admin' ?
                             `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${row.id}, '${escapeHtml(row.name)}', ${row.sp})" title="Hapus">
-                                <i class="fas fa-trash"></i>
-                            </button>` : '';
+                <i class="fas fa-trash"></i>
+            </button>` : '';
 
                         return `
-                        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
-                            ${actionBtn}
-                            ${assignBtn}
-                            <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            ${editBtn}
-                            ${deleteBtn}
-                        </div>`;
+        <div class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+            ${actionBtn}
+            ${assignBtn}
+            <button class="btn btn-info btn-sm" onclick="showDetail(${row.id})" title="Detail">
+                <i class="fas fa-eye"></i>
+            </button>
+            ${editBtn}
+            ${deleteBtn}
+        </div>`;
                     }
                 }
             ],
@@ -1984,31 +2114,37 @@
         });
 
         // 7. CONFIRM SP
-        $('#confirmSp').click(function() {
-            if (!spSiswaId) return;
-            var $btn = $(this);
-            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+        // $('#confirmSp').click(function() {
+        //     if (!spSiswaId) return;
+        //     var $btn = $(this);
+        //     $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
 
-            $.post('action_siswa.php', {
-                    action: 'issue_sp',
-                    id: spSiswaId
-                })
-                .done(function(response) {
-                    if (response.success) {
-                        closeModal('spModal');
-                        siswaTable.ajax.reload();
-                        showToast(`✅ ${response.message}`, 'success');
-                    } else {
-                        showToast(`❌ ${response.message || 'Gagal menerbitkan SP'}`, 'error');
-                    }
-                })
-                .fail(function() {
-                    showToast('❌ Koneksi gagal', 'error');
-                })
-                .always(function() {
-                    $btn.prop('disabled', false).html('<i class="fas fa-file-signature me-2"></i>Terbitkan SP');
-                });
-        });
+        //     $.post('action_siswa.php', {
+        //             action: 'issue_sp',
+        //             id: spSiswaId
+        //         })
+        //         .done(function(response) {
+        //             if (response.success) {
+        //                 closeModal('spModal');
+        //                 siswaTable.ajax.reload();
+
+        //                 // Auto download surat
+        //                 if (response.download_url) {
+        //                     window.open(response.download_url, '_blank');
+        //                 }
+
+        //                 showToast(`✅ ${response.message}`, 'success');
+        //             } else {
+        //                 showToast(`❌ ${response.message || 'Gagal menerbitkan SP'}`, 'error');
+        //             }
+        //         })
+        //         .fail(function() {
+        //             showToast('❌ Koneksi gagal', 'error');
+        //         })
+        //         .always(function() {
+        //             $btn.prop('disabled', false).html('<i class="fas fa-file-signature me-2"></i>Terbitkan SP');
+        //         });
+        // });
 
         // 8. CONFIRM DELETE
         $('#confirmDelete').click(function() {
@@ -2043,45 +2179,78 @@
             e.preventDefault();
 
             const id = $('#panggilSiswaId').val();
+            const mode = $('#panggilMode').val() || 'panggil';
             const tanggal = $('#panggilTanggal').val();
             const jam = $('#panggilJam').val();
-            const keperluan = $('#panggilKeperluan').val();
             const tempat = $('#panggilTempat').val();
 
-            const $btn = $(this).find('[type=submit]');
+            const $btn = $('#panggilSubmitBtn');
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
 
-            // Step 1: Update SP dan Point via AJAX terlebih dahulu
-            $.post('action_siswa.php', {
-                action: 'issue_sp',
-                id: id
-            }).done(function(response) {
-                if (response.success) {
-                    // Step 2: Jika update SP berhasil, buka surat panggilan
-                    const params = new URLSearchParams({
-                        id: id,
-                        tanggal: tanggal,
-                        jam: jam,
-                        keperluan: keperluan,
-                        tempat: tempat
-                    });
+            if (mode === 'sp2') {
+                // ═══════════════════════════════════════════════════════
+                // MODE SP2: Issue SP dulu, lalu buat surat
+                // ═══════════════════════════════════════════════════════
+                const alasan = $('#sp2Alasan').val() || 'Panggilan terkait pelanggaran tata tertib sekolah';
 
-                    // Open in new tab untuk download surat
-                    window.open(`export_panggil.php?${params.toString()}`, '_blank');
+                $.post('action_siswa.php', {
+                    action: 'issue_sp',
+                    id: id,
+                    keterangan: alasan,
+                    tanggal_panggil: tanggal,
+                    jam_panggil: jam,
+                    tempat: tempat
+                }).done(function(response) {
+                    if (response.success) {
+                        // Buat surat panggilan
+                        const params = new URLSearchParams({
+                            id: id,
+                            tanggal: tanggal,
+                            jam: jam,
+                            keperluan: `SP2 - ${alasan}`,
+                            tempat: tempat,
+                            type: 'sp2'
+                        });
 
-                    // Reload DataTable untuk menampilkan perubahan SP dan Point
-                    siswaTable.ajax.reload();
+                        window.open(`export_panggil.php?${params.toString()}`, '_blank');
 
-                    closeModal('panggilModal');
-                    showToast(`✅ ${response.message || 'Surat panggilan berhasil dibuat dan SP diterbitkan!'}`, 'success');
-                } else {
-                    showToast(`❌ ${response.message || 'Gagal menerbitkan SP'}`, 'error');
-                }
-            }).fail(function() {
-                showToast('❌ Koneksi gagal saat update SP', 'error');
-            }).always(function() {
-                $btn.prop('disabled', false).html('<i class="fas fa-envelope me-2"></i>Buat Surat Panggilan');
-            });
+                        // Reload dan tutup
+                        if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+                        closeModal('panggilModal');
+                        resetPanggilModal(); // Reset ke mode normal
+                        showToast(`✅ SP2 berhasil diterbitkan!`, 'success');
+                    } else {
+                        showToast(`❌ ${response.message || 'Gagal menerbitkan SP2'}`, 'error');
+                    }
+                }).fail(function() {
+                    showToast('❌ Koneksi gagal', 'error');
+                }).always(function() {
+                    $btn.prop('disabled', false).html(`<i class="fas fa-file-signature me-2"></i>Terbitkan SP2`);
+                });
+
+            } else {
+                // ═══════════════════════════════════════════════════════
+                // MODE PANGGILAN BIASA
+                // ═══════════════════════════════════════════════════════
+                const keperluan = $('#panggilKeperluan').val();
+
+                const params = new URLSearchParams({
+                    id: id,
+                    tanggal: tanggal,
+                    jam: jam,
+                    keperluan: keperluan,
+                    tempat: tempat,
+                    type: 'panggil'
+                });
+
+                window.open(`export_panggil.php?${params.toString()}`, '_blank');
+
+                closeModal('panggilModal');
+                resetPanggilModal(); // Reset ke mode normal
+                showToast(`✅ Surat panggilan berhasil dibuat!`, 'success');
+
+                $btn.prop('disabled', false).html(`<i class="fas fa-envelope me-2"></i>Buat Surat Panggilan`);
+            }
         });
 
         // 10. DO FORM SUBMIT - FIXED
@@ -2131,78 +2300,78 @@
         });
 
         // Handler untuk tombol Unassign User
-$(document).on('click', '#btnUnassignUser', function() {
-    if (!deleteSiswaId) return;
-    
-    const $btn = $(this);
-    $btn.prop('disabled', true).css('opacity', '0.5');
-    
-    $.post('action_siswa.php', {
-        action: 'delete',
-        id: deleteSiswaId,
-        mode: 'unassign'
-    }).done(function(response) {
-        if (response.success) {
-            closeModal('deleteModal');
-            siswaTable.ajax.reload();
-            loadAvailableUsers();
-            showToast(`✅ ${response.message}`, 'success');
-        } else {
-            showToast(`❌ ${response.message}`, 'error');
-            $btn.prop('disabled', false).css('opacity', '1');
-        }
-    }).fail(function() {
-        showToast('❌ Koneksi gagal', 'error');
-        $btn.prop('disabled', false).css('opacity', '1');
-    });
-});
+        $(document).on('click', '#btnUnassignUser', function() {
+            if (!deleteSiswaId) return;
 
-// Handler untuk tombol Clear Pelanggaran
-$(document).on('click', '#btnClearPelanggaran', function() {
-    if (!deleteSiswaId) return;
-    
-    const $btn = $(this);
-    $btn.prop('disabled', true).css('opacity', '0.5');
-    
-    $.post('action_siswa.php', {
-        action: 'delete',
-        id: deleteSiswaId,
-        mode: 'clear_pelanggaran'
-    }).done(function(response) {
-        if (response.success) {
-            closeModal('deleteModal');
-            siswaTable.ajax.reload();
-            showToast(`✅ ${response.message}`, 'success');
-        } else {
-            showToast(`❌ ${response.message}`, 'error');
-            $btn.prop('disabled', false).css('opacity', '1');
-        }
-    }).fail(function() {
-        showToast('❌ Koneksi gagal', 'error');
-        $btn.prop('disabled', false).css('opacity', '1');
-    });
-});
+            const $btn = $(this);
+            $btn.prop('disabled', true).css('opacity', '0.5');
 
-// Handler untuk tombol Full Delete (SP < 3)
-$(document).on('click', '#btnFullDelete', function() {
-    if (!deleteSiswaId) return;
-    
-    const $btn = $(this);
-    $btn.prop('disabled', true).css('opacity', '0.5').html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
-    
-    $.post('action_siswa.php', {
-        action: 'delete',
-        id: deleteSiswaId,
-        mode: 'full'
-    }).done(function(response) {
-        if (response.success) {
-            closeModal('deleteModal');
-            siswaTable.ajax.reload();
-            loadAvailableUsers();
-            showToast(`✅ Siswa berhasil dihapus permanen!`, 'success');
-        } else {
-            showToast(`❌ ${response.message}`, 'error');
-            $btn.prop('disabled', false).css('opacity', '1').html(`
+            $.post('action_siswa.php', {
+                action: 'delete',
+                id: deleteSiswaId,
+                mode: 'unassign'
+            }).done(function(response) {
+                if (response.success) {
+                    closeModal('deleteModal');
+                    siswaTable.ajax.reload();
+                    loadAvailableUsers();
+                    showToast(`✅ ${response.message}`, 'success');
+                } else {
+                    showToast(`❌ ${response.message}`, 'error');
+                    $btn.prop('disabled', false).css('opacity', '1');
+                }
+            }).fail(function() {
+                showToast('❌ Koneksi gagal', 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            });
+        });
+
+        // Handler untuk tombol Clear Pelanggaran
+        $(document).on('click', '#btnClearPelanggaran', function() {
+            if (!deleteSiswaId) return;
+
+            const $btn = $(this);
+            $btn.prop('disabled', true).css('opacity', '0.5');
+
+            $.post('action_siswa.php', {
+                action: 'delete',
+                id: deleteSiswaId,
+                mode: 'clear_pelanggaran'
+            }).done(function(response) {
+                if (response.success) {
+                    closeModal('deleteModal');
+                    siswaTable.ajax.reload();
+                    showToast(`✅ ${response.message}`, 'success');
+                } else {
+                    showToast(`❌ ${response.message}`, 'error');
+                    $btn.prop('disabled', false).css('opacity', '1');
+                }
+            }).fail(function() {
+                showToast('❌ Koneksi gagal', 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            });
+        });
+
+        // Handler untuk tombol Full Delete (SP < 3)
+        $(document).on('click', '#btnFullDelete', function() {
+            if (!deleteSiswaId) return;
+
+            const $btn = $(this);
+            $btn.prop('disabled', true).css('opacity', '0.5').html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+
+            $.post('action_siswa.php', {
+                action: 'delete',
+                id: deleteSiswaId,
+                mode: 'full'
+            }).done(function(response) {
+                if (response.success) {
+                    closeModal('deleteModal');
+                    siswaTable.ajax.reload();
+                    loadAvailableUsers();
+                    showToast(`✅ Siswa berhasil dihapus permanen!`, 'success');
+                } else {
+                    showToast(`❌ ${response.message}`, 'error');
+                    $btn.prop('disabled', false).css('opacity', '1').html(`
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
@@ -2213,10 +2382,10 @@ $(document).on('click', '#btnFullDelete', function() {
                     </div>
                 </div>
             `);
-        }
-    }).fail(function() {
-        showToast('❌ Koneksi gagal', 'error');
-        $btn.prop('disabled', false).css('opacity', '1').html(`
+                }
+            }).fail(function() {
+                showToast('❌ Koneksi gagal', 'error');
+                $btn.prop('disabled', false).css('opacity', '1').html(`
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(220, 38, 38, 0.4); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-trash-alt" style="color: #fca5a5; font-size: 18px;"></i>
@@ -2227,41 +2396,244 @@ $(document).on('click', '#btnFullDelete', function() {
                 </div>
             </div>
         `);
-    });
-});
-
-// Update handler untuk confirmDelete (SP >= 3)
-$('#confirmDelete').click(function() {
-    if (!deleteSiswaId) return;
-    
-    const $btn = $(this);
-    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
-    
-    $.post('action_siswa.php', {
-        action: 'delete',
-        id: deleteSiswaId,
-        mode: 'full'
-    }).done(function(response) {
-        if (response.success) {
-            closeModal('deleteModal');
-            siswaTable.ajax.reload();
-            loadAvailableUsers();
-            showToast(`✅ ${response.message}`, 'success');
-        } else {
-            showToast(`❌ ${response.message}`, 'error');
-        }
-    }).fail(function() {
-        showToast('❌ Koneksi gagal', 'error');
-    }).always(function() {
-        $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus Permanen');
-    });
-});
+            });
+        });
 
     }); // END document.ready
 
-    // ============================================================
-    // GLOBAL FUNCTIONS
-    // ============================================================
+    // ════════════════════════════════════════════════════════
+    // FUNGSI SP1 - Download langsung
+    // ════════════════════════════════════════════════════════
+    function issueSp1(id, name) {
+        if (!confirm(`Terbitkan SP1 untuk siswa "${name}"?\n\nPoint akan direset ke 0.`)) {
+            return;
+        }
+
+        $.post('action_siswa.php', {
+            action: 'issue_sp',
+            id: id
+        }).done(function(response) {
+            if (response.success) {
+                // Reload table
+                if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+
+                // Auto download
+                if (response.download_url) {
+                    window.open(response.download_url, '_blank');
+                }
+
+                showToast(`✅ SP1 berhasil diterbitkan untuk ${name}`, 'success');
+            } else {
+                showToast(`❌ ${response.message || 'Gagal menerbitkan SP1'}`, 'error');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+        });
+    }
+
+function openSp2Modal(id, name) {
+    resetPanggilModal();
+
+    $('#panggilSiswaId').val(id);
+    $('#panggilSiswaName').val(name || 'Siswa');
+
+    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    $('#panggilTanggal').val(today);
+    $('#panggilJam').val(`${hours}:${minutes}`);
+    $('#panggilMode').val('sp2');
+    $('#panggilSpLevel').val('2');
+
+    if ($('#sp2InfoBox').length === 0) {
+        $('#panggilSiswaName').closest('.form-group-siswa').after(`
+            <div id="sp2InfoBox" style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="background: rgba(139, 92, 246, 0.3); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-signature" style="color: #c4b5fd; font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: #c4b5fd; font-size: 16px;">Penerbitan SP2</div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.6);">Surat Panggilan Orang Tua</div>
+                    </div>
+                </div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.5;">
+                    <i class="fas fa-info-circle me-1" style="color: #c4b5fd;"></i>
+                    Point siswa akan direset ke <strong style="color: #fca5a5;">0</strong> dan status SP naik ke level 2.
+                </div>
+            </div>
+        `);
+    }
+    $('#sp2InfoBox').show();
+
+    // Hide keperluan + strip required so browser won't block submit
+    $('#panggilKeperluanGroup').hide();
+    $('#panggilKeperluan').removeAttr('required');  // ← KEY FIX
+
+    if ($('#sp2AlasanGroup').length === 0) {
+        $('#panggilKeperluanGroup').after(`
+            <div class="form-group-siswa" id="sp2AlasanGroup">
+                <label>Alasan Panggilan <span class="required">*</span></label>
+                <textarea class="form-textarea-siswa" id="sp2Alasan" rows="3" placeholder="Alasan panggilan orang tua...">Panggilan terkait pelanggaran tata tertib sekolah yang dilakukan siswa</textarea>
+            </div>
+        `);
+    }
+    $('#sp2AlasanGroup').show();
+
+    $('#panggilModal .liquid-modal-header').removeClass('warning').addClass('sp');
+    $('#panggilModalTitle').html(`<i class="fas fa-file-signature"></i>Konfirmasi SP2`);
+    $('#panggilSubmitBtn')
+        .removeClass('warning').addClass('sp')
+        .html(`<i class="fas fa-file-signature me-2"></i>Terbitkan SP2`);
+
+    openModal('panggilModal');
+}
+
+function resetPanggilModal() {
+    $('#panggilMode').val('panggil');
+    $('#panggilSpLevel').val('');
+
+    $('#sp2InfoBox').hide();
+    $('#sp2AlasanGroup').hide();
+
+    // Restore keperluan + re-add required
+    $('#panggilKeperluanGroup').show();
+    $('#panggilKeperluan').attr('required', 'required');  // ← KEY FIX
+    $('#panggilKeperluan').val('Masalah Disiplin Siswa');
+
+    $('#panggilModal .liquid-modal-header').removeClass('sp').addClass('warning');
+    $('#panggilModalTitle').html(`<i class="fas fa-envelope"></i>Surat Panggil Siswa / Orang Tua`);
+    $('#panggilSubmitBtn')
+        .removeClass('sp').addClass('warning')
+        .html(`<i class="fas fa-envelope me-2"></i>Buat Surat Panggilan`);
+}
+
+    // ════════════════════════════════════════════════════════
+    // DELETE HANDLER FUNCTIONS (Global - Outside document.ready)
+    // ════════════════════════════════════════════════════════
+
+    function handleUnassignUser() {
+        if (!deleteSiswaId) {
+            showToast('❌ ID siswa tidak valid', 'error');
+            return;
+        }
+
+        const $btn = $('#btnUnassignUser, button[onclick="handleUnassignUser()"]');
+        $btn.prop('disabled', true).css('opacity', '0.5');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'unassign'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+                if (typeof loadAvailableUsers === 'function') loadAvailableUsers();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        });
+    }
+
+    function handleClearPelanggaran() {
+        if (!deleteSiswaId) {
+            showToast('❌ ID siswa tidak valid', 'error');
+            return;
+        }
+
+        const $btn = $('#btnClearPelanggaran, button[onclick="handleClearPelanggaran()"]');
+        $btn.prop('disabled', true).css('opacity', '0.5');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'clear_pelanggaran'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1');
+        });
+    }
+
+    function handleFullDelete() {
+        if (!deleteSiswaId) {
+            showToast('❌ ID siswa tidak valid', 'error');
+            return;
+        }
+
+        // Konfirmasi tambahan untuk full delete
+        if (!confirm('Yakin ingin menghapus siswa ini PERMANEN? Semua data akan hilang!')) {
+            return;
+        }
+
+        const $btn = $('#btnFullDelete, button[onclick="handleFullDelete()"]');
+        const originalHtml = $btn.html();
+        $btn.prop('disabled', true).css('opacity', '0.5').html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'full'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+                if (typeof loadAvailableUsers === 'function') loadAvailableUsers();
+                showToast(`✅ Siswa berhasil dihapus permanen!`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+                $btn.prop('disabled', false).css('opacity', '1').html(originalHtml);
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+            $btn.prop('disabled', false).css('opacity', '1').html(originalHtml);
+        });
+    }
+
+    function handleConfirmDelete() {
+        if (!deleteSiswaId) {
+            showToast('❌ ID siswa tidak valid', 'error');
+            return;
+        }
+
+        const $btn = $('#confirmDelete');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+
+        $.post('action_siswa.php', {
+            action: 'delete',
+            id: deleteSiswaId,
+            mode: 'full'
+        }).done(function(response) {
+            if (response.success) {
+                closeModal('deleteModal');
+                if (typeof siswaTable !== 'undefined') siswaTable.ajax.reload();
+                if (typeof loadAvailableUsers === 'function') loadAvailableUsers();
+                showToast(`✅ ${response.message}`, 'success');
+            } else {
+                showToast(`❌ ${response.message}`, 'error');
+            }
+        }).fail(function() {
+            showToast('❌ Koneksi gagal', 'error');
+        }).always(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Hapus Permanen');
+        });
+    }
 
     function editData(id) {
         $.get(`action_siswa.php?action=edit&id=${id}`)
@@ -2297,32 +2669,20 @@ $('#confirmDelete').click(function() {
         });
     }
 
-    // ── Fungsi SP ── ─────────────────────────────────────────────
-    function confirmSp(id, name) {
-        spSiswaId = id;
-        const sp = parseInt(
-            $('#siswaTable').DataTable().rows().data().toArray()
-            .find(r => r.id == id)?.sp || 0
-        );
-        const nextSp = sp + 1;
-        $('#spMessage').html(
-            `Terbitkan <span style="color:#a78bfa">SP${nextSp}</span> untuk siswa <strong>"${name}"</strong>?`
-        );
-        openModal('spModal');
-    }
     // ─────────────────────────────────────────────────────────────
 
-    // Fungsi Panggil Siswa - Ganti yang lama
-
+    // Fungsi Panggil Siswa - Mode Normal (bukan SP)
     function callStudent(id, name) {
-        panggilSiswaId = id;
+        // Reset modal ke mode normal dulu
+        resetPanggilModal();
+
         $('#panggilSiswaId').val(id);
         $('#panggilSiswaName').val(name || 'Siswa');
 
-        // Set default tanggal hari ini
         const today = new Date().toISOString().split('T')[0];
         $('#panggilTanggal').val(today);
         $('#panggilJam').val('08:00');
+        $('#panggilTempat').val('SMK TI Bali Global Denpasar');
 
         openModal('panggilModal');
     }
@@ -2418,12 +2778,12 @@ $('#confirmDelete').click(function() {
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Telp:</span>
-                            <span class="detail-value"><a href="tel:${data.telphone || ''}" style="color: var(--primary-light); text-decoration: none;"><i class="fas fa-phone me-2"></i>${data.telphone || '—'}</a></span>
+                            <span class="detail-value"><a href="tel:${data.telphone || ''}" style="color: var(--primary-light); text-decoration: none;">${data.telphone || '—'}</a></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Point:</span>
                             <span class="detail-value">
-                                <span class="badge ${parseInt(data.point)>=100?'badge-point-danger':'badge-point'}">
+                                <span class="badge ${parseInt(data.point)>=95?'badge-point-danger':'badge-point'}">
                                     ${data.point || 0} pt
                                 </span>
                             </span>
@@ -2513,16 +2873,16 @@ $('#confirmDelete').click(function() {
 
     function confirmDelete(id, name, sp = null) {
         deleteSiswaId = id;
-        
+
         // Jika SP tidak dikirim, ambil dari DataTable
         if (sp === null) {
             const rowData = $('#siswaTable').DataTable().rows().data().toArray().find(r => r.id == id);
             sp = rowData ? parseInt(rowData.sp) || 0 : 0;
         }
-        
+
         // Simpan SP untuk digunakan saat confirm
         $('#deleteId').data('sp', sp);
-        
+
         if (sp >= 3) {
             // Mode DO: Langsung hapus semua (pelanggaran + siswa)
             $('#deleteMessage').html(`
@@ -2548,7 +2908,7 @@ $('#confirmDelete').click(function() {
             $('#deleteOptions').show();
             $('#confirmDelete').hide().data('mode', '');
         }
-        
+
         openModal('deleteModal');
     }
 

@@ -85,17 +85,22 @@ try {
                 exit;
             }
 
-            // Opsional: Cek apakah kelas masih digunakan di tabel siswa
-            // $check = $pdo->prepare("SELECT COUNT(*) FROM siswas WHERE id_kelas = ?");
-            // $check->execute([$id]);
-            // if ($check->fetchColumn() > 0) {
-            //     echo json_encode(['success' => false, 'message' => 'Kelas masih memiliki siswa, tidak dapat dihapus!']);
-            //     exit;
-            // }
+            // Cek apakah kelas masih digunakan di tabel siswa
+            $check = $pdo->prepare("SELECT COUNT(*) FROM siswas WHERE id_kelas = ?");
+            $check->execute([$id]);
+            if ($check->fetchColumn() > 0) {
+                echo json_encode(['success' => false, 'message' => 'Kelas masih memiliki siswa, tidak dapat dihapus!']);
+                exit;
+            }
 
             $stmt = $pdo->prepare("DELETE FROM kelas WHERE id = ?");
             $success = $stmt->execute([$id]);
-            echo json_encode(['success' => $success], JSON_UNESCAPED_UNICODE);
+            
+            if ($success && $stmt->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Kelas berhasil dihapus']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Kelas tidak ditemukan atau sudah dihapus']);
+            }
             exit;
 
         default:

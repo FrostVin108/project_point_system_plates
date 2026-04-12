@@ -648,7 +648,6 @@
                         <div class="form-group-guru">
                             <label>No Handphone <span class="required">*</span></label>
                             <div class="input-group-guru">
-                                <span class="input-icon"><i class="fas fa-phone"></i></span>
                                 <input type="tel" class="form-input-guru" id="addNoHp" required placeholder="08xx-xxxx-xxxx">
                             </div>
                         </div>
@@ -709,7 +708,6 @@
                         <div class="form-group-guru">
                             <label>No Handphone <span class="required">*</span></label>
                             <div class="input-group-guru">
-                                <span class="input-icon"><i class="fas fa-phone"></i></span>
                                 <input type="tel" class="form-input-guru" id="editNoHp" required>
                             </div>
                         </div>
@@ -1151,7 +1149,7 @@ function showDetail(id) {
                 '<div class="detail-card-liquid">' +
                     '<div class="detail-card-header"><i class="fas fa-chalkboard-teacher" style="color: var(--primary-light);"></i><h4>Data Guru</h4></div>' +
                     '<div class="detail-row"><span class="detail-label">Nama:</span><span class="detail-value" style="font-weight: 700;">' + (data.name || '—') + '</span></div>' +
-                    '<div class="detail-row"><span class="detail-label">No HP:</span><span class="detail-value"><a href="tel:' + (data.no_handphone || '') + '" style="color: var(--primary-light); text-decoration: none;"><i class="fas fa-phone me-2"></i>' + (data.no_handphone || '—') + '</a></span></div>' +
+                    '<div class="detail-row"><span class="detail-label">No HP:</span><span class="detail-value"><a href="tel:' + (data.no_handphone || '') + '" style="color: var(--primary-light); text-decoration: none;">' + (data.no_handphone || '—') + '</a></span></div>' +
                     '<div class="detail-row"><span class="detail-label">Mata Pelajaran:</span><span class="detail-value">' + mapelHtml + '</span></div>' +
                     '<div class="detail-row"><span class="detail-label">Alamat:</span><span class="detail-value">' + (data.alamat || '—') + '</span></div>' +
                 '</div>' +

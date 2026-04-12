@@ -50,6 +50,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    color: #ffffff !important;
 }
 
 .page-title-mapel i {
@@ -118,13 +119,11 @@
    MODAL STYLES - PORTAL VERSION
    ============================================ */
 
-/* Modal Portal Container (di body) */
 .modal-portal-container {
     position: relative;
     z-index: 1;
 }
 
-/* Modal Overlay - TRUE FULLSCREEN DI BODY */
 .liquid-modal-overlay {
     display: none;
     position: fixed;
@@ -407,10 +406,7 @@
     </div>
 </div>
 
-<!-- 
-  MODALS - DITEMPATKAN DI SINI SEMENTARA, AKAN DIPINDAHKAN KE BODY VIA JAVASCRIPT
-  Ini adalah trik PORTAL untuk menghindari stacking context issues
--->
+<!-- MODALS -->
 <div id="modal-portal-source" style="display: none;">
 
     <!-- ADD MODAL -->
@@ -509,7 +505,7 @@
         </div>
     </div>
 
-</div><!-- END MODAL PORTAL SOURCE -->
+</div>
 
 <!-- Bootstrap + DataTables CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -523,84 +519,41 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// MODAL PORTAL SYSTEM - MEMINDAHKAN MODAL KE BODY UNTUK AVOID STACKING CONTEXT
+// GLOBAL VARIABLES - PERBAIKAN UTAMA
+// ═══════════════════════════════════════════════════════════════════════════
+window.modalsPorted = false;
+window.deleteId = null;
+window.table = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODAL PORTAL SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Global variable untuk track modal yang sudah dipindahkan
-window.modalsPorted = window.modalsPorted || false;
-
 function initModalPortal() {
-    // Hindari double initialization
     if (window.modalsPorted) return;
     window.modalsPorted = true;
 
-    // Cari container sumber
     var sourceContainer = document.getElementById('modal-portal-source');
     if (!sourceContainer) {
         console.error('Modal portal source not found');
         return;
     }
 
-    // Buat container di body untuk modal
     var portalContainer = document.createElement('div');
     portalContainer.id = 'modal-portal-destination';
     portalContainer.className = 'modal-portal-container';
-    // Pastikan container ini tidak membuat stacking context baru
     portalContainer.style.cssText = 'position: static; z-index: auto; transform: none; filter: none;';
 
-    // Pindahkan semua modal ke body
     var modals = sourceContainer.querySelectorAll('[data-modal="true"]');
     modals.forEach(function(modal) {
-        // Clone modal untuk memastikan event listeners tetap berfungsi
         var clonedModal = modal.cloneNode(true);
         portalContainer.appendChild(clonedModal);
     });
 
-    // Append ke body (di luar semua container)
     document.body.appendChild(portalContainer);
-
-    // Hapus source container
     sourceContainer.remove();
 
     console.log('Modal portal initialized: ' + modals.length + ' modals moved to body');
-
-    // Re-attach event listeners untuk modal yang sudah dipindahkan
-    reattachModalEventListeners();
-}
-
-function reattachModalEventListeners() {
-    // Close button click
-    document.querySelectorAll('.liquid-modal-close, .btn-modal-cancel').forEach(function(btn) {
-        // Remove old listeners (if any) by cloning
-        var newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-
-        // Add new listener
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var modalOverlay = this.closest('.liquid-modal-overlay');
-            if (modalOverlay) {
-                closeModal(modalOverlay.id);
-            }
-        });
-    });
-
-    // Prevent modal content click from closing
-    document.querySelectorAll('.liquid-modal').forEach(function(modal) {
-        modal.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
-
-    // Close on overlay click
-    document.querySelectorAll('.liquid-modal-overlay').forEach(function(overlay) {
-        overlay.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal(this.id);
-            }
-        });
-    });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -608,7 +561,6 @@ function reattachModalEventListeners() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function openModal(modalId) {
-    // Pastikan portal sudah diinisialisasi
     if (!window.modalsPorted) {
         initModalPortal();
     }
@@ -619,16 +571,10 @@ function openModal(modalId) {
         return;
     }
 
-    // Reset scroll
     overlay.scrollTop = 0;
-
-    // Show modal
     overlay.classList.add('active');
-
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
 
-    // Focus trap (optional)
     setTimeout(function() {
         var firstInput = overlay.querySelector('input, select, textarea');
         if (firstInput) firstInput.focus();
@@ -648,6 +594,12 @@ function closeModal(modalId) {
         if (form) {
             setTimeout(function() { form.reset(); }, 300);
         }
+    }
+    
+    // Reset delete data
+    if (modalId === 'deleteModal') {
+        window.deleteId = null;
+        $('#deleteId').val('');
     }
 }
 
@@ -683,15 +635,32 @@ function showToast(msg, type) {
 }
 
 // ════════════════════════════════════════════════════════
-// DOCUMENT READY
+// CRUD FUNCTIONS
+// ════════════════════════════════════════════════════════
+
+function editData(id, name) {
+    $('#editId').val(id);
+    $('#editName').val(name);
+    openModal('editModal');
+}
+
+function deleteData(id, name) {
+    window.deleteId = id;
+    $('#deleteId').val(id);
+    $('#deleteName').text(name);
+    openModal('deleteModal');
+}
+
+// ════════════════════════════════════════════════════════
+// DOCUMENT READY - SEMUA EVENT HANDLER DI SINI
 // ════════════════════════════════════════════════════════
 $(document).ready(function() {
 
-    // Inisialisasi modal portal segera
+    // Inisialisasi modal portal
     initModalPortal();
 
     // ── DataTable ──────────────────────────────────────
-    var table = $('#mapelTable').DataTable({
+    window.table = $('#mapelTable').DataTable({
         ajax: {
             url: 'action_mapel.php?action=read',
             dataSrc: ''
@@ -714,11 +683,12 @@ $(document).ready(function() {
                 orderable: false,
                 className: 'text-center align-middle',
                 render: function (data) {
+                    var safeName = data.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     return '<div class="d-flex justify-content-center gap-2 flex-wrap">' +
-                        '<button class="btn btn-action-edit btn-sm" onclick="editData(' + data.id + ', \'' + data.name.replace(/'/g, "\\'") + '\')" title="Edit">' +
+                        '<button class="btn btn-action-edit btn-sm" onclick="editData(' + data.id + ', \'' + safeName + '\')" title="Edit">' +
                             '<i class="fas fa-edit"></i>' +
                         '</button>' +
-                        '<button class="btn btn-action-delete btn-sm" onclick="deleteData(' + data.id + ', \'' + data.name.replace(/'/g, "\\'") + '\')" title="Hapus">' +
+                        '<button class="btn btn-action-delete btn-sm" onclick="deleteData(' + data.id + ', \'' + safeName + '\')" title="Hapus">' +
                             '<i class="fas fa-trash"></i>' +
                         '</button>' +
                     '</div>';
@@ -743,7 +713,7 @@ $(document).ready(function() {
     // ── Form Submissions ─────────────────────────────
     
     // Add form
-    $(document).on('submit', '#addForm', function(e) {
+    $('#addForm').on('submit', function(e) {
         e.preventDefault();
         var name = $('#addName').val().trim();
         if(!name) { 
@@ -758,7 +728,7 @@ $(document).ready(function() {
         .done(function(response) {
             if(response.success) {
                 closeModal('addModal');
-                table.ajax.reload(null, false);
+                window.table.ajax.reload(null, false);
                 showToast('Mapel berhasil ditambahkan!', 'success');
             } else {
                 showToast(response.message || 'Gagal tambah mapel', 'error');
@@ -773,7 +743,7 @@ $(document).ready(function() {
     });
 
     // Edit form
-    $(document).on('submit', '#editForm', function(e) {
+    $('#editForm').on('submit', function(e) {
         e.preventDefault();
         var id = $('#editId').val();
         var name = $('#editName').val().trim();
@@ -789,7 +759,7 @@ $(document).ready(function() {
         .done(function(response) {
             if(response.success) {
                 closeModal('editModal');
-                table.ajax.reload(null, false);
+                window.table.ajax.reload(null, false);
                 showToast('Mapel berhasil diupdate!', 'success');
             } else {
                 showToast(response.message || 'Gagal update mapel', 'error');
@@ -803,9 +773,20 @@ $(document).ready(function() {
         });
     });
 
-    // Delete confirm
-    $(document).on('click', '#confirmDelete', function() {
-        var id = $('#deleteId').val();
+    // ════════════════════════════════════════════════════════
+    // DELETE HANDLER - HANYA SATU INI
+    // ════════════════════════════════════════════════════════
+    
+    $(document).on('click', '#confirmDelete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var id = window.deleteId;
+        if (!id) {
+            showToast('ID tidak valid', 'error');
+            return;
+        }
+        
         var $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
         
@@ -813,7 +794,7 @@ $(document).ready(function() {
         .done(function(response) {
             if(response.success) {
                 closeModal('deleteModal');
-                table.ajax.reload(null, false);
+                window.table.ajax.reload(null, false);
                 showToast('Mapel berhasil dihapus!', 'success');
             } else {
                 showToast(response.message || 'Gagal hapus mapel', 'error');
@@ -828,19 +809,6 @@ $(document).ready(function() {
     });
 
 }); // END ready
-
-// Global functions untuk dipanggil dari DataTable
-function editData(id, name) {
-    $('#editId').val(id);
-    $('#editName').val(name);
-    openModal('editModal');
-}
-
-function deleteData(id, name) {
-    $('#deleteId').val(id);
-    $('#deleteName').text(name);
-    openModal('deleteModal');
-}
 </script>
 
 <?php $this->stop() ?>

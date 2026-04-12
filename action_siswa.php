@@ -128,8 +128,8 @@ try {
                 INSERT INTO siswas (
                     name, nis, id_kelas, name_orang_tua, pekerjaan_orang_tua,
                     alamat_orang_tua, alamat, telphone_orang_tua, telphone, 
-                    detail, point, sp, id_user, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    detail, point, sp, id_user
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
 
             $success = $stmt->execute([
@@ -200,20 +200,23 @@ try {
             $currentPoint = (int)$siswa['point'];
             $currentSp = (int)$siswa['sp'];
 
-            // Validasi minimal 90 point untuk muncul tombol
-            if ($currentPoint < 90) {
-                echo json_encode(['success' => false, 'message' => 'Point belum mencapai 90']);
+            // ═══════════════════════════════════════════════════════════
+            // RULE: Minimal 100 point untuk terbitkan SP
+            // ═══════════════════════════════════════════════════════════
+            if ($currentPoint < 95) {
+                echo json_encode(['success' => false, 'message' => 'Point minimal 100 untuk menerbitkan SP']);
                 exit;
             }
 
-            // Hitung point baru dan SP baru
+            // Hitung SP baru dan Point baru sesuai aturan:
+            // - Jika point >= 100: kurangi 100
+            // - Jika point < 100: langsung jadi 0 (tapi sudah dicek di atas minimal 100)
             $newSp = $currentSp + 1;
-
+            
             if ($currentPoint >= 100) {
-                // Jika >= 100, kurangi 100
                 $newPoint = $currentPoint - 100;
             } else {
-                // Jika 90-99, langsung jadi 0
+                // Fallback untuk point 90-99 (seharusnya tidak terjadi karena dicek di atas)
                 $newPoint = 0;
             }
 
@@ -334,7 +337,7 @@ case 'do_student':
     break;
 
 case 'delete':
-    $id = (int) ($_POST['id'] ?? 0);
+   $id = (int) ($_POST['id'] ?? 0);
     $mode = $_POST['mode'] ?? 'full'; // 'full' | 'unassign' | 'clear_pelanggaran'
     
     if ($id == 0) {
@@ -359,18 +362,25 @@ case 'delete':
     if ($mode === 'full') {
         $pdo->beginTransaction();
         try {
-            // 1. Hapus semua pelanggaran siswa
+            // 1. Hapus semua pelanggaran siswa TERLEBIH DAHULU
             $deletePelanggaran = $pdo->prepare("DELETE FROM pelanggarans WHERE id_siswa = ?");
             $deletePelanggaran->execute([$id]);
             $pelanggaranDeleted = $deletePelanggaran->rowCount();
             
-            // 2. Hapus user dari users jika ada
+            // 2. UPDATE siswa: Set id_user = NULL (hapus relasi ke users)
+            //    Ini penting untuk menghindari foreign key constraint!
+            if ($userId) {
+                $updateSiswa = $pdo->prepare("UPDATE siswas SET id_user = NULL WHERE id = ?");
+                $updateSiswa->execute([$id]);
+            }
+            
+            // 3. Baru hapus user dari users (sekarang tidak ada yang mereferensi)
             if ($userId) {
                 $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
                 $deleteUser->execute([$userId]);
             }
             
-            // 3. Hapus siswa
+            // 4. Terakhir hapus siswa
             $deleteSiswa = $pdo->prepare("DELETE FROM siswas WHERE id = ?");
             $deleteSiswa->execute([$id]);
             
@@ -378,7 +388,7 @@ case 'delete':
             
             echo json_encode([
                 'success' => true,
-                'message' => "Siswa DO berhasil dihapus! {$pelanggaranDeleted} riwayat pelanggaran ikut terhapus.",
+                'message' => "Siswa berhasil dihapus permanen! {$pelanggaranDeleted} riwayat pelanggaran ikut terhapus.",
                 'mode' => 'full',
                 'pelanggaran_deleted' => $pelanggaranDeleted
             ]);
@@ -398,13 +408,13 @@ case 'delete':
         
         $pdo->beginTransaction();
         try {
-            // 1. Hapus user dari users
-            $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
-            $deleteUser->execute([$userId]);
-            
-            // 2. Update siswa: set id_user = NULL
+            // 1. Update siswa: set id_user = NULL (hapus relasi dulu)
             $updateSiswa = $pdo->prepare("UPDATE siswas SET id_user = NULL WHERE id = ?");
             $updateSiswa->execute([$id]);
+            
+            // 2. Baru hapus user
+            $deleteUser = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'siswa'");
+            $deleteUser->execute([$userId]);
             
             $pdo->commit();
             
@@ -423,20 +433,24 @@ case 'delete':
     
     // Mode 3: CLEAR RIWAYAT PELANGGARAN ONLY
     if ($mode === 'clear_pelanggaran') {
-        $deletePelanggaran = $pdo->prepare("DELETE FROM pelanggarans WHERE id_siswa = ?");
-        $deletePelanggaran->execute([$id]);
-        $deletedCount = $deletePelanggaran->rowCount();
-        
-        // Reset point siswa ke 0
-        $resetPoint = $pdo->prepare("UPDATE siswas SET point = 0 WHERE id = ?");
-        $resetPoint->execute([$id]);
-        
-        echo json_encode([
-            'success' => true,
-            'message' => "{$deletedCount} riwayat pelanggaran berhasil dihapus! Point siswa direset ke 0.",
-            'mode' => 'clear_pelanggaran',
-            'pelanggaran_deleted' => $deletedCount
-        ]);
+        try {
+            $deletePelanggaran = $pdo->prepare("DELETE FROM pelanggarans WHERE id_siswa = ?");
+            $deletePelanggaran->execute([$id]);
+            $deletedCount = $deletePelanggaran->rowCount();
+            
+            // Reset point siswa ke 0
+            $resetPoint = $pdo->prepare("UPDATE siswas SET point = 0 WHERE id = ?");
+            $resetPoint->execute([$id]);
+            
+            echo json_encode([
+                'success' => true,
+                'message' => "{$deletedCount} riwayat pelanggaran berhasil dihapus! Point siswa direset ke 0.",
+                'mode' => 'clear_pelanggaran',
+                'pelanggaran_deleted' => $deletedCount
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
         exit;
     }
     

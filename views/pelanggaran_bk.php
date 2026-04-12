@@ -2,7 +2,67 @@
 
 <?php $this->start('main') ?>
 
+<!-- 1. FontAwesome HARUS PALING ATAS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- 2. Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- 3. DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
 <style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   FIX: FontAwesome icons inside gradient text elements
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Force icon to use solid color, not gradient */
+.dashboard-title i,
+.glass-card-title i {
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    
+    /* CRITICAL: Reset gradient text effect */
+    -webkit-text-fill-color: currentColor !important;
+    -webkit-background-clip: initial !important;
+    background: none !important;
+    background-clip: initial !important;
+    
+    /* Ensure visibility */
+    display: inline-block !important;
+    color: #fbbf24 !important; /* Force yellow color */
+    text-shadow: 0 0 15px rgba(251, 191, 36, 0.5) !important;
+    
+    /* Prevent inheritance issues */
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Alternative: wrap icon in separate container */
+.dashboard-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.dashboard-title-text {
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-title-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fbbf24;
+    filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    DASHBOARD BK - LIQUID GLASS THEME
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -426,10 +486,10 @@
 
     <!-- HEADER -->
     <div class="dashboard-header">
-        <div>
-            <h1 class="dashboard-title"><i class="fa-solid fa-chart-area"></i>Dashboard BK</h1>
-            <p class="dashboard-subtitle">Pantau pelanggaran siswa secara real-time</p>
-        </div>
+        <h1 class="dashboard-title">
+            <span class="dashboard-title-icon"><i class="fas fa-chart-area"></i></span>
+            <span class="dashboard-title-text">Dashboard BK</span>
+        </h1>
         <div class="header-actions">
             <button class="btn-dashboard-action" onclick="openModal('exportModal')">
                 <i class="fas fa-file-word"></i>Export Laporan
@@ -899,12 +959,26 @@ function showToast(msg,type){
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DATATABLE
+// DATATABLE - HANYA 6 HARI TERAKHIR
 // ═══════════════════════════════════════════════════════════════════════════
+
+function getDate6DaysAgo() {
+    var d = new Date();
+    d.setDate(d.getDate() - 6);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
 function initDataTable() {
     dtTable = $('#dashboardTable').DataTable({
-        ajax: { url: 'action_dashboard_bk.php?action=recent_table', dataSrc: '' },
+        ajax: { 
+            url: 'action_dashboard_bk.php?action=recent_table', 
+            data: function(d) {
+                // Kirim range 6 hari terakhir ke server
+                d.date_start = getDate6DaysAgo();
+                d.date_end = new Date().toISOString().split('T')[0];
+            },
+            dataSrc: '' 
+        },
         columns: [
             { data:'date', render:function(d){ return new Date(d).toLocaleDateString('id-ID',{day:'numeric',month:'short'}); } },
             { data:null, render:function(d){ return '<span class="badge-dashboard siswa">'+(d.siswa_name||'-')+'</span>'; } },

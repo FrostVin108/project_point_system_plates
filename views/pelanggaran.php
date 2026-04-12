@@ -46,6 +46,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    color: #ffffff !important; /* TAMBAHKAN INI */
 }
 
 .page-title-pelanggaran i {
@@ -501,6 +502,17 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
+/* Sembunyikan kolom aksi untuk non-admin */
+.action-col-hidden {
+    display: none !important;
+}
+
+/* Atau jika pakai cara DataTables column visibility */
+th.action-col-header,
+td.action-col-cell {
+    /* akan di-handle oleh DataTables */
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .page-header-pelanggaran { flex-direction: column; align-items: stretch; }
@@ -541,13 +553,13 @@
                 <thead>
                     <tr>
                         <th width="5%" class="text-center">No</th>
-                        <th width="14%">Siswa</th>
-                        <th width="14%">Jenis</th>
-                        <th width="17%">Alasan</th>
-                        <th width="11%">Guru</th>
+                        <th width="15%">Siswa</th>
+                        <th width="15%">Jenis</th>
+                        <th width="20%">Alasan</th>
+                        <th width="12%">Guru</th>
                         <th width="10%" class="text-center">Point</th>
-                        <th width="12%" class="text-center">Tanggal</th>
-                        <th width="10%" class="text-center">Aksi</th>
+                        <th width="13%" class="text-center">Tanggal</th>
+                        <th width="10%" class="text-center action-col-header">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -1095,33 +1107,40 @@ function updateSubmit(modal) {
 }
 
 function initDataTable() {
+    // Definisi kolom dasar
+    var columns = [
+        {
+            data: null, orderable: false, className: 'text-center',
+            render: function(data, type, row, meta) { return meta.row + 1; }
+        },
+        { data: null, render: function(d) { return '<span class="badge-siswa">' + (d.siswas || '-') + '</span>'; } },
+        { data: null, render: function(d) { return '<span class="badge-jenis">' + (d.jenis_pelanggarans || '-') + '</span>'; } },
+        { data: null, render: function(d) { return '<span class="badge-alasan">' + (d.alasan_pelanggaran || '-') + '</span>'; } },
+        { data: null, render: function(d) { return '<span class="badge-guru">' + (d.gurus || '-') + '</span>'; } },
+        { data: null, className: 'text-center', render: function(d) { return '<span class="badge-point">' + (d.total_point || 0) + ' pt</span>'; } },
+        { data: null, className: 'text-center', render: function(d) { return new Date(d.date).toLocaleDateString('id-ID'); } }
+    ];
+    
+    // Tambah kolom aksi HANYA jika admin
+    if (window.isAdmin) {
+        columns.push({
+            data: null, orderable: false, className: 'text-center',
+            render: function(d) {
+                return '<div class="d-flex justify-content-center gap-2">' +
+                    '<button class="btn btn-action-edit btn-sm edit-btn" data-id="' + d.id + '" title="Edit"><i class="fas fa-edit"></i></button>' +
+                    '<button class="btn btn-action-delete btn-sm delete-btn" data-id="' + d.id + '" title="Hapus"><i class="fas fa-trash"></i></button>' +
+                '</div>';
+            }
+        });
+    }
+
     table = $('#pelanggaranTable').DataTable({
         ajax: {
             url: 'action_pelanggaran.php?action=read',
             dataSrc: '',
             error: function() { showToast('Gagal load data!', 'error'); }
         },
-        columns: [
-            {
-                data: null, orderable: false, className: 'text-center',
-                render: function(data, type, row, meta) { return meta.row + 1; }
-            },
-            { data: null, render: function(d) { return '<span class="badge-siswa">' + (d.siswas || '-') + '</span>'; } },
-            { data: null, render: function(d) { return '<span class="badge-jenis">' + (d.jenis_pelanggarans || '-') + '</span>'; } },
-            { data: null, render: function(d) { return '<span class="badge-alasan">' + (d.alasan_pelanggaran || '-') + '</span>'; } },
-            { data: null, render: function(d) { return '<span class="badge-guru">' + (d.gurus || '-') + '</span>'; } },
-            { data: null, className: 'text-center', render: function(d) { return '<span class="badge-point">' + (d.total_point || 0) + ' pt</span>'; } },
-            { data: null, className: 'text-center', render: function(d) { return new Date(d.date).toLocaleDateString('id-ID'); } },
-            {
-                data: null, orderable: false, className: 'text-center',
-                render: function(d) {
-                    return '<div class="d-flex justify-content-center gap-2">' +
-                        '<button class="btn btn-action-edit btn-sm edit-btn" data-id="' + d.id + '" title="Edit"><i class="fas fa-edit"></i></button>' +
-                        '<button class="btn btn-action-delete btn-sm delete-btn" data-id="' + d.id + '" title="Hapus"><i class="fas fa-trash"></i></button>' +
-                    '</div>';
-                }
-            }
-        ],
+        columns: columns,
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json',
             paginate: {
@@ -1135,6 +1154,11 @@ function initDataTable() {
         responsive: true,
         order: [[0, 'desc']]
     });
+    
+    // Update header table - sembunyikan kolom aksi di thead jika bukan admin
+    if (!window.isAdmin) {
+        $('#pelanggaranTable thead th:last-child').hide();
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
