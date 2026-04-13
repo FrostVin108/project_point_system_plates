@@ -1,5 +1,10 @@
 <?php $this->layout('layouts::app', ['title' => 'Pelanggaran']) ?>
 
+<?php 
+// Pastikan session sudah start di file layout/app
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin'; 
+?>
+
 <?php $this->start('main') ?>
 
 <style>
@@ -507,11 +512,12 @@
     display: none !important;
 }
 
-/* Atau jika pakai cara DataTables column visibility */
-th.action-col-header,
-td.action-col-cell {
-    /* akan di-handle oleh DataTables */
+<?php if (!$isAdmin): ?>
+#pelanggaranTable th:last-child,
+#pelanggaranTable td:last-child {
+    display: none !important;
 }
+<?php endif; ?>
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -559,7 +565,9 @@ td.action-col-cell {
                         <th width="12%">Guru</th>
                         <th width="10%" class="text-center">Point</th>
                         <th width="13%" class="text-center">Tanggal</th>
+                        <?php if ($isAdmin): ?>
                         <th width="10%" class="text-center action-col-header">Aksi</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -800,6 +808,7 @@ td.action-col-cell {
 // ═══════════════════════════════════════════════════════════════════════════
 
 window.modalsPorted = window.modalsPorted || false;
+window.isAdmin = <?php echo $isAdmin ? 'true' : 'false'; ?>;
 
 function initModalPortal() {
     if (window.modalsPorted) return;

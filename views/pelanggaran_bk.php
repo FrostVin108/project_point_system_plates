@@ -506,25 +506,25 @@
             <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="stat-value" id="statTotalPelanggaran">0</div>
             <div class="stat-label">Total Pelanggaran Bulan Ini</div>
-            <div class="stat-trend up"><i class="fas fa-arrow-up"></i><span>+12% dari bulan lalu</span></div>
+            <!-- <div class="stat-trend up"><i class="fas fa-arrow-up"></i><span>+12% dari bulan lalu</span></div> -->
         </div>
         <div class="stat-card warning">
             <div class="stat-icon"><i class="fas fa-users"></i></div>
             <div class="stat-value" id="statTotalSiswa">0</div>
             <div class="stat-label">Siswa Melanggar</div>
-            <div class="stat-trend neutral"><i class="fas fa-minus"></i><span>Status stabil</span></div>
+            <!-- <div class="stat-trend neutral"><i class="fas fa-minus"></i><span>Status stabil</span></div> -->
         </div>
         <div class="stat-card purple">
             <div class="stat-icon"><i class="fas fa-star"></i></div>
             <div class="stat-value" id="statTotalPoints">0</div>
             <div class="stat-label">Total Point Pelanggaran Siswa</div>
-            <div class="stat-trend down"><i class="fas fa-arrow-down"></i><span>-5% dari bulan lalu</span></div>
+            <!-- <div class="stat-trend down"><i class="fas fa-arrow-down"></i><span>-5% dari bulan lalu</span></div> -->
         </div>
         <div class="stat-card success">
             <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
             <div class="stat-value" id="statTotalGuru">0</div>
             <div class="stat-label">Guru Aktif Melaporkan</div>
-            <div class="stat-trend up"><i class="fas fa-arrow-up"></i><span>+3 guru baru</span></div>
+            <!-- <div class="stat-trend up"><i class="fas fa-arrow-up"></i><span>+3 guru baru</span></div> -->
         </div>
     </div>
 
